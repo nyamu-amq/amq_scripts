@@ -2,6 +2,7 @@
 // @name         AMQ Mousewheel Volume Control
 // @namespace    https://github.com/nyamu-amq
 // @version      0.1
+// @description  you can adjust volume with mouse wheel
 // @author       nyamu
 // @match        https://animemusicquiz.com/*
 
@@ -13,6 +14,8 @@
         return
     }
 
+	$("#qpOptionContainer")
+		.on("wheel", volumeControl);
 	$("#qpAnimeCenterContainer")
 		.on("wheel", volumeControl);
 	$("#qpAvatarRow")
