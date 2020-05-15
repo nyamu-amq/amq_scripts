@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         Wheel Volume Control
+// @name         AMQ Mousewheel Volume Control
 // @namespace    https://github.com/nyamu-amq
 // @version      0.1
 // @author       nyamu
