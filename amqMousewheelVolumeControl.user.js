@@ -24,9 +24,10 @@
 
 function volumeControl(event) {
 	var volumetemp=volumeController.volume;
-	if(volumetemp==undefined) volumetemp=1;
+	if(isNaN(volumetemp)) volumetemp=1;
 	volumetemp+=(event.originalEvent.deltaY<0)?.05:-.05;
 	volumetemp=Math.min(Math.max(volumetemp, 0), 1);
 	volumeController.volume=volumetemp;
 	volumeController.adjustVolume();
+	volumeController.setMuted(false);
 }
