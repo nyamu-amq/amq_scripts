@@ -7,12 +7,17 @@
 
 // ==/UserScript==
 
-if (!window.setupDocumentDone) return;
+(function() {
 
-$("#qpAnimeCenterContainer")
-	.on("wheel", volumeControl);
-$("#qpAvatarRow")
-	.on("wheel", volumeControl);
+    if (document.getElementById('startPage')) {
+        return
+    }
+
+	$("#qpAnimeCenterContainer")
+		.on("wheel", volumeControl);
+	$("#qpAvatarRow")
+		.on("wheel", volumeControl);
+})();
 
 function volumeControl(event) {
 	var volumetemp=volumeController.volume;
