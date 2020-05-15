@@ -23,9 +23,9 @@
 })();
 
 function volumeControl(event) {
-	var volumetemp=volumeController.volume;
-	if(isNaN(volumetemp)) volumetemp=1;
-	volumetemp+=(event.originalEvent.deltaY<0)?.05:-.05;
+	var volumetemp=Cookies.get('volume')*1;
+	if(event.originalEvent.deltaY<0) volumetemp=volumetemp+.05;
+	else volumetemp=volumetemp-.05;
 	volumetemp=Math.min(Math.max(volumetemp, 0), 1);
 	volumeController.volume=volumetemp;
 	volumeController.adjustVolume();
