@@ -4,7 +4,6 @@
 // @version      0.1
 // @author       nyamu
 // @match        https://animemusicquiz.com/*
-// @grant        none
 
 // ==/UserScript==
 
