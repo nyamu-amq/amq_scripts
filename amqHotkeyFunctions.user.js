@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Hotkey Functions
 // @namespace    https://github.com/nyamu-amq
-// @version      0.2
+// @version      0.3
 // @description  enable hotkey functions
 // @description  ESC: remove zombie tooltips
 // @description  TAB: move cursor focus to chat box and answer box
@@ -16,16 +16,13 @@ function doc_keyUp(event) {
 		$("[id^=tooltip]").remove(); $("[id^=popover]").remove();
 	}
 	else if (event.keyCode == '9') {
-		var inputContainer = $("#qpAnswerInputContainer");
-		if(document.activeElement.id=="qpAnswerInput" || $("#qpAnswerInput").attr("disabled")=="disabled") {
-			if(inputContainer.hasClass("focused")) {
-				inputContainer.removeClass("focused");
-			}
+		if(quiz.answerInput.inFocus || quiz.isSpectator) {
+			quiz.setInputInFocus(false);
 			$("#gcInput").focus();
 		}
 		else {
-			inputContainer.addClass("focused");
-			$("#qpAnswerInput").focus();
+			$("#gcInput").blur();
+			quiz.setInputInFocus(true);
 		}
 	}
 }
