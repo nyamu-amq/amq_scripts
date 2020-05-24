@@ -23,6 +23,7 @@ function doc_keyUp(event) {
 		else {
 			$("#gcInput").blur();
 			quiz.setInputInFocus(true);
+			$("#qpAnswerInput").focus();
 		}
 	}
 }
