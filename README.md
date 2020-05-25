@@ -6,7 +6,7 @@ im so lazy to write usage.... and english is too hard for me..../o\
 - show notification when your friend is online
 
 ### amqHotkeyFunctions.user.js
-- enables some hotkey functions. there are only 2 functions so far....
+- enables some hotkey functions. im so lazy to use mouse for this functions
 - [TAB] : move cursor focus to answer box and chat box
 - [ESC] : remove zombie tooltips
 - [PgUp] : increase volume
@@ -17,6 +17,9 @@ im so lazy to write usage.... and english is too hard for me..../o\
 ### amqMousewheelVolumeControl.user.js
 - adjust volume with mouse wheel when mouse cursor is over video area or avatar area
 
+### amqNoFriendRoomFilter.user.js
+- add no friend room filter
+- **this script might crash page design if you are using Elodie's custom style....** and idk how to fix..../o\
 
 
 im not good at javascript/html/css yet. so this scripts might have some bugs
