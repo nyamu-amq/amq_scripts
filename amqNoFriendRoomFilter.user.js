@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ No Friend Room Filter
 // @namespace    https://github.com/nyamu-amq
-// @version      0.1
+// @version      0.2
 // @description  add no friend room filter
 // @author       nyamu
 // @match        https://animemusicquiz.com/*
@@ -14,8 +14,8 @@
         return
     }
 
-	$("#rbMajorFilters").css("width", 350);
-	$("#rbMajorFilters").css("left", -350);
+	$("#rbMajorFilters").css("width", 370);
+	$("#rbMajorFilters").css("left", -370);
 	$("#rbMajorFilters").append(`<div><div class="customCheckbox"><input type="checkbox" id="rbfNoFriend"><label for="rbfNoFriend"><i class="fa fa-check" aria-hidden="true"></i></label></div><p>NoFriend</p><div>`);
 
 	$("#rbfNoFriend").on('click', () => {
