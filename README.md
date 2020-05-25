@@ -9,6 +9,10 @@ im so lazy to write usage.... and english is too hard for me..../o\
 - enables some hotkey functions. there are only 2 functions so far....
 - [TAB] : move cursor focus to answer box and chat box
 - [ESC] : remove zombie tooltips
+- [PgUp] : increase volume
+- [PgDn] : decrease volume
+- [Ctrl + M] : toggle mute
+- [Shift + Enter] : skip
 
 ### amqMousewheelVolumeControl.user.js
 - adjust volume with mouse wheel when mouse cursor is over video area or avatar area
