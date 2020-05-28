@@ -13,6 +13,10 @@ im so lazy to write usage.... and english is too hard for me..../o\
 - [PgDn] : decrease volume
 - [Ctrl + M] : toggle mute
 - [Shift + Enter] : skip
+- [Shift + PgUp] : move box focus to upper box
+- [Shift + PgDn] : move box focus to lower box
+- [Shift + Home] : move box focus to my box
+
 
 ### amqMousewheelVolumeControl.user.js
 - adjust volume with mouse wheel when mouse cursor is over video area or avatar area
