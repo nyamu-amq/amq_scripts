@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Hotkey Functions
 // @namespace    https://github.com/nyamu-amq
-// @version      0.5
+// @version      0.6
 // @description  enable hotkey functions
 // @description  ESC: remove zombie tooltips
 // @description  TAB: move cursor focus to chat box and answer box
@@ -49,16 +49,16 @@ function doc_keyDown(event) {
 			var curgroup=parseInt(quiz.avatarContainer.currentGroup);
 			if(event.keyCode=='33') {
 				if(curgroup>1)
-					quiz.selectAvatarGroup(String(curgroup-1));
+					SelectAvatarGroup(String(curgroup-1));
 			}
 			else if(event.keyCode=='34') {
 				if(curgroup<maxgroup)
-					quiz.selectAvatarGroup(String(curgroup+1));
+					SelectAvatarGroup(String(curgroup+1));
 			}
 			else if(event.keyCode=='36') {
 				if(!quiz.isSpectator) {
 					if(quiz.ownGroupSlot!=quiz.avatarContainer.currentGroup)
-						quiz.selectAvatarGroup(quiz.ownGroupSlot);
+						SelectAvatarGroup(quiz.ownGroupSlot);
 				}
 			}
 		}
@@ -80,5 +80,15 @@ function AdjustVolume(amount) {
 	volumeController.adjustVolume();
 	volumeController.setMuted(false);
 }
+function SelectAvatarGroup(number) {
+	quiz.avatarContainer.currentGroup = number;
+	quiz.scoreboard.setActiveGroup(number);
+	if (Object.keys(quiz.scoreboard.groups).length > 1) {
+		quiz.scoreboard.$quizScoreboardItemContainer.stop().animate({
+			scrollTop: quiz.scoreboard.groups[number].topOffset - 3
+		}, 300);
+	}
+}
+
 document.addEventListener('keyup', doc_keyUp, false);
 document.addEventListener('keydown', doc_keyDown, false);
