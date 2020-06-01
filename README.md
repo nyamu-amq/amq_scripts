@@ -5,6 +5,9 @@ im so lazy to write usage.... and english is too hard for me..../o\
 ### amqFriendOnlineNotifier.user.js
 - show notification when your friend is online
 
+### amqHighlightFriends.user.js
+- apply highlight to friends in scorebox
+
 ### amqHotkeyFunctions.user.js
 - enables some hotkey functions. im so lazy to use mouse for this functions
 - [TAB] : move cursor focus to answer box and chat box
