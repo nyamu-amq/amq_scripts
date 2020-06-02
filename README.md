@@ -32,7 +32,8 @@ im so lazy to write usage.... and english is too hard for me..../o\
 
 ### amqNoFriendRoomFilter.user.js
 - add no friend room filter
-- **this script might crash page design if you are using Elodie's custom style....** ~~and idk how to fix..../o\ ~~ i think it has been fixed since version 0.2
+- **this script might crash page design if you are using Elodie's custom style....** ~~and idk how to fix..../o\ ~~
+  + i think it has been fixed since version 0.2
 
 
 im not good at javascript/html/css yet. so this scripts might have some bugs
