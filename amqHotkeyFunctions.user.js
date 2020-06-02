@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Hotkey Functions
 // @namespace    https://github.com/nyamu-amq
-// @version      0.7
+// @version      0.8
 // @description  enable hotkey functions
 // @description  ESC: remove zombie tooltips
 // @description  TAB: move cursor focus to chat box and answer box
@@ -45,7 +45,7 @@ function doc_keyUp(event) {
 		volumeController.setMuted(!volumeController.muted);
 		volumeController.adjustVolume();
 	}
-	else if(lobby.inLobby) {
+	else if(lobby.inLobby &&  && lobby.settings.gameMode !== 'Ranked') {
 		if(event.keyCode=='37' && event.ctrlKey) {
 			if(lobby.isSpectator) {
 				let changeToListner = new Listener("Change To Player", function (succes) {
@@ -61,7 +61,7 @@ function doc_keyUp(event) {
 					command: "change to player"
 				});
 			}
-			else if(!lobby.isHost) {
+			else if(!lobby.isHost && lobby.settings.gameMode !== 'Ranked') {
 				lobby.isReady = !lobby.isReady;
 				socket.sendCommand({
 					type: "lobby",
@@ -82,7 +82,7 @@ function doc_keyUp(event) {
 			}
 		}
 	}
-	else if(quiz.inQuiz) {
+	else if(quiz.inQuiz &&  && lobby.settings.gameMode !== 'Ranked') {
 		if(event.keyCode=='37' && event.ctrlKey) {
 			if(quiz.isSpectator) {
 				gameChat.joinLeaveQueue();
