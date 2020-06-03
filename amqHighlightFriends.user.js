@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Hightlight Friends
 // @namespace    https://github.com/nyamu-amq
-// @version      0.2
+// @version      0.3
 // @description  apply highlight to friends in scorebox
 // @author       nyamu
 // @match        https://animemusicquiz.com/*
@@ -9,7 +9,9 @@
 
 // ==/UserScript==
 
-
+if (document.getElementById('startPage')) {
+    return
+}
 
 function AddFriendStyle() {
 	let head = document.head;
@@ -25,8 +27,11 @@ function AddFriendStyle() {
 		color: #80ff80;
 		text-shadow: 0 0 10px #408040;
 	}
+	.qpAvatarNameContainer.self {
+		color: #80c7ff;
+		text-shadow: 0 0 10px #228dff;
+	}
 	`));
-	
 }
 AddFriendStyle();
 
@@ -48,7 +53,9 @@ viewChanger.changeView = function (newView, arg) {
 	});
 
 	$(".qpAvatarNameContainer").not(".shadow").children("span").each((index, elem) => {
-		if(socialTab.isFriend($(elem).text()))
+		if($(elem).text()==selfName)
+			$(elem).parent().addClass("self");
+		else if(socialTab.isFriend($(elem).text()))
 			$(elem).parent().addClass("friend");
 	});
 };
