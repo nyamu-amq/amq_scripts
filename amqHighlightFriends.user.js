@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Hightlight Friends
 // @namespace    https://github.com/nyamu-amq
-// @version      0.4
+// @version      0.5
 // @description  apply highlight to friends in scorebox
 // @author       nyamu
 // @match        https://animemusicquiz.com/*
@@ -43,10 +43,8 @@ $("#settingsCustomColorContainer > .row")
     );
 $("#smColorSettings").append($("<div id='smColorContainer' class='col-xs-12 checkboxContainer text-center'></div>"));
 
-$("#smColorContainer").append($(`<div>Self Name <input type="color" id='smColorSelfName' value="`+GetCookie("smColorSelfName","#80c7ff")+`"}'></div>`));
-$("#smColorContainer").append($(`<div>Self Level <input type="color" id='smColorSelfLevel' value="`+GetCookie("smColorSelfLevel","#80c7ff")+`"}'></div>`));
-$("#smColorContainer").append($(`<div>Friend Name <input type="color" id='smColorFriendName' value="`+GetCookie("smColorFriendName","#80ff80")+`"}'></div>`));
-$("#smColorContainer").append($(`<div>Friend Level <input type="color" id='smColorFriendLevel' value="`+GetCookie("smColorFriendLevel","#80ff80")+`"}'></div>`));
+$("#smColorContainer").append($(`<div>Self Color<input type="color" id='smColorSelfName' value="`+GetCookie("smColorSelfName","#80c7ff")+`"}'></div>`));
+$("#smColorContainer").append($(`<div>Friend Color<input type="color" id='smColorFriendName' value="`+GetCookie("smColorFriendName","#80ff80")+`"}'></div>`));
 
 
 
@@ -64,21 +62,11 @@ $("#smColorSelfName").on('change',function() {
 	$(".qpAvatarNameContainer.self").css("color", color);
 	Cookies.set("smColorSelfName", color, { expires: 365 });
 });
-$("#smColorSelfLevel").on('change',function() {
-	let color=$("#smColorSelfLevel").val();
-	$(".qpAvatarLevelText.self").css("color", color);
-	Cookies.set("smColorSelfLevel", color, { expires: 365 });
-});
 $("#smColorFriendName").on('change',function() {
 	let color=$("#smColorFriendName").val();
 	$(".qpsPlayerName.friend").css("color", color);
 	$(".qpAvatarNameContainer.friend").css("color", color);
 	Cookies.set("smColorFriendName", color, { expires: 365 });
-});
-$("#smColorFriendLevel").on('change',function() {
-	let color=$("#smColorFriendLevel").val();
-	$(".qpAvatarLevelText.friend").css("color", color);
-	Cookies.set("smColorFriendLevel", color, { expires: 365 });
 });
 
 function AddFriendStyle() {
@@ -101,6 +89,12 @@ function AddFriendStyle() {
 		color: #80ff80;
 	}
 	.qpAvatarLevelText.self {
+		color: #80c7ff;
+	}
+	.qpAvatarPointText.friend {
+		color: #80ff80;
+	}
+	.qpAvatarPointText.self {
 		color: #80c7ff;
 	}
 	#smColorContainer > div {
@@ -131,11 +125,13 @@ ViewChanger.prototype.changeView = function (newView, arg) {
 	$(".qpAvatarNameContainer").not(".shadow").children("span").each((index, elem) => {
 		if($(elem).text()==selfName) {
 			$(elem).parent().addClass("self").css("color", $("#smColorSelfName").val());
-			$(elem).parent().parent().find(".qpAvatarLevelText").not(".shadow").addClass("self").css("color", $("#smColorSelfLevel").val());
+			$(elem).parent().parent().find(".qpAvatarLevelText").not(".shadow").addClass("self").css("color", $("#smColorSelfName").val());
+			$(elem).parent().parent().find(".qpAvatarPointText").not(".shadow").addClass("self").css("color", $("#smColorSelfName").val());
 		}
 		else if(socialTab.isFriend($(elem).text())) {
 			$(elem).parent().addClass("friend").css("color", $("#smColorFriendName").val());
-			$(elem).parent().parent().find(".qpAvatarLevelText").not(".shadow").addClass("friend").css("color", $("#smColorFriendLevel").val());
+			$(elem).parent().parent().find(".qpAvatarLevelText").not(".shadow").addClass("friend").css("color", $("#smColorFriendName").val());
+			$(elem).parent().parent().find(".qpAvatarPointText").not(".shadow").addClass("friend").css("color", $("#smColorFriendName").val());
 		}
 	});
 };
