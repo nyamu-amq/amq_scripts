@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Hightlight Friends
 // @namespace    https://github.com/nyamu-amq
-// @version      0.5
+// @version      0.6
 // @description  apply highlight to friends in scorebox
 // @author       nyamu
 // @match        https://animemusicquiz.com/*
@@ -60,12 +60,16 @@ $("#smColorSelfName").on('change',function() {
 	let color=$("#smColorSelfName").val();
 	$(".qpsPlayerName.self").css("color", color);
 	$(".qpAvatarNameContainer.self").css("color", color);
+	$(".qpAvatarLevelText.self").css("color", color);
+	$(".qpAvatarPointText.self").css("color", color);
 	Cookies.set("smColorSelfName", color, { expires: 365 });
 });
 $("#smColorFriendName").on('change',function() {
 	let color=$("#smColorFriendName").val();
 	$(".qpsPlayerName.friend").css("color", color);
 	$(".qpAvatarNameContainer.friend").css("color", color);
+	$(".qpAvatarLevelText.friend").css("color", color);
+	$(".qpAvatarPointText.friend").css("color", color);
 	Cookies.set("smColorFriendName", color, { expires: 365 });
 });
 
