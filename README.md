@@ -26,6 +26,8 @@ im so lazy to write usage.... and english is too hard for me..../o\
 - [Ctrl + Down] : start vote for returning lobby if game started and you are host
 
 
+### amqEmojiAnswer.js
+- convert emoji shortcode in answer box when press enter
 
 ### amqMousewheelVolumeControl.user.js
 - adjust volume with mouse wheel when mouse cursor is over video area or avatar area
@@ -35,9 +37,6 @@ im so lazy to write usage.... and english is too hard for me..../o\
 - ~~this script might crash page design if you are using Elodie's custom style....~~
   + i think it has been fixed since version 0.2
 
-### amqOddsAndEnds.user.js
-- fix minor bug that room option showing wrong room type sometimes
-- convert emoji shortcode in answer box
 
 im not good at javascript/html/css yet. so this scripts might have some bugs
 
