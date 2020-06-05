@@ -10,6 +10,7 @@ im so lazy to write usage.... and english is too hard for me..../o\
 
 ### amqHighlightFriends.user.js
 - apply highlight to friends in scorebox
+- color settings are available on settings>graphics tab
 
 ### amqHotkeyFunctions.user.js
 - enables some hotkey functions. im so lazy to use mouse for this functions
@@ -23,7 +24,7 @@ im so lazy to write usage.... and english is too hard for me..../o\
 - [Shift + PgDn] : move box focus to lower box
 - [Shift + Home] : move box focus to box 1
 - [Shift + End] : move box focus to my box
-- [Ctrl + Left] : join game in lobby. toggle ready if you joined. toggle queue if game started and you are spec
+- [Ctrl + Left] : join game in lobby. toggle ready if you joined
 - [Ctrl + Right] : change to spec in lobby if you joined
 - [Ctrl + Up] : start game if you are host and all players are ready
 - [Ctrl + Down] : start vote for returning lobby if game started and you are host
