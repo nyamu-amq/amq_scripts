@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Hightlight Friends
 // @namespace    https://github.com/nyamu-amq
-// @version      0.6
+// @version      0.7
 // @description  apply highlight to friends in scorebox
 // @author       nyamu
 // @match        https://animemusicquiz.com/*
@@ -13,43 +13,25 @@ if (document.getElementById('startPage')) {
     return;
 }
 
-$("#settingModal .tabContainer")
-    .append($("<div></div>")
-        .addClass("tab leftRightButtonTop clickAble")
-        .attr("onClick", "options.selectTab('settingsCustomColorContainer', this)")
-        .append($("<h5></h5>")
-            .text("Colors")
-        )
-    );
+$("#settingsGraphicContainer")
+	.append($("<div></div>")
+		.addClass("row")
+	    .append($("<div></div>")
+	        .addClass("col-xs-12")
+	        .attr("id", "smColorSettings")
+	        .append($("<div></div>")
+	            .attr("style", "text-align: center")
+	            .append($("<label></label>")
+	                .text("ColorSettings")
+				)
+	        )
+		)
+	);
 
-$("#settingModal .modal-body")
-    .append($("<div></div>")
-        .attr("id", "settingsCustomColorContainer")
-        .addClass("settingContentContainer hide")
-        .append($("<div></div>")
-            .addClass("row")
-        )
-    );
-$("#settingsCustomColorContainer > .row")
-    .append($("<div></div>")
-        .addClass("col-xs-12")
-        .attr("id", "smColorSettings")
-        .append($("<div></div>")
-            .attr("style", "text-align: center")
-            .append($("<label></label>")
-                .text("ColorSettings")
-            )
-        )
-    );
 $("#smColorSettings").append($("<div id='smColorContainer' class='col-xs-12 checkboxContainer text-center'></div>"));
 
 $("#smColorContainer").append($(`<div>Self Color<input type="color" id='smColorSelfName' value="`+GetCookie("smColorSelfName","#80c7ff")+`"}'></div>`));
 $("#smColorContainer").append($(`<div>Friend Color<input type="color" id='smColorFriendName' value="`+GetCookie("smColorFriendName","#80ff80")+`"}'></div>`));
-
-
-
-options.$SETTING_TABS = $("#settingModal .tab");
-options.$SETTING_CONTAINERS = $(".settingContentContainer");
 
 function GetCookie(key, def) {
 	let value=Cookies.get(key);
