@@ -2,6 +2,9 @@
 
 im so lazy to write usage.... and english is too hard for me..../o\
 
+### amqEmojiAnswer.js
+- convert emoji shortcode in answer box when press enter
+
 ### amqFriendOnlineNotifier.user.js
 - show notification when your friend is online
 
@@ -24,10 +27,6 @@ im so lazy to write usage.... and english is too hard for me..../o\
 - [Ctrl + Right] : change to spec in lobby if you joined
 - [Ctrl + Up] : start game if you are host and all players are ready
 - [Ctrl + Down] : start vote for returning lobby if game started and you are host
-
-
-### amqEmojiAnswer.js
-- convert emoji shortcode in answer box when press enter
 
 ### amqMousewheelVolumeControl.user.js
 - adjust volume with mouse wheel when mouse cursor is over video area or avatar area
