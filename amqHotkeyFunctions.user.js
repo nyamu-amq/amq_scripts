@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Hotkey Functions
 // @namespace    https://github.com/nyamu-amq
-// @version      0.10
+// @version      0.11
 // @description  enable hotkey functions
 // @description  ESC: remove zombie tooltips
 // @description  TAB: move cursor focus to chat box and answer box
@@ -13,7 +13,7 @@
 // @description  Shift + PgDn: move box focus to lower box
 // @description  Shift + Home: move box focus to box 1
 // @description  Shift + End: move box focus to my box
-// @description  Ctrl + Left: join game in lobby. toggle ready if you joined. toggle queue if game started and you are spec
+// @description  Ctrl + Left: join game in lobby. toggle ready if you joined
 // @description  Ctrl + Right: change to spec in lobby if you joined
 // @description  Ctrl + Up: start game if you are host and all players are ready
 // @description  Ctrl + Down: start vote for returning lobby if game started and you are host
@@ -22,6 +22,10 @@
 // @grant        none
 
 // ==/UserScript==
+
+if (document.getElementById('startPage')) {
+    return
+}
 
 function doc_keyUp(event) {
 	if(event.keyCode=='27') {
@@ -83,12 +87,7 @@ function doc_keyUp(event) {
 		}
 	}
 	else if(quiz.inQuiz && hostModal.gameMode !== 'Ranked') {
-		if(event.keyCode=='37' && event.ctrlKey) {
-			if(quiz.isSpectator) {
-				gameChat.joinLeaveQueue();
-			}
-		}
-		else if(event.keyCode=='40' && event.ctrlKey) {
+		if(event.keyCode=='40' && event.ctrlKey) {
 			if(lobby.isHost) {
 				quiz.startReturnLobbyVote();
 			}
