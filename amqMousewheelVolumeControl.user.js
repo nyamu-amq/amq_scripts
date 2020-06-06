@@ -48,7 +48,7 @@ AMQ_addScriptData({
     name: "Mousewheel Volume Control",
     author: "nyamu",
     description: `
-        <p>You can adjust volume with mouse wheel.</p>
+        <p>You can adjust volume with mouse wheel when mouse cursor is over video area or avatar area.</p>
         <p>It works in expand library also.</p>
     `
 });
