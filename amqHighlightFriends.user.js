@@ -1,11 +1,12 @@
 // ==UserScript==
 // @name         AMQ Hightlight Friends
 // @namespace    https://github.com/nyamu-amq
-// @version      0.7
-// @description  apply highlight to friends in scorebox
+// @version      0.8
+// @description  Change color of yourself and friends in score box and avatar box
 // @author       nyamu
 // @match        https://animemusicquiz.com/*
 // @grant        none
+// @require      https://raw.githubusercontent.com/TheJoseph98/AMQ-Scripts/master/common/amqScriptInfo.js
 
 // ==/UserScript==
 
@@ -55,12 +56,7 @@ $("#smColorFriendName").on('change',function() {
 	Cookies.set("smColorFriendName", color, { expires: 365 });
 });
 
-function AddFriendStyle() {
-	let head = document.head;
-	let style = document.createElement("style");
-	head.appendChild(style);
-	style.type = "text/css";
-	style.appendChild(document.createTextNode(`
+AMQ_addStyle(`
 	.qpsPlayerName.friend {
 		color: #80ff80;
 		text-shadow: 0 0 10px #408040;
@@ -86,9 +82,7 @@ function AddFriendStyle() {
 	#smColorContainer > div {
 		width: 100px;
 	}
-	`));
-}
-AddFriendStyle();
+`);
 
 ViewChanger.prototype.changeView = function (newView, arg) {
 	if (arg === undefined) {
@@ -121,3 +115,14 @@ ViewChanger.prototype.changeView = function (newView, arg) {
 		}
 	});
 };
+
+AMQ_addScriptData({
+    name: "Highlight Friends",
+    author: "nyamu",
+    description: `
+        <p>Change color of yourself and friends' text in score box and avatar box.</p>
+        <p>It makes it easier to find your friends in room that many users joined like ranked game.</p>
+        <p>You can adjust these colors on Settings > Graphics tab.</p>
+        <img src="https://i.imgur.com/tIEAL9N.png" />
+    `
+});

@@ -1,11 +1,12 @@
 // ==UserScript==
 // @name         AMQ No Friend Room Filter
 // @namespace    https://github.com/nyamu-amq
-// @version      0.2
+// @version      0.3
 // @description  add no friend room filter
 // @author       nyamu
 // @match        https://animemusicquiz.com/*
 // @grant        none
+// @require      https://raw.githubusercontent.com/TheJoseph98/AMQ-Scripts/master/common/amqScriptInfo.js
 
 // ==/UserScript==
 
@@ -28,3 +29,14 @@
 		this.updateNumberOfRoomsText();
 	};
 })();
+
+AMQ_addScriptData({
+    name: "No Friend Room Filter",
+    author: "nyamu",
+    description: `
+        <p>Add room filter that hide no friend room.</p>
+        <p>It shows only room with your friends if it checked.</p>
+        <img src="https://i.imgur.com/lCX6Py1.png" />
+        <p><s>Enjoy stalking.</s></p>
+    `
+});

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Hotkey Functions
 // @namespace    https://github.com/nyamu-amq
-// @version      0.11
+// @version      0.12
 // @description  enable hotkey functions
 // @description  ESC: remove zombie tooltips
 // @description  TAB: move cursor focus to chat box and answer box
@@ -20,6 +20,7 @@
 // @author       nyamu
 // @match        https://animemusicquiz.com/*
 // @grant        none
+// @require      https://raw.githubusercontent.com/TheJoseph98/AMQ-Scripts/master/common/amqScriptInfo.js
 
 // ==/UserScript==
 
@@ -153,3 +154,25 @@ function SelectAvatarGroup(number) {
 
 document.addEventListener('keyup', doc_keyUp, false);
 document.addEventListener('keydown', doc_keyDown, false);
+
+AMQ_addScriptData({
+    name: "Hotkey Functions",
+    author: "nyamu",
+    description: `
+        <p>It enables some hotkey functions.</p>
+        <p>[ESC] : remove zombie tooltips</p>
+        <p>[TAB] : move cursor focus to chat box and answer box</p>
+        <p>[PgUp] : increase volume</p>
+        <p>[PgDn] : decrease volume</p>
+        <p>[Ctrl + M]  : toggle mute</p>
+        <p>[Shift + Enter] : skip</p>
+        <p>[Shift + PgUp] : move box focus to upper box</p>
+        <p>[Shift + PgDn] : move box focus to lower box</p>
+        <p>[Shift + Home] : move box focus to box 1</p>
+        <p>[Shift + End] : move box focus to my box</p>
+        <p>[Ctrl + Left] : join game in lobby. toggle ready if you joined</p>
+        <p>[Ctrl + Right] : change to spec in lobby if you joined</p>
+        <p>[Ctrl + Up] : start game if you are host and all players are ready</p>
+        <p>[Ctrl + Down] : start vote for returning lobby if game started and you are host</p>
+    `
+});
