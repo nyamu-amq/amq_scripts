@@ -31,6 +31,7 @@ im so lazy to write usage.... and english is too hard for me..../o\
 
 ### amqMousewheelVolumeControl.user.js
 - adjust volume with mouse wheel when mouse cursor is over video area or avatar area
+- it works in expand library also
 
 ### amqNoFriendRoomFilter.user.js
 - add no friend room filter
