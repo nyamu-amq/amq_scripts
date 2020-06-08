@@ -2,7 +2,7 @@
 // @name         AMQ Hightlight Friends
 // @namespace    https://github.com/nyamu-amq
 // @version      0.9
-// @description  Change color of yourself and friends in score box and avatar box and chat
+// @description  Apply color to name of yourself and friends. and more
 // @author       nyamu, ensorcell
 // @match        https://animemusicquiz.com/*
 // @grant        none
@@ -400,6 +400,6 @@ AMQ_addScriptData({
         <p>It makes it easier to find your friends in room that many users joined like ranked game.</p>
         <p>You can adjust these colors and toggle on Settings > Graphics tab.</p>
         <img src="https://i.imgur.com/ymPESKe.png" />
-        <p>Codes that applying colors to friend name on chat written by ensorcell. thanks a lot.</p>
+        <p>Codes that applying colors to friend name on chat was written by ensorcell. thanks a lot.</p>
     `
 });
