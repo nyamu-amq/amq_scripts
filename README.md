@@ -9,8 +9,12 @@ im so lazy to write usage.... and english is too hard for me..../o\
 - show notification when your friend is online
 
 ### amqHighlightFriends.user.js
-- apply highlight to friends in scorebox
+- apply color to yourself and friends in scorebox and avatarbox
+- apply color to name of yourself and friends on chat
+- apply color to join/spec/leave system message on chat
+- apply color to name of yourself and friends on spec list
 - color settings are available on settings>graphics tab
+- codes that applying colors to friend name on chat was written by ensorcell. thanks a lot
 
 ### amqHotkeyFunctions.user.js
 - enables some hotkey functions. im so lazy to use mouse for this functions
