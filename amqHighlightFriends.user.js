@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Hightlight Friends
 // @namespace    https://github.com/nyamu-amq
-// @version      0.9
+// @version      0.10
 // @description  Apply color to name of yourself and friends. and more
 // @author       nyamu, ensorcell
 // @match        https://animemusicquiz.com/*
@@ -39,121 +39,201 @@ if (document.getElementById('startPage')) {
 	if(!friendshadow) {
 		Cookies.set("smColorFriendShadow", "#40ff40", { expires: 365 });
 	}
+
+	let joincolor=Cookies.get("smColorJoinColor");
+	if(!joincolor)
+		Cookies.set("smColorJoinColor", "#8080ff", { expires: 365 });
+	let speccolor=Cookies.get("smColorSpecColor");
+	if(!speccolor)
+		Cookies.set("smColorSpecColor", "#ffff80", { expires: 365 });
+	let leavecolor=Cookies.get("smColorLeaveColor");
+	if(!leavecolor)
+		Cookies.set("smColorLeaveColor", "#ff8080", { expires: 365 });
 }
 
 let colorSettingData = [
-	[
-		{
-			width: 60,
-			label: ""
-		},
-		{
-			width: 60,
-			label: "Color"
-		},
-		{
-			width: 70,
-			label: "Shadow"
-		},
-		{
-			width: 70,
-			label: "Scorebox"
-		},
-		{
-			width: 50,
-			label: "Name"
-		},
-		{
-			width: 50,
-			label: "Score"
-		},
-		{
-			width: 50,
-			label: "Level"
-		},
-		{
-			width: 50,
-			label: "Chat"
-		},
-		{
-			width: 50,
-			label: "Spec"
-		}
-	],
-	[
-		{
-			label: "Self"
-		},
-		{
-			id: "smColorSelfColor",
-			type: "color"
-		},
-		{
-			id: "smColorSelfShadow",
-			type: "color"
-		},
-		{
-			id: "smColorSelfScorebox",
-			type: "checkbox"
-		},
-		{
-			id: "smColorSelfName",
-			type: "checkbox"
-		},
-		{
-			id: "smColorSelfPoint",
-			type: "checkbox"
-		},
-		{
-			id: "smColorSelfLevel",
-			type: "checkbox"
-		},
-		{
-			id: "smColorSelfChat",
-			type: "checkbox"
-		},
-		{
-			id: "smColorSelfSpec",
-			type: "checkbox"
-		}
-	],
-	[
-		{
-			label: "Friend"
-		},
-		{
-			id: "smColorFriendColor",
-			type: "color"
-		},
-		{
-			id: "smColorFriendShadow",
-			type: "color"
-		},
-		{
-			id: "smColorFriendScorebox",
-			type: "checkbox"
-		},
-		{
-			id: "smColorFriendName",
-			type: "checkbox"
-		},
-		{
-			id: "smColorFriendPoint",
-			type: "checkbox"
-		},
-		{
-			id: "smColorFriendLevel",
-			type: "checkbox"
-		},
-		{
-			id: "smColorFriendChat",
-			type: "checkbox"
-		},
-		{
-			id: "smColorFriendSpec",
-			type: "checkbox"
-		}
-	]
+	{
+		id:"smColorTable",
+		rows:
+		[
+			{
+				columns:[
+					{
+						width: 60,
+						label: ""
+					},
+					{
+						width: 60,
+						label: "Color"
+					},
+					{
+						width: 70,
+						label: "Shadow"
+					},
+					{
+						width: 70,
+						label: "Scorebox"
+					},
+					{
+						width: 50,
+						label: "Name"
+					},
+					{
+						width: 50,
+						label: "Score"
+					},
+					{
+						width: 50,
+						label: "Level"
+					},
+					{
+						width: 50,
+						label: "Chat"
+					},
+					{
+						width: 50,
+						label: "Spec"
+					}
+				]
+			},
+			{
+				height:30,
+				columns:[
+					{
+						label: "Self"
+					},
+					{
+						id: "smColorSelfColor",
+						type: "color"
+					},
+					{
+						id: "smColorSelfShadow",
+						type: "color"
+					},
+					{
+						id: "smColorSelfScorebox",
+						type: "checkbox"
+					},
+					{
+						id: "smColorSelfName",
+						type: "checkbox"
+					},
+					{
+						id: "smColorSelfPoint",
+						type: "checkbox"
+					},
+					{
+						id: "smColorSelfLevel",
+						type: "checkbox"
+					},
+					{
+						id: "smColorSelfChat",
+						type: "checkbox"
+					},
+					{
+						id: "smColorSelfSpec",
+						type: "checkbox"
+					}
+				]
+			},
+			{
+				height:30,
+				columns:[
+					{
+						label: "Friend"
+					},
+					{
+						id: "smColorFriendColor",
+						type: "color"
+					},
+					{
+						id: "smColorFriendShadow",
+						type: "color"
+					},
+					{
+						id: "smColorFriendScorebox",
+						type: "checkbox"
+					},
+					{
+						id: "smColorFriendName",
+						type: "checkbox"
+					},
+					{
+						id: "smColorFriendPoint",
+						type: "checkbox"
+					},
+					{
+						id: "smColorFriendLevel",
+						type: "checkbox"
+					},
+					{
+						id: "smColorFriendChat",
+						type: "checkbox"
+					},
+					{
+						id: "smColorFriendSpec",
+						type: "checkbox"
+					}
+				]
+			}
+		]
+	},
+	{
+		id:"smSystemColorTable",
+		rows:
+		[
+			{
+				columns:
+				[
+					{
+						width: 90,
+						colspan: 2 ,
+						label: "Join"
+					},
+					{
+						width: 90,
+						colspan: 2 ,
+						label: "Spec"
+					},
+					{
+						width: 90,
+						colspan: 2 ,
+						label: "Leave"
+					}
+				]
+			},
+			{
+				height:30,
+				columns:
+				[
+					{
+						id: "smColorJoin",
+						type: "checkbox"
+					},
+					{
+						id: "smColorJoinColor",
+						type: "color"
+					},
+					{
+						id: "smColorSpec",
+						type: "checkbox"
+					},
+					{
+						id: "smColorSpecColor",
+						type: "color"
+					},
+					{
+						id: "smColorLeave",
+						type: "checkbox"
+					},
+					{
+						id: "smColorLeaveColor",
+						type: "color"
+					}
+				]
+			}
+		]
+	}
 ];
 
 $("#settingsGraphicContainer")
@@ -179,53 +259,57 @@ $("#smColorSettings")
 		.addClass("checkboxContainer")
 		.addClass("text-center")
 	);
-$("#smColorContainer")
-	.append($("<table></table>")
-		.attr("id", "smColorTable")
+for(let table of colorSettingData) {
+	$("#smColorContainer")
+		.append($("<table></table>")
+			.attr("id", table.id)
 	);
-
-for (let row of colorSettingData) {
-	let tr=$("<tr></tr>");
-	tr.attr("height",30);
-	for (let column of row) {
-		let td=$("<td></td>");
-		if(column.hasOwnProperty("width"))
-			td.attr("width",column.width);
-		if(column.type=="color") {
-			td.append($("<input id='" + column.id + "' type='color'>")
-				.val(GetCookie(column.id,"#ffffff"))
-			);
-			td.on('change',function() {
-				setTimeout(() => {
-					let color=$("#"+column.id).val();
-					Cookies.set(column.id, color, { expires: 365 });
-					ColorChanged();
-				},1);
-			});
+	for (let row of table.rows) {
+		let tr=$("<tr></tr>");
+		if(row.hasOwnProperty("height"))
+			tr.attr("height",row.height);
+		for (let column of row.columns) {
+			let td=$("<td></td>");
+			if(column.hasOwnProperty("width"))
+				td.attr("width",column.width);
+			if(column.hasOwnProperty("colspan"))
+				td.attr("colspan",column.colspan);
+			if(column.type=="color") {
+				td.append($("<input id='" + column.id + "' type='color'>")
+					.val(GetCookie(column.id,"#ffffff"))
+				);
+				td.on('change',function() {
+					setTimeout(() => {
+						let color=$("#"+column.id).val();
+						Cookies.set(column.id, color, { expires: 365 });
+						ColorChanged();
+					},1);
+				});
+			}
+			else if(column.type=="checkbox") {
+				let div=$('<div></div>');
+				div.addClass("customCheckbox");
+				let checkbox=$('<input type="checkbox" id="'+column.id+'">');
+				checkbox.prop("checked", GetCookie(column.id, "true")=="true");
+				checkbox.click(function () {
+					setTimeout(() => {
+						let check=$("#"+column.id).prop("checked");
+						Cookies.set(column.id, check, { expires: 365 });
+						ColorChanged();
+					},1);
+				});
+				div.append(checkbox);
+				div.append($('<label for="'+column.id+'"><i class="fa fa-check" aria-hidden="true"></i></label>'));
+				td.append(div);
+			}
+			else {
+				if(column.hasOwnProperty("label"))
+					td.text(column.label);
+			}
+			tr.append(td);
 		}
-		else if(column.type=="checkbox") {
-			let div=$('<div></div>');
-			div.addClass("customCheckbox");
-			let checkbox=$('<input type="checkbox" id="'+column.id+'">');
-			checkbox.prop("checked", GetCookie(column.id, "true")=="true");
-			checkbox.click(function () {
-				setTimeout(() => {
-					let check=$("#"+column.id).prop("checked");
-					Cookies.set(column.id, check, { expires: 365 });
-					ColorChanged();
-				},1);
-			});
-			div.append(checkbox);
-			div.append($('<label for="'+column.id+'"><i class="fa fa-check" aria-hidden="true"></i></label>'));
-			td.append(div);
-		}
-		else {
-			if(column.hasOwnProperty("label"))
-				td.text(column.label);
-		}
-		tr.append(td);
+		$("#"+table.id).append(tr);
 	}
-	$("#smColorTable").append(tr);
 }
 
 function GetCookie(key, def) {
@@ -257,6 +341,10 @@ function ColorChanged() {
 	$(".qpAvatarPointText.friend").css("color", $("#smColorFriendPoint").prop("checked")?friendcolor:"");
 	$(".gcUserName.friend").css("color", $("#smColorFriendChat").prop("checked")?friendcolor:"");
 	$(".gcSpectatorItem.friend").children("h3").css("color", $("#smColorFriendSpec").prop("checked")?$("#smColorFriendColor").val():"");
+
+	$(".csmJoin").css("color", $("#smColorJoin").prop("checked")?$("#smColorJoinColor").val():"");
+	$(".csmSpec").css("color", $("#smColorSpec").prop("checked")?$("#smColorSpecColor").val():"");
+	$(".csmLeft").css("color", $("#smColorLeave").prop("checked")?$("#smColorLeaveColor").val():"");
 }
 
 AMQ_addStyle(`
@@ -387,9 +475,10 @@ GameChat.prototype.systemMessage = function (title, msg) {
 		msg = "";
 	}
 	this.insertMsg(format(template, title, msg, typestr));
-	$(".csmSpec").css("color", "#ffff80");
-	$(".csmJoin").css("color", "#8080ff");
-	$(".csmLeft").css("color", "#ff8080");
+
+	$(".csmJoin").css("color", $("#smColorJoin").prop("checked")?$("#smColorJoinColor").val():"");
+	$(".csmSpec").css("color", $("#smColorSpec").prop("checked")?$("#smColorSpecColor").val():"");
+	$(".csmLeft").css("color", $("#smColorLeave").prop("checked")?$("#smColorLeaveColor").val():"");
 };
 
 AMQ_addScriptData({
