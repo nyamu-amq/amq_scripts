@@ -4,6 +4,7 @@ im so lazy to write usage.... and english is too hard for me..../o\
 
 ### amqEmojiAnswer.js
 - convert emoji shortcode in answer box when press enter
+- it works on room name also now
 
 ### amqFriendOnlineNotifier.user.js
 - show notification when your friend is online
