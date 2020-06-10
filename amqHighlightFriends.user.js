@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Hightlight Friends
 // @namespace    https://github.com/nyamu-amq
-// @version      0.10
+// @version      0.11
 // @description  Apply color to name of yourself and friends. and more
 // @author       nyamu, ensorcell
 // @match        https://animemusicquiz.com/*
@@ -347,19 +347,6 @@ function ColorChanged() {
 	$(".csmLeft").css("color", $("#smColorLeave").prop("checked")?$("#smColorLeaveColor").val():"");
 }
 
-AMQ_addStyle(`
-	li.csmSpec > span {
-		color: #ffff80;
-	}
-	li.csmJoin > span {
-		color: #8080ff;
-	}
-	li.csmLeft > span {
-		color: #ff8080;
-	}
-	}
-`);
-
 ViewChanger.prototype.changeView = function (newView, arg) {
 	if (arg === undefined) {
 		arg = {};
@@ -456,8 +443,8 @@ function checkSpecAndApplyColor(spectator) {
 
 GameChat.prototype.systemMessage = function (title, msg) {
 	let template=`
-		<li>
-			<span{2}>{0}</span><br>
+		<li{2}>
+			<span>{0}</span><br>
 			<div class="gcMsgIndent">{1}</div>
 		</li>
 	`;
