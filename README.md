@@ -2,6 +2,9 @@
 
 im so lazy to write usage.... and english is too hard for me..../o\
 
+### amqBugfix.user.js
+- it fixes bug that wrong game type on game settings
+
 ### amqEmojiAnswer.js
 - convert emoji shortcode in answer box when press enter
 - it works on room name also now
