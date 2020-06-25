@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Auto Ready
 // @namespace    https://github.com/nyamu-amq
-// @version      0.1
+// @version      0.2
 // @description  
 // @author       nyamu
 // @match        https://animemusicquiz.com/*
@@ -70,7 +70,7 @@ let spectateGameListener = new Listener("Spectate Game", (response) => {
 	notifyAutoReady();
 });
 function notifyAutoReady() {
-	if(quiz.gameMode === "Ranked") returnl;
+	if(quiz.gameMode === "Ranked") return;
 	if(isAutoReady)	gameChat.systemMessage("Auto Ready is Enabled. Press [ALT+R] to disable.");
 	else gameChat.systemMessage("Auto Ready is Disabled. Press [ALT+R] to enable.");
 }
