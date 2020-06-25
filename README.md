@@ -2,6 +2,13 @@
 
 im so lazy to write usage.... and english is too hard for me..../o\
 
+### amqAutoReady.user.js
+- It changes your state to ready automatically when you are in lobby.
+- Even when settings are changed.
+- You can unready by clicking unready button manually.
+- You can toggle it with [Alt+R]. Default is off.
+- Dedicated to lazists.
+
 ### amqBugfix.user.js
 - it fixes bug that wrong game type on game settings
 
