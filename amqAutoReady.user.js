@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Auto Ready
 // @namespace    https://github.com/nyamu-amq
-// @version      0.3
+// @version      0.4
 // @description  
 // @author       nyamu
 // @match        https://animemusicquiz.com/*
@@ -13,8 +13,16 @@
 if (document.getElementById('startPage')) {
 	return;
 }
-var isAutoReady=Cookies.get('auto_ready');
-if(!isAutoReady) isAutoReady=false;
+
+{
+	let auto_ready=Cookies.get('auto_ready');
+	if(auto_ready!=undefined) {
+		localStorage.setItem('auto_ready', auto_ready);
+		Cookies.set('auto_ready', "", { expires: 0 });
+	}
+}
+
+var isAutoReady=localStorage.getItem('auto_ready')=="true";
 
 let settingChangeListener = new Listener("Room Settings Changed", (changes) => {
 	setTimeout(() => { checkReady(); },1);
@@ -50,9 +58,8 @@ function onViewChanged() {
 function dockeyup(event) {
 	if(event.altKey && event.keyCode=='82') {
 		isAutoReady=!isAutoReady;
-		Cookies.set('auto_ready', isAutoReady, { expires: 365 });
-		if(isAutoReady) chatSystemMessage("Enabled Auto Ready");
-		else chatSystemMessage("Disabled Auto Ready");
+		localStorage.setItem('auto_ready', isAutoReady);
+		chatSystemMessage(isAutoReady?"Enabled Auto Ready":"Disabled Auto Ready");
 	}
 }
 document.addEventListener('keyup', dockeyup, false);
@@ -75,8 +82,7 @@ let spectateGameListener = new Listener("Spectate Game", (response) => {
 });
 function notifyAutoReady() {
 	if(quiz.gameMode === "Ranked") return;
-	if(isAutoReady)	gameChat.systemMessage("Auto Ready is Enabled. Press [ALT+R] to disable.");
-	else gameChat.systemMessage("Auto Ready is Disabled. Press [ALT+R] to enable.");
+	gameChat.systemMessage(isAutoReady?"Auto Ready is Enabled. Press [ALT+R] to disable.":"Auto Ready is Disabled. Press [ALT+R] to enable.");
 }
 joinGameListener.bindListener();
 spectateGameListener.bindListener();

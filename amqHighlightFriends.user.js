@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         AMQ Hightlight Friends
+// @name         AMQ Highlight Friends
 // @namespace    https://github.com/nyamu-amq
-// @version      0.11
+// @version      0.12
 // @description  Apply color to name of yourself and friends. and more
 // @author       nyamu, ensorcell
 // @match        https://animemusicquiz.com/*
@@ -11,44 +11,7 @@
 // ==/UserScript==
 
 if (document.getElementById('startPage')) {
-    return;
-}
-
-{
-	let selfcolor=Cookies.get("smColorSelfColor");
-	if(!selfcolor) {
-		selfcolor=Cookies.get("smColorSelfName");
-		if(!selfcolor) {
-			selfcolor="#80c7ff";
-		}
-		Cookies.set("smColorSelfColor", selfcolor, { expires: 365 });
-	}
-	let friendcolor=Cookies.get("smColorFriendColor");
-	if(!friendcolor) {
-		friendcolor=Cookies.get("smColorFriendName");
-		if(!friendcolor) {
-			friendcolor="#80ff80";
-		}
-		Cookies.set("smColorFriendColor", friendcolor, { expires: 365 });
-	}
-	let selfshadow=Cookies.get("smColorSelfShadow");
-	if(!selfshadow) {
-		Cookies.set("smColorSelfShadow", "#228dff", { expires: 365 });
-	}
-	let friendshadow=Cookies.get("smColorFriendShadow");
-	if(!friendshadow) {
-		Cookies.set("smColorFriendShadow", "#40ff40", { expires: 365 });
-	}
-
-	let joincolor=Cookies.get("smColorJoinColor");
-	if(!joincolor)
-		Cookies.set("smColorJoinColor", "#8080ff", { expires: 365 });
-	let speccolor=Cookies.get("smColorSpecColor");
-	if(!speccolor)
-		Cookies.set("smColorSpecColor", "#ffff80", { expires: 365 });
-	let leavecolor=Cookies.get("smColorLeaveColor");
-	if(!leavecolor)
-		Cookies.set("smColorLeaveColor", "#ff8080", { expires: 365 });
+	return;
 }
 
 let colorSettingData = [
@@ -236,6 +199,105 @@ let colorSettingData = [
 	}
 ];
 
+var saveData = {
+	"smColorSelfColor":"#80c7ff",
+	"smColorFriendColor":"#80ff80",
+	"smColorSelfShadow":"#228dff",
+	"smColorFriendShadow":"#40ff40",
+	"smColorJoinColor":"#8080ff",
+	"smColorSpecColor":"#ffff80",
+	"smColorLeaveColor":"#ff8080"
+};
+
+function saveSettings() {
+	localStorage.setItem("highlightFriendsSettings", JSON.stringify(saveData));
+}
+
+// load settings from local storage
+function loadSettings() {
+// load settings, if nothing is loaded, use default settings
+	let loadedSettings = localStorage.getItem("highlightFriendsSettings");
+	if (loadedSettings !== null) {
+		saveData = JSON.parse(loadedSettings);
+	}
+}
+function getSaveData(key, defaultvalue) {
+	if(!saveData.hasOwnProperty(key)) return defaultvalue;
+	return saveData[key];
+}
+function setSaveData(key, value) {
+	saveData[key]=value;
+	saveSettings();
+}
+
+function setSavedSettingsIfCookieExists(sdkey, cookiekey) {
+	let cookievalue=Cookies.get(cookiekey);
+	if(!cookievalue) return false;
+	saveData[sdkey]=cookievalue;
+	return true;
+}
+
+function cookies2SavedData() {
+	if(!setSavedSettingsIfCookieExists("smColorSelfColor","smColorSelfColor")) {
+		if(!setSavedSettingsIfCookieExists("smColorSelfColor","smColorSelfName")) {
+			loadSettings();
+			return;
+		}
+	}
+	if(!setSavedSettingsIfCookieExists("smColorFriendColor","smColorFriendColor")) {
+		setSavedSettingsIfCookieExists("smColorFriendColor","smColorFriendName");
+	}
+	setSavedSettingsIfCookieExists("smColorSelfShadow","smColorSelfShadow");
+	setSavedSettingsIfCookieExists("smColorFriendShadow","smColorFriendShadow");
+
+	setSavedSettingsIfCookieExists("smColorJoinColor","smColorJoinColor");
+	setSavedSettingsIfCookieExists("smColorSpecColor","smColorSpecColor");
+	setSavedSettingsIfCookieExists("smColorLeaveColor","smColorLeaveColor");
+
+	for(let table of colorSettingData) {
+		for (let row of table.rows) {
+			for (let column of row.columns) {
+				if(column.type==="checkbox") {
+					let value=Cookies.get(column.id);
+					if(value!==undefined) {
+						saveData[column.id]=value==="true";
+						deleteCookie(column.id);
+					}
+				}
+			}
+		}
+	}
+
+	deleteCookie("smColorSelfColor");
+	deleteCookie("smColorSelfName");
+	deleteCookie("smColorFriendColor");
+	deleteCookie("smColorFriendName");
+	deleteCookie("smColorSelfShadow");
+	deleteCookie("smColorFriendShadow");
+	deleteCookie("smColorJoinColor");
+	deleteCookie("smColorSpecColor");
+	deleteCookie("smColorLeaveColor");
+
+	saveSettings();
+}
+
+function deleteCookie(key) {
+	Cookies.set(key, "", { expires: 0 });
+}
+
+cookies2SavedData();
+
+$(document.documentElement).keydown(function (event) {
+    if (event.which === 145) {
+        if (friendScoreWindow.isVisible()) {
+            friendScoreWindow.close();
+        }
+        else {
+            friendScoreWindow.open();
+        }
+    }
+});
+
 $("#settingsGraphicContainer")
 	.append($("<div></div>")
 		.addClass("row")
@@ -276,12 +338,12 @@ for(let table of colorSettingData) {
 				td.attr("colspan",column.colspan);
 			if(column.type=="color") {
 				td.append($("<input id='" + column.id + "' type='color'>")
-					.val(GetCookie(column.id,"#ffffff"))
+					.val(saveData[column.id])
 				);
 				td.on('change',function() {
 					setTimeout(() => {
 						let color=$("#"+column.id).val();
-						Cookies.set(column.id, color, { expires: 365 });
+						setSaveData(column.id, color);
 						ColorChanged();
 					},1);
 				});
@@ -290,11 +352,11 @@ for(let table of colorSettingData) {
 				let div=$('<div></div>');
 				div.addClass("customCheckbox");
 				let checkbox=$('<input type="checkbox" id="'+column.id+'">');
-				checkbox.prop("checked", GetCookie(column.id, "true")=="true");
+				checkbox.prop("checked", getSaveData(column.id, true));
 				checkbox.click(function () {
 					setTimeout(() => {
 						let check=$("#"+column.id).prop("checked");
-						Cookies.set(column.id, check, { expires: 365 });
+						setSaveData(column.id, check);
 						ColorChanged();
 					},1);
 				});
@@ -310,12 +372,6 @@ for(let table of colorSettingData) {
 		}
 		$("#"+table.id).append(tr);
 	}
-}
-
-function GetCookie(key, def) {
-	let value=Cookies.get(key);
-	if(value===undefined) return def;
-	return value;
 }
 
 function ColorChanged() {
@@ -398,18 +454,10 @@ ViewChanger.prototype.changeView = function (newView, arg) {
 
 new Listener("Game Chat Message", function (payload) {
 	if(payload.sender === selfName) {
-		setTimeout(() => {$(".gcUserName").each((index, elem) => {
-			if($(elem).text() === selfName){
-				$(elem).addClass("self").css("color", $("#smColorSelfChat").prop("checked")?$("#smColorSelfColor").val():"");
-			}
-		});},1);
+		setTimeout(() => {$(".gcUserName").last().addClass("self").css("color", $("#smColorSelfChat").prop("checked")?$("#smColorSelfColor").val():"");},0);
 	}
 	else if (socialTab.isFriend(payload.sender)) {
-		setTimeout(() => {$(".gcUserName").each((index, elem) => {
-			if(socialTab.isFriend($(elem).text())){
-				$(elem).addClass("friend").css("color", $("#smColorFriendChat").prop("checked")?$("#smColorFriendColor").val():"");
-			}
-		});},1);
+		setTimeout(() => {$(".gcUserName").last().addClass("friend").css("color", $("#smColorFriendChat").prop("checked")?$("#smColorFriendColor").val():"");},0);
 	}
 }).bindListener()
 
@@ -429,7 +477,7 @@ function checkSpecAndApplyColor(spectator) {
 				$(elem).parent().addClass("self");
 				$(elem).css("color", $("#smColorSelfSpec").prop("checked")?$("#smColorSelfColor").val():"");
 			}
-		});},1);
+		});},0);
 	}
 	if(socialTab.isFriend(spectator)) {
 		setTimeout(() => {$(".gcSpectatorItem").children("h3").each((index,elem)=> {
@@ -437,7 +485,7 @@ function checkSpecAndApplyColor(spectator) {
 				$(elem).parent().addClass("friend");
 				$(elem).css("color", $("#smColorFriendSpec").prop("checked")?$("#smColorFriendColor").val():"");
 			}
-		});},1);
+		});},0);
 	}
 }
 
@@ -476,6 +524,6 @@ AMQ_addScriptData({
         <p>It makes it easier to find your friends in room that many users joined like ranked game.</p>
         <p>You can adjust these colors and toggle on Settings > Graphics tab.</p>
         <img src="https://i.imgur.com/ymPESKe.png" />
-        <p>Codes that applying colors to friend name on chat was written by ensorcell. thanks a lot.</p>
+        <p>Codes that applying colors to friend name on chat was provided by ensorcell. thanks a lot.</p>
     `
 });
