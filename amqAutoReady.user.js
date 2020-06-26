@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Auto Ready
 // @namespace    https://github.com/nyamu-amq
-// @version      0.2
+// @version      0.3
 // @description  
 // @author       nyamu
 // @match        https://animemusicquiz.com/*
@@ -23,6 +23,9 @@ let spectatorChangeToPlayer = new Listener("Spectator Change To Player", (player
 	if (player.name === selfName) {
 		setTimeout(() => { checkReady(); },1);
 	}
+});
+let hostPromotionListner = new Listener("Host Promotion", (payload) => {
+	setTimeout(() => { checkReady(); },1);
 });
 
 function checkReady() {
@@ -61,6 +64,7 @@ function chatSystemMessage(msg) {
 
 settingChangeListener.bindListener();
 spectatorChangeToPlayer.bindListener();
+hostPromotionListner.bindListener();
 
 let joinGameListener = new Listener("Join Game", (response) => {
 	notifyAutoReady();
