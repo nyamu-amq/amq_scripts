@@ -1,12 +1,13 @@
 // ==UserScript==
 // @name         AMQ Highlight Friends
 // @namespace    https://github.com/nyamu-amq
-// @version      0.12
+// @version      0.13
 // @description  Apply color to name of yourself and friends. and more
 // @author       nyamu, ensorcell
 // @match        https://animemusicquiz.com/*
 // @grant        none
 // @require      https://raw.githubusercontent.com/TheJoseph98/AMQ-Scripts/master/common/amqScriptInfo.js
+// @require      https://raw.githubusercontent.com/TheJoseph98/AMQ-Scripts/master/common/amqWindows.js
 
 // ==/UserScript==
 
@@ -286,17 +287,6 @@ function deleteCookie(key) {
 }
 
 cookies2SavedData();
-
-$(document.documentElement).keydown(function (event) {
-    if (event.which === 145) {
-        if (friendScoreWindow.isVisible()) {
-            friendScoreWindow.close();
-        }
-        else {
-            friendScoreWindow.open();
-        }
-    }
-});
 
 $("#settingsGraphicContainer")
 	.append($("<div></div>")
