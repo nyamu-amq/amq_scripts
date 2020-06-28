@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Highlight Friends
 // @namespace    https://github.com/nyamu-amq
-// @version      0.14
+// @version      0.15
 // @description  Apply color to name of yourself and friends. and more
 // @author       nyamu, ensorcell
 // @match        https://animemusicquiz.com/*
@@ -458,8 +458,10 @@ function updateFriendTable(players) {
 
 let specGameListner = new Listener("Spectate Game", (data) => {
 	if(!data.error) {
-		if (data.settings.gameMode !== 'Battle Royale' || data.quizState.state !== quiz.QUIZ_STATES.BATTLE_ROYAL)
-			updateFriendTable(data.quizState.players);
+		if(data.quizState) {
+			if(data.settings.gameMode === 'Battle Royale' && data.quizState.state === quiz.QUIZ_STATES.BATTLE_ROYAL) return;
+		}
+		updateFriendTable(data.quizState.players);
 	}
 });
 specGameListner.bindListener();
