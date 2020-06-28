@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Highlight Friends
 // @namespace    https://github.com/nyamu-amq
-// @version      0.16
+// @version      0.17
 // @description  Apply color to name of yourself and friends. and more
 // @author       nyamu, ensorcell
 // @match        https://animemusicquiz.com/*
@@ -56,7 +56,7 @@ let colorSettingData = [
 					},
 					{
 						width: 50,
-						label: "Spec"
+						label: "Spec&Lobby"
 					}
 				]
 			},
@@ -388,8 +388,8 @@ function updatePlayerRow(player) {
 		let rankCol = $(`<td class="fstRank">`+(player.position===undefined?1:player.position)+`</td>`);
 		let scoreCol = $(`<td class="fstScore"></td>`);
 		if(isScoreLife) {
-			scoreCol.text(player.score===undefined?hostModal.lifeSliderCombo.getValue():player.score+
-				" ("+player.correctGuesses===undefined?0:player.correctGuesses+")");
+			scoreCol.text( (player.score===undefined?hostModal.lifeSliderCombo.getValue():player.score) +
+				" ("+ (player.correctGuesses===undefined?0:player.correctGuesses) +")");
 		}
 		else scoreCol.text(player.score===undefined?0:player.score);
 		let nameCol = $(`<td class="fstName">`+quiz.players[player.gamePlayerId]._name+`</td>`);
@@ -413,8 +413,8 @@ function updatePlayerRow(player) {
 
 		if(player.score!==undefined) $(row).find(".fstScore").text(player.score);
 		if(isScoreLife) {
-			$(row).find(".fstScore").text(player.score===undefined?hostModal.lifeSliderCombo.getValue():player.score+
-				" ("+player.correctGuesses===undefined?0:player.correctGuesses+")");
+			$(row).find(".fstScore").text( (player.score===undefined?hostModal.lifeSliderCombo.getValue():player.score) +
+				" ("+ (player.correctGuesses===undefined?0:player.correctGuesses) +")");
 		}
 		else $(row).find(".fstScore").text(player.score===undefined?0:player.score);
 
@@ -653,13 +653,11 @@ new Listener("Game Chat Message", function (payload) {
 
 new Listener("New Spectator", function (spectator) {
 	colorSpectators();
-	//checkSpecAndApplyColor(spectator.name);
 }).bindListener();
 
 new Listener("Player Changed To Spectator", function (payload) {
 	let playerName = payload.spectatorDescription.name;
 	colorSpectators();
-	//checkSpecAndApplyColor(playerName);
 }).bindListener();
 
 function colorSpectators(){
@@ -731,11 +729,21 @@ AMQ_addScriptData({
         <p>It makes it easier to find your friends in room that many users joined like ranked game.</p>
         <p>You can adjust these colors and toggle on Settings > Graphics tab.</p>
         <img src="https://i.imgur.com/ymPESKe.png" />
-        <p>Codes that applying colors to friend name on chat was provided by ensorcell. thanks a lot.</p>
+        <p>You can open/close Player Summary window by clicking this button.</p>
+        <img src="https://i.imgur.com/ZFLFd2t.png" />
+        <p>It's almost like scorebox but shows some additional infomation. When you clicked someone, it shows his/her box.</p>
+        <img src="https://i.imgur.com/qEqp4wm.png" />
+        <p>It shows your friends only in ranked game. It might be more useful in ranked game than normal room.</p>
+        <img src="https://i.imgur.com/ZJMDBUd.png" />
+        <p>Codes that applying colors to friend name on chat and lobby was provided by ensorcell. thanks a lot.</p>
+        <p>Thanks a lot TheJoseph98 for providing window script and mentoring.</p>
     `
 });
 
 AMQ_addStyle(`
+    #playerSummaryWindowTableContainer {
+        padding: 10px;
+    }
     .friendScore {
         height: 30px;
     }
