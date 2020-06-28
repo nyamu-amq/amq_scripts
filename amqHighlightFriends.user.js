@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Highlight Friends
 // @namespace    https://github.com/nyamu-amq
-// @version      0.13
+// @version      0.14
 // @description  Apply color to name of yourself and friends. and more
 // @author       nyamu, ensorcell
 // @match        https://animemusicquiz.com/*
@@ -288,6 +288,203 @@ function deleteCookie(key) {
 
 cookies2SavedData();
 
+let playerSummaryWindow;
+let playerSummaryWindowTable;
+let playerSummaryWindowOpenButton;
+function createPlayerSummaryWindow() {
+    playerSummaryWindow = new AMQWindow({
+        title: "Player Summary",
+        position: {
+        	x: 0,
+        	y: 34
+        },
+        width: 400,
+        height: 374,
+        minWidth: 400,
+        minHeight: 300,
+        zIndex: 1010,
+        resizable: true,
+        draggable: true
+    });
+
+    playerSummaryWindow.addPanel({
+        id: "playerSummaryWindowTableContainer",
+        width: 1.0,
+        height: "calc(100%)",
+        scrollable: {
+            x: false,
+            y: true
+        }
+    });
+
+	playerSummaryWindowTable = $(`<table id="playerSummaryWindowTable" class="table floatingContainer"></table>`);
+	playerSummaryWindow.panels[0].panel.append(playerSummaryWindowTable);
+
+	clearTable();
+
+	playerSummaryWindowOpenButton = $(`<div id="qpPlayerSummaryButton" class="clickAble qpOption"><i aria-hidden="true" class="fa fa-users qpMenuItem"></i></div>`)
+		.click(function () {
+			if(playerSummaryWindow.isVisible()) {
+				$(".rowSelected").removeClass("rowSelected");
+				playerSummaryWindow.close();
+			}
+			else {
+				playerSummaryWindow.open();
+			}
+		})
+		.popover({
+			placement: "bottom",
+			content: "Player Summary",
+			trigger: "hover"
+	});
+
+	let oldWidth = $("#qpOptionContainer").width();
+	$("#qpOptionContainer").width(oldWidth + 35);
+	$("#qpOptionContainer > div").append(playerSummaryWindowOpenButton);
+}
+function clearTable() {
+	playerSummaryWindowTable.children().remove();
+
+	playerSummaryWindow.setTitle(quiz.gameMode==="Ranked"?"Friend Summary":"Player Summary");
+
+	let header = $(`<tr class="header"></tr>`)
+	let rankCol = $(`<td class="fstRank"><b>Rank</b></td>`);
+	let scoreCol = $(`<td class="fstScore"><b>Score<b></td>`);
+	let nameCol = $(`<td class="fstName"><b>Name</b></td>`);
+	let boxCol = $(`<td class="fstBox"><b>Box</b></td>`);
+	let answerCol = $(`<td class="fstAnswer"><b>Last Answer</b></td>`);
+
+	header.append(rankCol);
+	header.append(scoreCol);
+	header.append(nameCol);
+	header.append(boxCol);
+	header.append(answerCol);
+	playerSummaryWindowTable.append(header);
+}
+
+createPlayerSummaryWindow();
+
+$(document.documentElement).keydown(function (event) {
+    if (event.which === 145) {
+        if (playerSummaryWindow.isVisible()) {
+            playerSummaryWindow.close();
+        }
+        else {
+            playerSummaryWindow.open();
+        }
+    }
+});
+
+let quizReadyListener = new Listener("quiz ready", (data) => {
+	clearTable();
+});
+
+function updatePlayerRow(player) {
+	let row=playerSummaryWindowTable.find("#friendScore"+player.gamePlayerId);
+	let isScoreLife=(quiz.gameMode==="Battle Royale" || quiz.gameMode==="Last Man Standing");
+
+	if(row.length==0) {
+		let playerrow=$(`<tr id="friendScore`+player.gamePlayerId+`" class="friendScore clickAble"></tr>`);
+		let rankCol = $(`<td class="fstRank">`+(player.position===undefined?1:player.position)+`</td>`);
+		let scoreCol = $(`<td class="fstScore"></td>`);
+		if(isScoreLife) {
+			scoreCol.text(player.score===undefined?hostModal.lifeSliderCombo.getValue():player.score+
+				" ("+player.correctGuesses===undefined?0:player.correctGuesses+")");
+		}
+		else scoreCol.text(player.score===undefined?0:player.score);
+		let nameCol = $(`<td class="fstName">`+quiz.players[player.gamePlayerId]._name+`</td>`);
+		let boxCol = $(`<td class="fstBox">`+findBoxById(player.gamePlayerId)+`</td>`);
+		let answerCol = $(`<td class="fstAnswer">`+quiz.players[player.gamePlayerId].avatarSlot.$answerContainerText.text()+`</td>`);
+		playerrow.append(rankCol);
+		playerrow.append(scoreCol);
+		playerrow.append(nameCol);
+		playerrow.append(boxCol);
+		playerrow.append(answerCol);
+		playerrow.click(function () {
+			SelectAvatarGroup($(this).find(".fstBox").text());
+        });
+		playerSummaryWindowTable.append(playerrow);
+
+		row=playerSummaryWindowTable.find("#friendScore"+player.gamePlayerId)[0];
+	}
+	else {
+		row=row[0];
+		if(player.position!==undefined) $(row).find(".fstRank").text(player.position);
+
+		if(player.score!==undefined) $(row).find(".fstScore").text(player.score);
+		if(isScoreLife) {
+			$(row).find(".fstScore").text(player.score===undefined?hostModal.lifeSliderCombo.getValue():player.score+
+				" ("+player.correctGuesses===undefined?0:player.correctGuesses+")");
+		}
+		else $(row).find(".fstScore").text(player.score===undefined?0:player.score);
+
+		$(row).find(".fstBox").text(findBoxById(player.gamePlayerId));
+		$(row).find(".fstAnswer").text(quiz.players[player.gamePlayerId].avatarSlot.$answerContainerText.text());
+	}
+	if(player.correct===undefined) {
+		$(row).removeClass("correctGuess");
+		$(row).removeClass("incorrectGuess");
+	}
+	else if(player.correct===true) {
+		$(row).addClass("correctGuess");
+		$(row).removeClass("incorrectGuess");
+	}
+	else {
+		$(row).removeClass("correctGuess");
+		$(row).addClass("incorrectGuess");
+	}
+}
+
+function findBoxById(id) {
+	let object=quiz.avatarContainer._groupSlotMap;
+	return Object.keys(object).find(key => object[key].indexOf(id) !==-1);
+}
+
+function updateFriendTable(players) {
+	setTimeout(() => {
+		if(viewChanger.currentView!=="quiz") return;
+		players.forEach((player) => {
+			if(quiz.gameMode !== "Ranked" || socialTab.isFriend(quiz.players[player.gamePlayerId]._name) || quiz.players[player.gamePlayerId]._name==selfName)
+				updatePlayerRow(player);
+		});
+		let rows=playerSummaryWindowTable.find(".friendScore");
+		$(rows).sort(function(a,b){
+			let _a=($(a).find(".fstBox").text()*10000)+($(a).find(".fstRank").text()*1);
+			let _b=($(b).find(".fstBox").text()*10000)+($(b).find(".fstRank").text()*1);
+			return (_a - _b);
+		}).appendTo(playerSummaryWindowTable);
+	},1);
+}
+
+let specGameListner = new Listener("Spectate Game", (data) => {
+	if(!data.error) {
+		if (data.settings.gameMode !== 'Battle Royale' || data.quizState.state !== quiz.QUIZ_STATES.BATTLE_ROYAL)
+			updateFriendTable(data.quizState.players);
+	}
+});
+specGameListner.bindListener();
+
+let startGameListner = new Listener("Game Starting", (data) => {
+	updateFriendTable(Object.values(lobby.players));
+});
+startGameListner.bindListener();
+
+let resultListner = new Listener("answer results", (data) => {
+	updateFriendTable(data.players);
+});
+resultListner.bindListener();
+
+function SelectAvatarGroup(number) {
+	quiz.avatarContainer.currentGroup = number;
+	quiz.scoreboard.setActiveGroup(number);
+	if (Object.keys(quiz.scoreboard.groups).length > 1) {
+		quiz.scoreboard.$quizScoreboardItemContainer.stop().animate({
+			scrollTop: quiz.scoreboard.groups[number].topOffset - 3
+		}, 300);
+	}
+}
+
+
 $("#settingsGraphicContainer")
 	.append($("<div></div>")
 		.addClass("row")
@@ -393,18 +590,18 @@ function ColorChanged() {
 	$(".csmLeft").css("color", $("#smColorLeave").prop("checked")?$("#smColorLeaveColor").val():"");
 }
 
-ViewChanger.prototype.changeView = function (newView, arg) {
-	if (arg === undefined) {
-		arg = {};
+ViewChanger.prototype.changeView = (function() {
+	var old=ViewChanger.prototype.changeView;
+	return function() {
+		old.apply(this,arguments);
+		onViewChanged();
 	}
+})();
 
-	this.__controllers[this.currentView].closeView(arg);
-	this._$loadingScreen.removeClass("hidden");
-	this.__controllers[newView].openView(function () {
-		this._$loadingScreen.addClass("hidden");
-		this.currentView = newView;
-	}.bind(this));
-
+function onViewChanged() {
+	clearTable();
+	if(lobby.inLobby) colorPlayers();
+	if(viewChanger.currentView!=="quiz") return;
 	$(".qpsPlayerName.self").css("color", $("#smColorSelfScorebox").prop("checked")?$("#smColorSelfColor").val():"");
 	$(".qpsPlayerName.self").css("text-shadow", $("#smColorSelfScorebox").prop("checked")?"0 0 10px "+$("#smColorSelfShadow").val():"");
 	$(".qpsPlayerName").each((index, elem) => {
@@ -440,6 +637,7 @@ ViewChanger.prototype.changeView = function (newView, arg) {
 			$(elem).css("color", $("#smColorFriendSpec").prop("checked")?$("#smColorFriendColor").val():"");
 		}
 	});
+	colorSpectators();
 };
 
 new Listener("Game Chat Message", function (payload) {
@@ -452,31 +650,48 @@ new Listener("Game Chat Message", function (payload) {
 }).bindListener()
 
 new Listener("New Spectator", function (spectator) {
-	checkSpecAndApplyColor(spectator.name);
+	colorSpectators();
+	//checkSpecAndApplyColor(spectator.name);
 }).bindListener();
 
 new Listener("Player Changed To Spectator", function (payload) {
 	let playerName = payload.spectatorDescription.name;
-	checkSpecAndApplyColor(playerName);
+	colorSpectators();
+	//checkSpecAndApplyColor(playerName);
 }).bindListener();
 
-function checkSpecAndApplyColor(spectator) {
-	if(selfName === spectator) {
-		setTimeout(() => {$(".gcSpectatorItem").children("h3").each((index,elem)=> {
-			if($(elem).text() === selfName) {
-				$(elem).parent().addClass("self");
-				$(elem).css("color", $("#smColorSelfSpec").prop("checked")?$("#smColorSelfColor").val():"");
-			}
-		});},0);
-	}
-	if(socialTab.isFriend(spectator)) {
-		setTimeout(() => {$(".gcSpectatorItem").children("h3").each((index,elem)=> {
-			if(socialTab.isFriend($(elem).text())) {
-				$(elem).parent().addClass("friend");
-				$(elem).css("color", $("#smColorFriendSpec").prop("checked")?$("#smColorFriendColor").val():"");
-			}
-		});},0);
-	}
+function colorSpectators(){
+	setTimeout(() => {$(".gcSpectatorItem").children("h3").each((index,elem)=> {
+		if($(elem).text() === selfName) {
+			$(elem).parent().addClass("self");
+			$(elem).css("color", $("#smColorSelfSpec").prop("checked")?$("#smColorSelfColor").val():"");
+		}
+        else if(socialTab.isFriend($(elem).text())) {
+			$(elem).parent().addClass("friend");
+			$(elem).css("color", $("#smColorFriendSpec").prop("checked")?$("#smColorFriendColor").val():"");
+		}
+	});},0);
+}
+
+new Listener("New Player", function(){
+    colorPlayers();
+}).bindListener();
+
+new Listener("Spectator Change To Player", function(){
+    colorPlayers();
+}).bindListener();
+
+function colorPlayers(){
+    setTimeout(() => {$(".lobbyAvatarNameContainerInner").children("h2").each((index,elem)=> {
+		if($(elem).text() === selfName) {
+			$(elem).parent().addClass("self");
+			$(elem).css("color", $("#smColorSelfSpec").prop("checked")?$("#smColorSelfColor").val():"");
+		}
+        else if(socialTab.isFriend($(elem).text())) {
+			$(elem).parent().addClass("friend");
+			$(elem).css("color", $("#smColorFriendSpec").prop("checked")?$("#smColorFriendColor").val():"");
+		}
+	});},0);
 }
 
 GameChat.prototype.systemMessage = function (title, msg) {
@@ -517,3 +732,40 @@ AMQ_addScriptData({
         <p>Codes that applying colors to friend name on chat was provided by ensorcell. thanks a lot.</p>
     `
 });
+
+AMQ_addStyle(`
+    .friendScore {
+        height: 30px;
+    }
+    .friendScore > td {
+        vertical-align: middle;
+        border: 1px solid black;
+        text-align: center;
+    }
+    .fstRank {
+        min-width: 40px;
+    }
+    .fstScore {
+        min-width: 40px;
+    }
+    .fstName {
+        min-width: 80px;
+    }
+    .fstBox {
+        min-width: 40px;
+    }
+    .fstAnswer {
+        min-width: 80px;
+    }
+    .correctGuess {
+        background-color: rgba(0, 200, 0, 0.07);
+    }
+    .incorrectGuess {
+        background-color: rgba(255, 0, 0, 0.07);
+    }
+    #qpPlayerSummaryButton {
+        width: 30px;
+        height: 100%;
+        margin-right: 5px;
+    }
+`);
