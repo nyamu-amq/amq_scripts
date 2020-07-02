@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Highlight Friends
 // @namespace    https://github.com/nyamu-amq
-// @version      0.17
+// @version      0.18
 // @description  Apply color to name of yourself and friends. and more
 // @author       nyamu, ensorcell
 // @match        https://animemusicquiz.com/*
@@ -466,6 +466,17 @@ let specGameListner = new Listener("Spectate Game", (data) => {
 });
 specGameListner.bindListener();
 
+function removeFriendFromTable(friendname) {
+	if(!quiz.inQuiz) return;
+	if(quiz.gameMode !== "Ranked") return;
+	let id = Object.keys(quiz.players).find(key=>quiz.players[key]._name===friendname);
+	if(id!==undefined) {
+		let row=playerSummaryWindowTable.find("#friendScore"+id);
+		if(row!==undefined)
+			row.remove();
+	}
+}
+
 let startGameListner = new Listener("Game Starting", (data) => {
 	updateFriendTable(Object.values(lobby.players));
 });
@@ -480,9 +491,7 @@ function SelectAvatarGroup(number) {
 	quiz.avatarContainer.currentGroup = number;
 	quiz.scoreboard.setActiveGroup(number);
 	if (Object.keys(quiz.scoreboard.groups).length > 1) {
-		quiz.scoreboard.$quizScoreboardItemContainer.stop().animate({
-			scrollTop: quiz.scoreboard.groups[number].topOffset - 3
-		}, 300);
+		quiz.scoreboard.$quizScoreboardItemContainer.stop().scrollTop(quiz.scoreboard.groups[number].topOffset - 3);
 	}
 }
 
@@ -602,52 +611,83 @@ ViewChanger.prototype.changeView = (function() {
 
 function onViewChanged() {
 	clearTable();
-	if(lobby.inLobby) colorPlayers();
-	if(viewChanger.currentView!=="quiz") return;
-	$(".qpsPlayerName.self").css("color", $("#smColorSelfScorebox").prop("checked")?$("#smColorSelfColor").val():"");
-	$(".qpsPlayerName.self").css("text-shadow", $("#smColorSelfScorebox").prop("checked")?"0 0 10px "+$("#smColorSelfShadow").val():"");
-	$(".qpsPlayerName").each((index, elem) => {
-		if(socialTab.isFriend($(elem).text())) {
-			$(elem).addClass("friend").css("color", $("#smColorFriendScorebox").prop("checked")?$("#smColorFriendColor").val():"");
-			$(elem).addClass("friend").css("text-shadow", $("#smColorFriendScorebox").prop("checked")?"0 0 10px "+$("#smColorFriendShadow").val():"");
-		}
-	});
-
-	$(".qpAvatarNameContainer").not(".shadow").children("span").each((index, elem) => {
-		if($(elem).text() === selfName) {
-			let parent=$(elem).parent();
-			parent.addClass("self").css("color", $("#smColorSelfName").prop("checked")?$("#smColorSelfColor").val():"");
-			let parent2=parent.parent();
-			parent2.find(".qpAvatarLevelText").not(".shadow").addClass("self").css("color", $("#smColorSelfLevel").prop("checked")?$("#smColorSelfColor").val():"");
-			parent2.find(".qpAvatarPointText").not(".shadow").addClass("self").css("color", $("#smColorSelfPoint").prop("checked")?$("#smColorSelfColor").val():"");
-		}
-		else if(socialTab.isFriend($(elem).text())) {
-			let parent=$(elem).parent();
-			parent.addClass("friend").css("color", $("#smColorFriendName").prop("checked")?$("#smColorFriendColor").val():"");
-			let parent2=parent.parent();
-			parent2.find(".qpAvatarLevelText").not(".shadow").addClass("friend").css("color", $("#smColorFriendLevel").prop("checked")?$("#smColorFriendColor").val():"");
-			parent2.find(".qpAvatarPointText").not(".shadow").addClass("friend").css("color", $("#smColorFriendPoint").prop("checked")?$("#smColorFriendColor").val():"");
-		}
-	});
-	$(".gcSpectatorItem").children("h3").each((index,elem)=> {
-		if($(elem).text() === selfName) {
-			$(elem).parent().addClass("self");
-			$(elem).css("color", $("#smColorSelfSpec").prop("checked")?$("#smColorSelfColor").val():"");
-		}
-		else if(socialTab.isFriend($(elem).text())) {
-			$(elem).parent().addClass("friend");
-			$(elem).css("color", $("#smColorFriendSpec").prop("checked")?$("#smColorFriendColor").val():"");
-		}
-	});
+	colorScorebox();
+	colorPlayers();
+	colorAvatar();
 	colorSpectators();
 };
 
+function colorScorebox() {
+	if(!quiz.inQuiz) return;
+	$(".qpsPlayerName.self").css("color", $("#smColorSelfScorebox").prop("checked")?$("#smColorSelfColor").val():"")
+		.css("text-shadow", $("#smColorSelfScorebox").prop("checked")?"0 0 10px "+$("#smColorSelfShadow").val():"");
+	$(".qpsPlayerName").each((index, elem) => {
+		if(socialTab.isFriend($(elem).text())) {
+			$(elem).addClass("friend").css("color", $("#smColorFriendScorebox").prop("checked")?$("#smColorFriendColor").val():"")
+				.css("text-shadow", $("#smColorFriendScorebox").prop("checked")?"0 0 10px "+$("#smColorFriendShadow").val():"");
+		}
+		else if($(elem).text()!==selfName) {
+			$(elem).removeClass("friend").css("color", "").css("text-shadow", "");
+		}
+	});
+}
+
+function colorAvatar() {
+	if(!quiz.inQuiz) return;
+	$(".qpAvatarNameContainer").not(".shadow").children("span").each((index, elem) => {
+		if($(elem).text() === selfName) {
+			let parent=$(elem).parent();
+			parent.addClass("self")
+				.css("color", $("#smColorSelfName").prop("checked")?$("#smColorSelfColor").val():"");
+			let parent2=parent.parent();
+			parent2.find(".qpAvatarLevelText").not(".shadow")
+				.addClass("self")
+				.css("color", $("#smColorSelfLevel").prop("checked")?$("#smColorSelfColor").val():"");
+			parent2.find(".qpAvatarPointText").not(".shadow")
+				.addClass("self")
+				.css("color", $("#smColorSelfPoint").prop("checked")?$("#smColorSelfColor").val():"");
+		}
+		else if(socialTab.isFriend($(elem).text())) {
+			let parent=$(elem).parent();
+			parent.addClass("friend")
+				.css("color", $("#smColorFriendName").prop("checked")?$("#smColorFriendColor").val():"");
+			let parent2=parent.parent();
+			parent2.find(".qpAvatarLevelText").not(".shadow")
+				.addClass("friend")
+				.css("color", $("#smColorFriendLevel").prop("checked")?$("#smColorFriendColor").val():"");
+			parent2.find(".qpAvatarPointText").not(".shadow")
+				.addClass("friend")
+				.css("color", $("#smColorFriendPoint").prop("checked")?$("#smColorFriendColor").val():"");
+		}
+		else {
+			let parent=$(elem).parent();
+			parent.removeClass("friend")
+				.css("color", "");
+			let parent2=parent.parent();
+			parent2.find(".qpAvatarLevelText").not(".shadow")
+				.removeClass("friend")
+				.css("color", "");
+			parent2.find(".qpAvatarPointText").not(".shadow")
+				.removeClass("friend")
+				.css("color", "");
+		}
+	});
+}
+
 new Listener("Game Chat Message", function (payload) {
 	if(payload.sender === selfName) {
-		setTimeout(() => {$(".gcUserName").last().addClass("self").css("color", $("#smColorSelfChat").prop("checked")?$("#smColorSelfColor").val():"");},0);
+		setTimeout(() => {
+			$(".gcUserName").last()
+				.addClass("self")
+				.css("color", $("#smColorSelfChat").prop("checked")?$("#smColorSelfColor").val():"");
+		},0);
 	}
 	else if (socialTab.isFriend(payload.sender)) {
-		setTimeout(() => {$(".gcUserName").last().addClass("friend").css("color", $("#smColorFriendChat").prop("checked")?$("#smColorFriendColor").val():"");},0);
+		setTimeout(() => {
+			$(".gcUserName").last()
+				.addClass("friend")
+				.css("color", $("#smColorFriendChat").prop("checked")?$("#smColorFriendColor").val():"");
+		},0);
 	}
 }).bindListener()
 
@@ -656,19 +696,23 @@ new Listener("New Spectator", function (spectator) {
 }).bindListener();
 
 new Listener("Player Changed To Spectator", function (payload) {
-	let playerName = payload.spectatorDescription.name;
 	colorSpectators();
 }).bindListener();
 
 function colorSpectators(){
+	if(!quiz.inQuiz && !lobby.inLobby) return;
 	setTimeout(() => {$(".gcSpectatorItem").children("h3").each((index,elem)=> {
 		if($(elem).text() === selfName) {
-			$(elem).parent().addClass("self");
+			$(elem).parent().addClass("self")
 			$(elem).css("color", $("#smColorSelfSpec").prop("checked")?$("#smColorSelfColor").val():"");
 		}
-        else if(socialTab.isFriend($(elem).text())) {
-			$(elem).parent().addClass("friend");
+		else if(socialTab.isFriend($(elem).text())) {
+			$(elem).parent().addClass("friend")
 			$(elem).css("color", $("#smColorFriendSpec").prop("checked")?$("#smColorFriendColor").val():"");
+		}
+		else {
+			$(elem).parent().removeClass("friend")
+			$(elem).css("color","");
 		}
 	});},0);
 }
@@ -682,14 +726,19 @@ new Listener("Spectator Change To Player", function(){
 }).bindListener();
 
 function colorPlayers(){
-    setTimeout(() => {$(".lobbyAvatarNameContainerInner").children("h2").each((index,elem)=> {
+	if(!lobby.inLobby) return;
+	setTimeout(() => {$(".lobbyAvatarNameContainerInner").children("h2").each((index,elem)=> {
 		if($(elem).text() === selfName) {
-			$(elem).parent().addClass("self");
+			$(elem).parent().addClass("self")
 			$(elem).css("color", $("#smColorSelfSpec").prop("checked")?$("#smColorSelfColor").val():"");
 		}
         else if(socialTab.isFriend($(elem).text())) {
-			$(elem).parent().addClass("friend");
+			$(elem).parent().addClass("friend")
 			$(elem).css("color", $("#smColorFriendSpec").prop("checked")?$("#smColorFriendColor").val():"");
+		}
+		else {
+			$(elem).parent().removeClass("friend")
+			$(elem).css("color", "");
 		}
 	});},0);
 }
@@ -720,6 +769,26 @@ GameChat.prototype.systemMessage = function (title, msg) {
 	$(".csmSpec").css("color", $("#smColorSpec").prop("checked")?$("#smColorSpecColor").val():"");
 	$(".csmLeft").css("color", $("#smColorLeave").prop("checked")?$("#smColorLeaveColor").val():"");
 };
+
+new Listener("new friend", (friend) => {
+	setTimeout(() => {
+		colorScorebox();
+		colorPlayers();
+		colorAvatar();
+		colorSpectators();
+	},0);
+}).bindListener();
+new Listener("friend removed", (target) => {
+	setTimeout(() => {
+		colorScorebox();
+		colorPlayers();
+		colorAvatar();
+		colorSpectators();
+		removeFriendFromTable(target.name);
+	},0);
+}).bindListener();
+
+
 
 AMQ_addScriptData({
     name: "Highlight Friends",
