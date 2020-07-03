@@ -25,7 +25,11 @@ im so lazy to write usage.... and english is too hard for me..../o\
 - apply color to join/spec/leave system message on chat
 - apply color to name of yourself and friends on spec list
 - color settings are available on settings>graphics tab
-- codes that applying colors to friend name on chat was written by ensorcell. thanks a lot
+- you can open player summary window by clicking this ![summaryicon](https://i.imgur.com/ZFLFd2t.png) icon or by pressing scroll lock key
+  + it shows some infomation of all players, it shows friends only in ranked game
+  + when you click someone, box will be changed to the person's box
+- codes that applying colors to friend name on chat and lobby was provided by ensorcell. thanks a lot
+- thanks a lot TheJoseph98 for providing window script and mentoring
 
 ### amqHotkeyFunctions.user.js
 - enables some hotkey functions. im so lazy to use mouse for this functions
