@@ -50,15 +50,15 @@ im so lazy to write usage.... and english is too hard for me..../o\
 
 ### amqLadderAssist.user.js
 - you can open and close ladder info window by pressing [ALT+L]
-- it receives match data from spreadsheet when it opened. it takes few seconds. just wait
+- it receives match data from spreadsheet when it is opened. it takes few seconds. just wait
 - it shows your matches to play when match data is received
 - green row is opponent is online, red row is opponent is offline
 - tier is lower one of two
 - if you clicked 'host room or change settings' button....
   + when you are in roomlist, it makes room with match type and tier settings
-  + when you are in room, it changes settings
-- you can invite opponent by clicking invite button. it is valid when you are in room
-
+  + when you are in a room, it changes settings
+- you can invite opponent by clicking invite button. it worked when you are in a room and opponent is online
+- it receives match data only when it is opened. if you want to receive latest match data, close and open it again
 
 ### amqMousewheelVolumeControl.user.js
 - adjust volume with mouse wheel when mouse cursor is over video area or avatar area
