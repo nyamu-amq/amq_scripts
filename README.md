@@ -48,6 +48,18 @@ im so lazy to write usage.... and english is too hard for me..../o\
 - [Ctrl + Up] : start game if you are host and all players are ready
 - [Ctrl + Down] : start vote for returning lobby if game started and you are host
 
+### amqLadderAssist.user.js
+- you can open and close ladder info window by pressing [ALT+L]
+- it receives match data from spreadsheet when it opened. it takes few seconds. just wait
+- it shows your matches to play when match data is received
+- green row is opponent is online, red row is opponent is offline
+- tier is lower one of two
+- if you clicked 'host room or change settings' button....
+  + when you are in roomlist, it makes room with match type and tier settings
+  + when you are in room, it changes settings
+- you can invite opponent by clicking invite button. it is valid when you are in room
+
+
 ### amqMousewheelVolumeControl.user.js
 - adjust volume with mouse wheel when mouse cursor is over video area or avatar area
 - it works in expand library also
