@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Ladder Assist
 // @namespace    https://github.com/nyamu-amq
-// @version      0.1
+// @version      0.2
 // @description  
 // @author       nyamu
 // @grant        GM_xmlhttpRequest
@@ -105,7 +105,7 @@ function openLadderWindow() {
 function updateLadderWindow() {
 	clearTable();
 	for(let data of matchData) {
-		let matchrow=$(`<tr id="match`+data[0]+`" class="matchRow"></tr>`);
+		let matchRow=$(`<tr id="match`+data[0]+`" class="matchRow"></tr>`);
 		let idCol = $(`<td class="matchId">`+data[0]+`</td>`);
 		let typeCol = $(`<td class="matchType">`+data[1]+`</td>`);
 		let opponentCol = $(`<td class="matchOpponent">`+data[3]+`</td>`);
@@ -137,15 +137,32 @@ function updateLadderWindow() {
 		});
 		inviteCol.append(inviteButton);
 
-		matchrow.append(idCol);
-		matchrow.append(typeCol);
-		matchrow.append(opponentCol);
-		matchrow.append(tierCol);
-		matchrow.append(roomCol);
-		matchrow.append(inviteCol);
+		matchRow.append(idCol);
+		matchRow.append(typeCol);
+		matchRow.append(opponentCol);
+		matchRow.append(tierCol);
+		matchRow.append(roomCol);
+		matchRow.append(inviteCol);
 
-		ladderWindowTable.append(matchrow);
+		ladderWindowTable.append(matchRow);
 	}
+	let pingRow=$(`<tr></tr>`);
+	let pingCol=$(`<td colspan=6></td>`);
+	let pingButton = $(`<div class="clickAble">copy ping message to clipboard</div>`)
+	.click(function () {
+		let users=[];
+		for(let data of matchData) {
+			if(users.indexOf("@"+data[2])===-1) {
+				users.push("@"+data[2]);
+			}
+		}
+
+		copyToClipboard(users.join(" "));
+	});
+	pingCol.append(pingButton);
+	pingRow.append(pingCol);
+	ladderWindowTable.append(pingRow);
+
 	updateOpponentOnlineState()
 }
 function updateOpponentOnlineState() {
@@ -160,6 +177,14 @@ function updateOpponentOnlineState() {
 		}
 	})
 }
+function copyToClipboard(str) {
+  const el = document.createElement('textarea');
+  el.value = str;
+  document.body.appendChild(el);
+  el.select();
+  document.execCommand('copy');
+  document.body.removeChild(el);
+};
 
 function getDifficulty(type, tier) {
 	let settings={};
@@ -261,6 +286,7 @@ function inviteUser(playerName) {
 }
 
 new Listener("online user change", function (change) {
+	console.log(change);
 	setTimeout(() => {updateOpponentOnlineState();},1);
 }).bindListener();
 
@@ -280,7 +306,13 @@ AMQ_addScriptData({
     name: "Ladder Assist",
     author: "nyamu",
     description: `
-        <p>Ladder Assist</p>
+        <p>You can open and close ladder info window by pressing [ALT+L]. It receives match data from spreadsheet when it is opened. it takes few seconds. just wait.</p>
+        <p>It shows your matches to play when match data is received
+        <p>Green row is opponent is online, red row is opponent is offline</p>
+        <p>Tier is lower one of two</p>
+        <p>If you clicked 'host room or change settings' button.... If you clicked it when you are in roomlist page, it makes room with match type and tier settings. If you clicked it when you are in a room, it changes settings</p>
+        <p>You can invite opponent by clicking invite button. it works when you are in a room and opponent is online</p>
+        <p>It receives match data only when it is opened. If you want to receive latest match data, close and open it again</p>
     `
 });
 AMQ_addStyle(`
