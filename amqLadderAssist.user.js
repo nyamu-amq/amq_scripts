@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Ladder Assist
 // @namespace    https://github.com/nyamu-amq
-// @version      0.3
+// @version      0.4
 // @description  
 // @author       nyamu
 // @grant        GM_xmlhttpRequest
@@ -19,7 +19,6 @@ if (document.getElementById('startPage')) {
 
 let ladderWindow;
 let ladderWindowTable;
-let ladderWindowOpenButton;
 function createLadderWindow() {
 	ladderWindow = new AMQWindow({
 		title: "Ladder Info",
@@ -37,39 +36,62 @@ function createLadderWindow() {
 	});
 
 	ladderWindow.addPanel({
+		id: "ladderWindowPanel",
+		width: 1.0,
+		height: 45
+	});
+	ladderWindow.addPanel({
 		id: "ladderWindowTableContainer",
 		width: 1.0,
-		height: "calc(100%)",
+		height: "calc(100% - 45px)",
+        position: {
+            x: 0,
+            y: 45
+        },
 		scrollable: {
 			x: false,
 			y: true
 		}
 	});
 
+	ladderWindow.panels[0].panel
+		.append($(`<button class="btn btn-primary ladderPanelButton" type="button"><i aria-hidden="true" class="fa fa-cloud-download"></i></button`)
+			.click(() => {
+				sendRequest();
+			})
+			.popover({
+				placement: "bottom",
+				content: "Update match data",
+				trigger: "hover",
+				container: "body",
+				animation: false
+			})
+		)
+		.append($(`<button class="btn btn-default ladderPanelButton" type="button"><i aria-hidden="true" class="fa fa-phone"></i></button`)
+			.click(() => {
+				let users=[];
+				for(let data of matchData) {
+					if(users.indexOf("@"+data[2])===-1) {
+						users.push("@"+data[2]);
+					}
+				}
+				copyToClipboard(users.join(" "));
+			})
+			.popover({
+				placement: "bottom",
+				content: "Copy discord id of all opponents to clipboard",
+				trigger: "hover",
+				container: "body",
+				animation: false
+			})
+		)
+		.append($(`<div class="ladderPanelMessage"></div>`));
+
 	ladderWindowTable = $(`<table id="ladderWindowTable" class="table floatingContainer"></table>`);
-	ladderWindow.panels[0].panel.append(ladderWindowTable);
+	ladderWindow.panels[1].panel.append(ladderWindowTable);
 
 	clearTable();
 
-	// ladderWindowOpenButton = $(`<div id="qpLadderButton" class="clickAble qpOption"><i aria-hidden="true" class="fa fa-database qpMenuItem"></i></div>`)
-	// .click(function () {
-	// 	if(ladderWindow.isVisible()) {
-	// 		$(".rowSelected").removeClass("rowSelected");
-	// 		ladderWindow.close();
-	// 	}
-	// 	else {
-	// 		openLadderWindow();
-	// 	}
-	// })
-	// .popover({
-	// 	placement: "bottom",
-	// 	content: "Ladder Info",
-	// 	trigger: "hover"
-	// });
-
-	// let oldWidth = $("#qpOptionContainer").width();
-	// $("#qpOptionContainer").width(oldWidth + 35);
-	// $("#qpOptionContainer > div").append(ladderWindowOpenButton);
 }
 function clearTable() {
 	ladderWindowTable.children().remove();
@@ -79,9 +101,12 @@ function clearTable() {
 	let typeCol = $(`<td class="matchType"><b>Type<b></td>`);
 	let opponentCol = $(`<td class="matchOpponent"><b>Opponent</b></td>`);
 	let tierCol = $(`<td class="matchTier"><b>Tier</b></td>`);
-	let roomCol = $(`<td class="matchSetting"><b>R</b></td>`);
-	let inviteCol = $(`<td class="matchInvite"><b>I</b></td>`);
-	let pingCol = $(`<td class="matchPing"><b>P</b></td>`);
+	let roomCol = $(`<td class="matchButtons"><b>R</b></td>`);
+	let inviteCol = $(`<td class="matchButtons"><b>I</b></td>`);
+	let pingCol = $(`<td class="matchButtons"><b>P</b></td>`);
+	let winCol = $(`<td class="matchButtons"><b>W</b></td>`);
+	let loseCol = $(`<td class="matchButtons"><b>L</b></td>`);
+	let drawCol = $(`<td class="matchButtons"><b>D</b></td>`);
 
 	header.append(idCol);
 	header.append(typeCol);
@@ -90,20 +115,29 @@ function clearTable() {
 	header.append(roomCol);
 	header.append(inviteCol);
 	header.append(pingCol);
+	header.append(winCol);
+	header.append(loseCol);
+	header.append(drawCol);
 	ladderWindowTable.append(header);
+}
+function updateLadderMessage(text) {
+	$(".ladderPanelMessage").text(text);
 }
 
 createLadderWindow();
 
 var lastRequest=0;
 function openLadderWindow() {
-	if(Date.now()-lastRequest>10000) {
-		lastRequest=Date.now();
+	if(lastRequest===0) {
+		socialTab.allPlayerList.TRACKING_TIMEOUT=9999999999;
+		socialTab.allPlayerList.startTracking();
 		clearTable();
 		sendRequest();
 	}
+	//socialTab.allPlayerList.loadAllOnline();
 	ladderWindow.open();
 }
+
 function updateLadderWindow() {
 	clearTable();
 	for(let data of matchData) {
@@ -112,9 +146,12 @@ function updateLadderWindow() {
 		let typeCol = $(`<td class="matchType">`+data[1]+`</td>`);
 		let opponentCol = $(`<td class="matchOpponent">`+data[3]+`</td>`);
 		let tierCol = $(`<td class="matchTier">`+data[4]+`</td>`);
-		let roomCol = $(`<td class="matchSetting"></td>`);
-		let inviteCol = $(`<td class="matchInvite"></td>`);
-		let pingCol = $(`<td class="matchPing"></td>`);
+		let roomCol = $(`<td class="matchButtons"></td>`);
+		let inviteCol = $(`<td class="matchButtons"></td>`);
+		let pingCol = $(`<td class="matchButtons"></td>`);
+		let winCol = $(`<td class="matchButtons"></td>`);
+		let loseCol = $(`<td class="matchButtons"></td>`);
+		let drawCol = $(`<td class="matchButtons"></td>`);
 
 		let roomButton = $(`<div class="clickAble"><i aria-hidden="true" class="fa fa-home"></i></div>`)
 		.click(function () {
@@ -151,6 +188,37 @@ function updateLadderWindow() {
 		});
 		pingCol.append(pingButton);
 
+		let winButton = $(`<div class="clickAble">💪</div>`)
+		.click(function () {
+			copyToClipboard("m!r "+data[0]+" "+selfName);
+		})
+		.popover({
+			placement: "bottom",
+			content: "Copy report command to clipboard",
+			trigger: "hover"
+		});
+		winCol.append(winButton);
+		let loseButton = $(`<div class="clickAble">💀</div>`)
+		.click(function () {
+			copyToClipboard("m!r "+data[0]+" "+data[3]);
+		})
+		.popover({
+			placement: "bottom",
+			content: "Copy report command to clipboard",
+			trigger: "hover"
+		});
+		loseCol.append(loseButton);
+		let drawButton = $(`<div class="clickAble">😓</div>`)
+		.click(function () {
+			copyToClipboard("m!r "+data[0]+" draw");
+		})
+		.popover({
+			placement: "bottom",
+			content: "Copy report command to clipboard",
+			trigger: "hover"
+		});
+		drawCol.append(drawButton);
+
 		matchRow.append(idCol);
 		matchRow.append(typeCol);
 		matchRow.append(opponentCol);
@@ -158,25 +226,27 @@ function updateLadderWindow() {
 		matchRow.append(roomCol);
 		matchRow.append(inviteCol);
 		matchRow.append(pingCol);
+		matchRow.append(winCol);
+		matchRow.append(loseCol);
+		matchRow.append(drawCol);
 
 		ladderWindowTable.append(matchRow);
 	}
-	let pingRow=$(`<tr class="pingRow"></tr>`);
-	let pingCol=$(`<td colspan=7></td>`);
-	let pingButton = $(`<div class="clickAble">Click here to copy discord id of all opponents to clipboard</div>`)
-	.click(function () {
-		let users=[];
-		for(let data of matchData) {
-			if(users.indexOf("@"+data[2])===-1) {
-				users.push("@"+data[2]);
-			}
-		}
-
-		copyToClipboard(users.join(" "));
-	});
-	pingCol.append(pingButton);
-	pingRow.append(pingCol);
-	ladderWindowTable.append(pingRow);
+	// let pingRow=$(`<tr class="pingRow"></tr>`);
+	// let pingCol=$(`<td colspan=10></td>`);
+	// let pingButton = $(`<div class="clickAble">Click here to copy discord id of all opponents to clipboard</div>`)
+	// .click(function () {
+	// 	let users=[];
+	// 	for(let data of matchData) {
+	// 		if(users.indexOf("@"+data[2])===-1) {
+	// 			users.push("@"+data[2]);
+	// 		}
+	// 	}
+	// 	copyToClipboard(users.join(" "));
+	// });
+	// pingCol.append(pingButton);
+	// pingRow.append(pingCol);
+	// ladderWindowTable.append(pingRow);
 
 	updateOpponentOnlineState()
 }
@@ -207,7 +277,7 @@ function getDifficulty(type, tier) {
 	if(type.includes('random')) {
 		settings={
 			"diamond":[0,100],
-			"platimun":[0,100],
+			"platinum":[0,100],
 			"gold":[10,100],
 			"silver":[20,100],
 			"bronze":[30,100],
@@ -216,7 +286,7 @@ function getDifficulty(type, tier) {
 	else if(type.includes('list')) {
 		settings={
 			"diamond":[0,40],
-			"platimun":[0,40],
+			"platinum":[0,40],
 			"gold":[0,40],
 			"silver":[0,60],
 			"bronze":[0,100],
@@ -225,7 +295,7 @@ function getDifficulty(type, tier) {
 	else if(type.includes('1000')) {
 		settings={
 			"diamond":[0,40],
-			"platimun":[0,40],
+			"platinum":[0,40],
 			"gold":[0,60],
 			"silver":[0,100],
 			"bronze":[20,100],
@@ -271,6 +341,14 @@ function isOnline(username) {
 
 var matchData=[];
 function sendRequest() {
+	let remainedTime=lastRequest+60000-Date.now();
+	if(remainedTime>0) {
+		updateLadderMessage("You can update after "+Math.ceil(remainedTime*.001)+" sec");
+		return;
+	}
+	lastRequest=Date.now();
+	updateLadderMessage("Receiving data...");
+
 	GM_xmlhttpRequest({
 		method: "POST",
 		url: "https://script.google.com/macros/s/AKfycbyoBo5WyPqYYGTYMBWfOpFlSJp9g3X9E6SXZghko0LGrfnj2G9T/exec",
@@ -283,6 +361,7 @@ function sendRequest() {
 			matchData=res.data;
 			matchData.sort(function(a,b){return a[0]*1-b[0]*1;});
 			updateLadderWindow();
+			updateLadderMessage("Update completed on "+new Date().toLocaleTimeString());
 		},
 		onerror: function (response) {
 			console.log(response.responseText);
@@ -304,6 +383,9 @@ function inviteUser(playerName) {
 new Listener("online user change", function (change) {
 	setTimeout(() => {updateOpponentOnlineState();},1);
 }).bindListener();
+new Listener("all online users", function (change) {
+	setTimeout(() => {updateOpponentOnlineState();},1);
+}).bindListener();
 
 function dockeyup(event) {
 	if(event.altKey && event.keyCode==76) {
@@ -311,75 +393,81 @@ function dockeyup(event) {
 			ladderWindow.close();
 		}
 		else {
-			openLadderWindow()
+			openLadderWindow();
 		}
 	}
 }
 document.addEventListener('keyup', dockeyup, false);
 
 AMQ_addScriptData({
-    name: "Ladder Assist",
-    author: "nyamu",
-    description: `
-        <p>You can open and close ladder info window by pressing [ALT+L]. It receives match data from spreadsheet when it is opened. it takes few seconds. just wait.</p>
-        <p>It shows your matches to play when match data is received
-        <p>Green row is opponent is online, red row is opponent is offline</p>
-        <p>Tier is lower one of two</p>
-        <p>If you clicked 'host room or change settings' button.... If you clicked it when you are in roomlist page, it makes room with match type and tier settings. If you clicked it when you are in a room, it changes settings</p>
-        <p>You can invite opponent by clicking invite button. it works when you are in a room and opponent is online</p>
-        <p>It receives match data only when it is opened. If you want to receive latest match data, close and open it again</p>
-    `
+	name: "Ladder Assist",
+	author: "nyamu",
+	description: `
+		<p>You can open and close ladder info window by pressing [ALT+L].</p>
+		<p>Cloud button is for updating data manually. You can update by clicking it. It will receive match data from spreadsheet. Updating data takes a few seconds. just wait. It recieves data automatically when ladder window is opened first time only.</p>
+		<p>It shows your matches to play when match data is received.</p>
+		<p>Opponents of green rows are online, opponents of red rows are offline.</p>
+		<p>Tier is lower one of two.</p>
+		<p>R column button is for making room and changing settings. If you clicked it when you are outside of room, it makes room with match type and tier settings. If you clicked it when you are in a room and you are host, it changes settings.</p>
+		<p>I column button is for inviting opponent. You can invite opponent by clicking it. it works when you are in a room and opponent is online.</p>
+		<p>P column button is for copying opponent's discord id to clipboard. It is useful for pinging opponent.</p>
+		<p>W/L/D column buttons are for copying Win/Lose/Draw report command to clipboard. It is just for copying text. It doesn't report automatically.</p>
+		<p>Phone button on the left side of cloud button is for copying all opponent's discord id to clipboard. It is useful for pinging all opponents.</p>
+	`
 });
 AMQ_addStyle(`
-    #ladderWindowTableContainer {
-        padding: 10px;
-    }
-    .matchRow {
+	#ladderWindowPanel {
+		border-bottom: 1px solid #6d6d6d;
+	}
+	.ladderPanelButton {
+		float: right;
+		margin-top: 5px;
+		margin-right: 7px;
+		padding: 5px 7px;
+	}
+	.ladderPanelMessage {
+        width: 300px;
+        margin: 5px 5px 5px 5px;
         height: 30px;
-    }
-    .matchRow > td {
-        vertical-align: middle;
-        border: 1px solid black;
-        text-align: center;
-    }
-    .matchId {
-        min-width: 40px;
-    }
-    .matchType {
-        min-width: 80px;
-    }
-    .matchOpponent {
-        min-width: 80px;
-    }
-    .matchTier {
-        min-width: 40px;
-    }
-    .matchSetting {
-        min-width: 20px;
-    }
-    .matchInvite {
-        min-width: 20px;
-    }
-    .matchPing {
-        min-width: 20px;
-    }
-    .onlineOpponent {
-        background-color: rgba(0, 200, 0, 0.07);
-    }
-    .offlineOpponent {
-        background-color: rgba(255, 0, 0, 0.07);
-    }
-    .pingRow {
-        height: 30px;
-    }
-    .pingRow > td {
-        vertical-align: middle;
-        border: 1px solid black;
-        text-align: center;
-    }
-    #qpLadderButton {
-        width: 30px;
-        height: 100%;
-        margin-right: 5px;
-    }
+        text-overflow: ellipsis;
+        padding: 5px;
+        float: left;
+	}
+	#ladderWindowTableContainer {
+		padding: 10px;
+	}
+	.matchRow {
+		height: 30px;
+	}
+	.matchRow > td {
+		vertical-align: middle;
+		border: 1px solid black;
+		text-align: center;
+	}
+	.matchId {
+		min-width: 40px;
+	}
+	.matchType {
+		min-width: 80px;
+	}
+	.matchOpponent {
+		min-width: 80px;
+	}
+	.matchTier {
+		min-width: 40px;
+	}
+	.matchButtons {
+		min-width: 20px;
+	}
+	.onlineOpponent {
+		background-color: rgba(0, 200, 0, 0.07);
+	}
+	.offlineOpponent {
+		background-color: rgba(255, 0, 0, 0.07);
+	}
+	#qpLadderButton {
+		width: 30px;
+		height: 100%;
+		margin-right: 5px;
+	}
 `);
