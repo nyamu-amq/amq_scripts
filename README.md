@@ -49,16 +49,16 @@ im so lazy to write usage.... and english is too hard for me..../o\
 - [Ctrl + Down] : start vote for returning lobby if game started and you are host
 
 ### amqLadderAssist.user.js
-- you can open and close ladder info window by pressing [ALT+L]
-- it receives match data from spreadsheet when it is opened. it takes few seconds. just wait
-- it shows your matches to play when match data is received
-- green row is opponent is online, red row is opponent is offline
-- tier is lower one of two
-- if you clicked 'host room or change settings' button....
-  + when you are in roomlist, it makes room with match type and tier settings
-  + when you are in a room, it changes settings
-- you can invite opponent by clicking invite button. it worked when you are in a room and opponent is online
-- it receives match data only when it is opened. if you want to receive latest match data, close and open it again
+- You can open and close ladder info window by pressing [ALT+L].
+- Cloud button is for updating data manually. You can update by clicking it. It will receive match data from spreadsheet. Updating data takes a few seconds. just wait. It recieves data automatically when ladder window is opened first time only.
+- It shows your matches to play when match data is received.
+- Opponents of green rows are online, opponents of red rows are offline.
+- Tier is lower one of two.
+- R column button is for making room and changing settings. If you clicked it when you are outside of room, it makes room with match type and tier settings. If you clicked it when you are in a room and you are host, it changes settings.
+- I column button is for inviting opponent. You can invite opponent by clicking it. it works when you are in a room and opponent is online.
+- P column button is for copying opponent's discord id to clipboard. It is useful for pinging opponent.
+- W/L/D column buttons are for copying Win/Lose/Draw report command to clipboard. It is just for copying text. It doesn't report automatically.
+- Phone button on the left side of cloud button is for copying all opponent's discord id to clipboard. It is useful for pinging all opponents.
 
 ### amqMousewheelVolumeControl.user.js
 - adjust volume with mouse wheel when mouse cursor is over video area or avatar area
