@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Ladder Assist
 // @namespace    https://github.com/nyamu-amq
-// @version      0.2
+// @version      0.3
 // @description  
 // @author       nyamu
 // @grant        GM_xmlhttpRequest
@@ -81,6 +81,7 @@ function clearTable() {
 	let tierCol = $(`<td class="matchTier"><b>Tier</b></td>`);
 	let roomCol = $(`<td class="matchSetting"><b>R</b></td>`);
 	let inviteCol = $(`<td class="matchInvite"><b>I</b></td>`);
+	let pingCol = $(`<td class="matchPing"><b>P</b></td>`);
 
 	header.append(idCol);
 	header.append(typeCol);
@@ -88,6 +89,7 @@ function clearTable() {
 	header.append(tierCol);
 	header.append(roomCol);
 	header.append(inviteCol);
+	header.append(pingCol);
 	ladderWindowTable.append(header);
 }
 
@@ -112,6 +114,7 @@ function updateLadderWindow() {
 		let tierCol = $(`<td class="matchTier">`+data[4]+`</td>`);
 		let roomCol = $(`<td class="matchSetting"></td>`);
 		let inviteCol = $(`<td class="matchInvite"></td>`);
+		let pingCol = $(`<td class="matchPing"></td>`);
 
 		let roomButton = $(`<div class="clickAble"><i aria-hidden="true" class="fa fa-home"></i></div>`)
 		.click(function () {
@@ -137,18 +140,30 @@ function updateLadderWindow() {
 		});
 		inviteCol.append(inviteButton);
 
+		let pingButton = $(`<div class="clickAble"><i aria-hidden="true" class="fa fa-phone"></i></div>`)
+		.click(function () {
+			copyToClipboard("@"+data[2]);
+		})
+		.popover({
+			placement: "bottom",
+			content: "Copy discord id to clipboard",
+			trigger: "hover"
+		});
+		pingCol.append(pingButton);
+
 		matchRow.append(idCol);
 		matchRow.append(typeCol);
 		matchRow.append(opponentCol);
 		matchRow.append(tierCol);
 		matchRow.append(roomCol);
 		matchRow.append(inviteCol);
+		matchRow.append(pingCol);
 
 		ladderWindowTable.append(matchRow);
 	}
-	let pingRow=$(`<tr></tr>`);
-	let pingCol=$(`<td colspan=6></td>`);
-	let pingButton = $(`<div class="clickAble">copy ping message to clipboard</div>`)
+	let pingRow=$(`<tr class="pingRow"></tr>`);
+	let pingCol=$(`<td colspan=7></td>`);
+	let pingButton = $(`<div class="clickAble">Click here to copy discord id of all opponents to clipboard</div>`)
 	.click(function () {
 		let users=[];
 		for(let data of matchData) {
@@ -184,6 +199,7 @@ function copyToClipboard(str) {
   el.select();
   document.execCommand('copy');
   document.body.removeChild(el);
+  displayMessage("Copied to clipboard", str);
 };
 
 function getDifficulty(type, tier) {
@@ -286,7 +302,6 @@ function inviteUser(playerName) {
 }
 
 new Listener("online user change", function (change) {
-	console.log(change);
 	setTimeout(() => {updateOpponentOnlineState();},1);
 }).bindListener();
 
@@ -345,11 +360,22 @@ AMQ_addStyle(`
     .matchInvite {
         min-width: 20px;
     }
+    .matchPing {
+        min-width: 20px;
+    }
     .onlineOpponent {
         background-color: rgba(0, 200, 0, 0.07);
     }
     .offlineOpponent {
         background-color: rgba(255, 0, 0, 0.07);
+    }
+    .pingRow {
+        height: 30px;
+    }
+    .pingRow > td {
+        vertical-align: middle;
+        border: 1px solid black;
+        text-align: center;
     }
     #qpLadderButton {
         width: 30px;
