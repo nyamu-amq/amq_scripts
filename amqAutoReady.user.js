@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Auto Ready
 // @namespace    https://github.com/nyamu-amq
-// @version      0.4
+// @version      0.5
 // @description  
 // @author       nyamu
 // @match        https://animemusicquiz.com/*
@@ -23,6 +23,7 @@ if (document.getElementById('startPage')) {
 }
 
 var isAutoReady=localStorage.getItem('auto_ready')=="true";
+var isAutoSpec=false;
 
 let settingChangeListener = new Listener("Room Settings Changed", (changes) => {
 	setTimeout(() => { checkReady(); },1);
@@ -45,24 +46,39 @@ ViewChanger.prototype.changeView = (function() {
 	var old=ViewChanger.prototype.changeView;
 	return function() {
 		old.apply(this,arguments);
-		onViewChanged();
+		setTimeout(() => { onViewChanged(); },1);
 	}
 })();
 
 function onViewChanged() {
 	if(viewChanger.currentView=="lobby") {
-		checkReady();
+		if(isAutoSpec) {
+			if(!lobby.isSpectator) lobby.changeToSpectator(selfName)
+		}
+		else checkReady();
 	}
+	isAutoSpec=false;
 }
 
 function dockeyup(event) {
 	if(event.altKey && event.keyCode=='82') {
-		isAutoReady=!isAutoReady;
-		localStorage.setItem('auto_ready', isAutoReady);
-		chatSystemMessage(isAutoReady?"Enabled Auto Ready":"Disabled Auto Ready");
+		if(event.shiftKey) {
+			toggleAutoSpec();
+		}
+		else {
+			isAutoReady=!isAutoReady;
+			localStorage.setItem('auto_ready', isAutoReady);
+			chatSystemMessage(isAutoReady?"Enabled Auto Ready":"Disabled Auto Ready");
+		}
 	}
 }
 document.addEventListener('keyup', dockeyup, false);
+
+function toggleAutoSpec() {
+	if(!quiz.inQuiz) return;
+	isAutoSpec=!isAutoSpec;
+	chatSystemMessage(isAutoSpec?"Enabled Auto Spec":"Disabled Auto Spec");
+}
 
 function chatSystemMessage(msg) {
 	if(!gameChat.isShown()) return;
@@ -74,10 +90,12 @@ spectatorChangeToPlayer.bindListener();
 hostPromotionListner.bindListener();
 
 let joinGameListener = new Listener("Join Game", (response) => {
+	if(response.error) return;
 	notifyAutoReady();
 });
 
 let spectateGameListener = new Listener("Spectate Game", (response) => {
+	if(response.error) return;
 	notifyAutoReady();
 });
 function notifyAutoReady() {
