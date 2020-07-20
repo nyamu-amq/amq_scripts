@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Ladder Assist
 // @namespace    https://github.com/nyamu-amq
-// @version      0.4
+// @version      0.5
 // @description  
 // @author       nyamu
 // @grant        GM_xmlhttpRequest
@@ -85,6 +85,31 @@ function createLadderWindow() {
 				animation: false
 			})
 		)
+        .append($(`<select id="tableViewMode"></select>`)
+            .append($(`<option value="pending" selected>All Pending Matches</option>`))
+            .append($(`<option value="pendinglistall">Pending List All</option>`))
+            .append($(`<option value="pendinglistops">Pending List Ops</option>`))
+            .append($(`<option value="pendinglisteds">Pending List Eds</option>`))
+            .append($(`<option value="pendinglistins">Pending List Ins</option>`))
+            .append($(`<option value="pendingrandomall">Pending Random All</option>`))
+            .append($(`<option value="pendingrandomops">Pending Random Ops</option>`))
+            .append($(`<option value="pendingrandomeds">Pending Random Eds</option>`))
+            .append($(`<option value="pendingrandomins">Pending Random Ins</option>`))
+            .append($(`<option value="pendingtop1000">Pending Top1000Anime</option>`))
+            .append($(`<option value="completed">All Completed Matches</option>`))
+            .append($(`<option value="completedlistall">Completed List All</option>`))
+            .append($(`<option value="completedlistops">Completed List Ops</option>`))
+            .append($(`<option value="completedlisteds">Completed List Eds</option>`))
+            .append($(`<option value="completedlistins">Completed List Ins</option>`))
+            .append($(`<option value="completedrandomall">Completed Random All</option>`))
+            .append($(`<option value="completedrandomops">Completed Random Ops</option>`))
+            .append($(`<option value="completedrandomeds">Completed Random Eds</option>`))
+            .append($(`<option value="completedrandomins">Completed Random Ins</option>`))
+            .append($(`<option value="completedtop1000">Completed Top1000Anime</option>`))
+            .change(function () {
+            	ChangeTableMode();
+            })
+        )
 		.append($(`<div class="ladderPanelMessage"></div>`));
 
 	ladderWindowTable = $(`<table id="ladderWindowTable" class="table floatingContainer"></table>`);
@@ -93,35 +118,87 @@ function createLadderWindow() {
 	clearTable();
 
 }
+function checkType(type) {
+	type=type.toLowerCase();
+	if(strMode.includes("list")) {
+		if(!type.includes("list")) return false;
+	}
+	else if(strMode.includes("random")) {
+		if(!type.includes("random")) return false;
+	}
+	else if(strMode.includes("1000")) {
+		if(!type.includes("1000")) return false;
+	}
+
+	if(strMode.endsWith("ops")) {
+		if(!type.includes("opening")) return false;
+	}
+	else if(strMode.endsWith("eds")) {
+		if(!type.includes("ending")) return false;
+	}
+	else if(strMode.endsWith("ins")) {
+		if(!type.includes("insert")) return false;
+	}
+	else if(strMode.endsWith("all")) {
+		if(!type.includes("all")) return false;
+	}
+
+	return true;
+}
 function clearTable() {
 	ladderWindowTable.children().remove();
 
-	let header = $(`<tr class="header"></tr>`)
-	let idCol = $(`<td class="matchId"><b>ID#</b></td>`);
-	let typeCol = $(`<td class="matchType"><b>Type<b></td>`);
-	let opponentCol = $(`<td class="matchOpponent"><b>Opponent</b></td>`);
-	let tierCol = $(`<td class="matchTier"><b>Tier</b></td>`);
-	let roomCol = $(`<td class="matchButtons"><b>R</b></td>`);
-	let inviteCol = $(`<td class="matchButtons"><b>I</b></td>`);
-	let pingCol = $(`<td class="matchButtons"><b>P</b></td>`);
-	let winCol = $(`<td class="matchButtons"><b>W</b></td>`);
-	let loseCol = $(`<td class="matchButtons"><b>L</b></td>`);
-	let drawCol = $(`<td class="matchButtons"><b>D</b></td>`);
+	if(tableViewMode===0) {
+		let header = $(`<tr class="header"></tr>`)
+		let idCol = $(`<td class="matchId"><b>ID#</b></td>`);
+		let typeCol = $(`<td class="matchType"><b>Type<b></td>`);
+		let opponentCol = $(`<td class="matchOpponent"><b>Opponent</b></td>`);
+		let tierCol = $(`<td class="matchTier"><b>Tier</b></td>`);
+		let roomCol = $(`<td class="matchButtons"><b>R</b></td>`);
+		let inviteCol = $(`<td class="matchButtons"><b>I</b></td>`);
+		let pingCol = $(`<td class="matchButtons"><b>P</b></td>`);
+		let winCol = $(`<td class="matchButtons"><b>W</b></td>`);
+		let loseCol = $(`<td class="matchButtons"><b>L</b></td>`);
+		let drawCol = $(`<td class="matchButtons"><b>D</b></td>`);
 
-	header.append(idCol);
-	header.append(typeCol);
-	header.append(opponentCol);
-	header.append(tierCol);
-	header.append(roomCol);
-	header.append(inviteCol);
-	header.append(pingCol);
-	header.append(winCol);
-	header.append(loseCol);
-	header.append(drawCol);
-	ladderWindowTable.append(header);
+		header.append(idCol);
+		header.append(typeCol);
+		header.append(opponentCol);
+		header.append(tierCol);
+		header.append(roomCol);
+		header.append(inviteCol);
+		header.append(pingCol);
+		header.append(winCol);
+		header.append(loseCol);
+		header.append(drawCol);
+		ladderWindowTable.append(header);
+	}
+	else {
+		let header = $(`<tr class="header"></tr>`)
+		let idCol = $(`<td class="matchId"><b>ID#</b></td>`);
+		let typeCol = $(`<td class="matchType"><b>Type<b></td>`);
+		let opponentCol = $(`<td class="matchOpponent"><b>Opponent</b></td>`);
+		let tierCol = $(`<td class="matchTier"><b>Tier</b></td>`);
+		let resultCol = $(`<td class="matchResult"><b>Result</b></td>`);
+
+		header.append(idCol);
+		header.append(typeCol);
+		header.append(opponentCol);
+		header.append(tierCol);
+		header.append(resultCol);
+		ladderWindowTable.append(header);
+	}
 }
 function updateLadderMessage(text) {
 	$(".ladderPanelMessage").text(text);
+}
+
+var tableViewMode=0;
+var strMode="";
+function ChangeTableMode() {
+	strMode=$("#tableViewMode").val().toLowerCase();
+	tableViewMode=(strMode.startsWith("pending"))?0:1;
+	updateLadderWindow();
 }
 
 createLadderWindow();
@@ -139,8 +216,13 @@ function openLadderWindow() {
 }
 
 function updateLadderWindow() {
+	if(tableViewMode===0) updatePendingTable();
+	else updateCompletedTable();
+}
+function updatePendingTable() {
 	clearTable();
 	for(let data of matchData) {
+		if(!checkType(data[1])) continue;
 		let matchRow=$(`<tr id="match`+data[0]+`" class="matchRow"></tr>`);
 		let idCol = $(`<td class="matchId">`+data[0]+`</td>`);
 		let typeCol = $(`<td class="matchType">`+data[1]+`</td>`);
@@ -232,25 +314,37 @@ function updateLadderWindow() {
 
 		ladderWindowTable.append(matchRow);
 	}
-	// let pingRow=$(`<tr class="pingRow"></tr>`);
-	// let pingCol=$(`<td colspan=10></td>`);
-	// let pingButton = $(`<div class="clickAble">Click here to copy discord id of all opponents to clipboard</div>`)
-	// .click(function () {
-	// 	let users=[];
-	// 	for(let data of matchData) {
-	// 		if(users.indexOf("@"+data[2])===-1) {
-	// 			users.push("@"+data[2]);
-	// 		}
-	// 	}
-	// 	copyToClipboard(users.join(" "));
-	// });
-	// pingCol.append(pingButton);
-	// pingRow.append(pingCol);
-	// ladderWindowTable.append(pingRow);
 
 	updateOpponentOnlineState()
 }
+function updateCompletedTable() {
+	clearTable();
+	for(let data of completedData) {
+		if(!checkType(data[1])) continue;
+		let matchRow=$(`<tr id="match`+data[0]+`" class="matchRow"></tr>`);
+		let idCol = $(`<td class="matchId">`+data[0]+`</td>`);
+		let typeCol = $(`<td class="matchType">`+data[1]+`</td>`);
+		let opponentCol = $(`<td class="matchOpponent">`+data[2]+`</td>`);
+		let tierCol = $(`<td class="matchTier">`+data[3]+`</td>`);
+		let resultCol = $(`<td class="matchResult">`+data[4]+`</td>`);
+
+		matchRow.append(idCol);
+		matchRow.append(typeCol);
+		matchRow.append(opponentCol);
+		matchRow.append(tierCol);
+		matchRow.append(resultCol);
+		if(data[4].toLowerCase()===selfName.toLowerCase()) {
+			matchRow.addClass("onlineOpponent");
+		}
+		else if(data[4].toLowerCase()===data[2].toLowerCase()) {
+			matchRow.addClass("offlineOpponent");
+		}
+
+		ladderWindowTable.append(matchRow);
+	}
+}
 function updateOpponentOnlineState() {
+	if(tableViewMode!==0) return;
 	$(".matchRow").each((index,elem)=>{
 		if(isOnline(matchData[index][3])) {
 			$(elem).addClass("onlineOpponent");
@@ -340,6 +434,7 @@ function isOnline(username) {
 }
 
 var matchData=[];
+var completedData=[];
 function sendRequest() {
 	let remainedTime=lastRequest+60000-Date.now();
 	if(remainedTime>0) {
@@ -360,6 +455,7 @@ function sendRequest() {
 			var res=JSON.parse(response.responseText);
 			matchData=res.data;
 			matchData.sort(function(a,b){return a[0]*1-b[0]*1;});
+			completedData=res.completed;
 			updateLadderWindow();
 			updateLadderMessage("Update completed on "+new Date().toLocaleTimeString());
 		},
@@ -425,12 +521,19 @@ AMQ_addStyle(`
 		margin-right: 7px;
 		padding: 5px 7px;
 	}
+	#tableViewMode {
+		width: 184px;
+		color: black;
+		float: right;
+		margin-top: 5px;
+		margin-right: 7px;
+		padding: 5px 7px;
+	}
 	.ladderPanelMessage {
-        width: 300px;
-        margin: 5px 5px 5px 5px;
+        width: 120px;
+        margin: 3px 3px 5px 5px;
         height: 30px;
         text-overflow: ellipsis;
-        padding: 5px;
         float: left;
 	}
 	#ladderWindowTableContainer {
@@ -458,6 +561,9 @@ AMQ_addStyle(`
 	}
 	.matchButtons {
 		min-width: 20px;
+	}
+	.matchResult {
+		min-width: 80px;
 	}
 	.onlineOpponent {
 		background-color: rgba(0, 200, 0, 0.07);
