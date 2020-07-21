@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Ladder Assist
 // @namespace    https://github.com/nyamu-amq
-// @version      0.6
+// @version      0.7
 // @description  
 // @author       nyamu
 // @grant        GM_xmlhttpRequest
@@ -44,10 +44,10 @@ function createLadderWindow() {
 		id: "ladderWindowTableContainer",
 		width: 1.0,
 		height: "calc(100% - 45px)",
-        position: {
-            x: 0,
-            y: 45
-        },
+		position: {
+			x: 0,
+			y: 45
+		},
 		scrollable: {
 			x: false,
 			y: true
@@ -86,31 +86,31 @@ function createLadderWindow() {
 				animation: false
 			})
 		)
-        .append($(`<select id="tableViewMode"></select>`)
-            .append($(`<option value="pending" selected>All Pending Matches</option>`))
-            .append($(`<option value="pendinglistall">Pending List All</option>`))
-            .append($(`<option value="pendinglistops">Pending List Ops</option>`))
-            .append($(`<option value="pendinglisteds">Pending List Eds</option>`))
-            .append($(`<option value="pendinglistins">Pending List Ins</option>`))
-            .append($(`<option value="pendingrandomall">Pending Random All</option>`))
-            .append($(`<option value="pendingrandomops">Pending Random Ops</option>`))
-            .append($(`<option value="pendingrandomeds">Pending Random Eds</option>`))
-            .append($(`<option value="pendingrandomins">Pending Random Ins</option>`))
-            .append($(`<option value="pendingtop1000">Pending Top1000Anime</option>`))
-            .append($(`<option value="completed">All Completed Matches</option>`))
-            .append($(`<option value="completedlistall">Completed List All</option>`))
-            .append($(`<option value="completedlistops">Completed List Ops</option>`))
-            .append($(`<option value="completedlisteds">Completed List Eds</option>`))
-            .append($(`<option value="completedlistins">Completed List Ins</option>`))
-            .append($(`<option value="completedrandomall">Completed Random All</option>`))
-            .append($(`<option value="completedrandomops">Completed Random Ops</option>`))
-            .append($(`<option value="completedrandomeds">Completed Random Eds</option>`))
-            .append($(`<option value="completedrandomins">Completed Random Ins</option>`))
-            .append($(`<option value="completedtop1000">Completed Top1000Anime</option>`))
-            .change(function () {
-            	ChangeTableMode();
-            })
-        )
+		.append($(`<select id="tableViewMode"></select>`)
+			.append($(`<option value="pending" selected>All Pending Matches</option>`))
+			.append($(`<option value="pendinglistall">Pending List All</option>`))
+			.append($(`<option value="pendinglistops">Pending List Ops</option>`))
+			.append($(`<option value="pendinglisteds">Pending List Eds</option>`))
+			.append($(`<option value="pendinglistins">Pending List Ins</option>`))
+			.append($(`<option value="pendingrandomall">Pending Random All</option>`))
+			.append($(`<option value="pendingrandomops">Pending Random Ops</option>`))
+			.append($(`<option value="pendingrandomeds">Pending Random Eds</option>`))
+			.append($(`<option value="pendingrandomins">Pending Random Ins</option>`))
+			.append($(`<option value="pendingtop1000">Pending Top1000Anime</option>`))
+			.append($(`<option value="completed">All Completed Matches</option>`))
+			.append($(`<option value="completedlistall">Completed List All</option>`))
+			.append($(`<option value="completedlistops">Completed List Ops</option>`))
+			.append($(`<option value="completedlisteds">Completed List Eds</option>`))
+			.append($(`<option value="completedlistins">Completed List Ins</option>`))
+			.append($(`<option value="completedrandomall">Completed Random All</option>`))
+			.append($(`<option value="completedrandomops">Completed Random Ops</option>`))
+			.append($(`<option value="completedrandomeds">Completed Random Eds</option>`))
+			.append($(`<option value="completedrandomins">Completed Random Ins</option>`))
+			.append($(`<option value="completedtop1000">Completed Top1000Anime</option>`))
+			.change(function () {
+				ChangeTableMode();
+			})
+		)
 		.append($(`<div class="ladderPanelMessage"></div>`));
 
 	ladderWindowTable = $(`<table id="ladderWindowTable" class="table floatingContainer"></table>`);
@@ -238,7 +238,7 @@ function updatePendingTable() {
 
 		let roomButton = $(`<div class="clickAble"><i aria-hidden="true" class="fa fa-home"></i></div>`)
 		.click(function () {
-			hostRoom(data[1],data[4]);
+			hostRoom(data[1],data[4],data[0]);
 		})
 		.popover({
 			placement: "bottom",
@@ -398,21 +398,24 @@ function getDifficulty(type, tier) {
 	}
 	return settings[tier];
 }
-function hostRoom(type, tier) {
+function hostRoom(type, tier, matchid) {
 	if(viewChanger.currentView!=="roomBrowser" && !(lobby.inLobby && lobby.isHost) ) return;
 	type=type.toLowerCase();
 	tier=tier.toLowerCase();
 	hostModal.selectStandard();
-	let settingObject = hostModal._settingStorage._serilizer.decode("2020k11111030k000001110000000k00k051o00k012r02i0a46311002s0111111111002s0111002s01a111111111102a1111111111i01k403-11111--");
-
-	hostModal.changeSettings(settingObject);
+	hostModal.changeSettings(hostModal.DEFUALT_SETTINGS);
 	setTimeout(()=>{
-		hostModal.$roomName.val("IHI");
+		hostModal.$roomName.val(`IHI #${matchid}`);
 		hostModal.$privateCheckbox.prop("checked",true);
 		hostModal.$passwordInput.val("ladder");
+		hostModal.roomSizeSwitch.setOn(false);
+		hostModal.$roomSize.slider('setValue', 2, false, true);
+		hostModal.$songTypeInsert.prop("checked",true);
 
+		hostModal.songDiffAdvancedSwitch.setOn(true);
 		hostModal.songDiffRangeSliderCombo.setValue(getDifficulty(type,tier));
 		if(type.includes('random')) hostModal.$songPool.slider('setValue',1);
+		else hostModal.$songPool.slider('setValue',3);
 		if(type.includes('opening')) {
 			hostModal.$songTypeEnding.prop("checked",false);
 			hostModal.$songTypeInsert.prop("checked",false);
@@ -501,6 +504,7 @@ AMQ_addScriptData({
 	name: "Ladder Assist",
 	author: "nyamu",
 	description: `
+		<p>This script is written to make IHI ladder game more comfortable.</p>
 		<p>You can open and close ladder info window by pressing [ALT+L].</p>
 		<p>Cloud button is for updating data manually. You can update by clicking it. It will receive match data from spreadsheet. Updating data takes a few seconds. just wait. It recieves data automatically when ladder window is opened first time only.</p>
 		<p>It shows your matches to play when match data is received.</p>
@@ -532,11 +536,11 @@ AMQ_addStyle(`
 		padding: 5px 7px;
 	}
 	.ladderPanelMessage {
-        width: 120px;
-        margin: 3px 3px 5px 5px;
-        height: 30px;
-        text-overflow: ellipsis;
-        float: left;
+		width: 120px;
+		margin: 3px 3px 5px 5px;
+		height: 30px;
+		text-overflow: ellipsis;
+		float: left;
 	}
 	#ladderWindowTableContainer {
 		padding: 10px;
