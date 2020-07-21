@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Ladder Assist
 // @namespace    https://github.com/nyamu-amq
-// @version      0.5
+// @version      0.6
 // @description  
 // @author       nyamu
 // @grant        GM_xmlhttpRequest
@@ -75,7 +75,8 @@ function createLadderWindow() {
 						users.push("@"+data[2]);
 					}
 				}
-				copyToClipboard(users.join(" "));
+				if(users.length>0)
+					copyToClipboard(users.join(" ")+" ");
 			})
 			.popover({
 				placement: "bottom",
@@ -261,7 +262,7 @@ function updatePendingTable() {
 
 		let pingButton = $(`<div class="clickAble"><i aria-hidden="true" class="fa fa-phone"></i></div>`)
 		.click(function () {
-			copyToClipboard("@"+data[2]);
+			copyToClipboard("@"+data[2]+" ");
 		})
 		.popover({
 			placement: "bottom",
@@ -402,7 +403,8 @@ function hostRoom(type, tier) {
 	type=type.toLowerCase();
 	tier=tier.toLowerCase();
 	hostModal.selectStandard();
-	let settingObject = hostModal._settingStorage._serilizer.decode("2020k11111030k000001110000000k00k051o00k012r02i0a46311002s0111111111002s0111002s01a111111111102a1111111111i61k403-11111--");
+	let settingObject = hostModal._settingStorage._serilizer.decode("2020k11111030k000001110000000k00k051o00k012r02i0a46311002s0111111111002s0111002s01a111111111102a1111111111i01k403-11111--");
+
 	hostModal.changeSettings(settingObject);
 	setTimeout(()=>{
 		hostModal.$roomName.val("IHI");
