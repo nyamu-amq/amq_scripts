@@ -49,6 +49,7 @@ im so lazy to write usage.... and english is too hard for me..../o\
 - [Ctrl + Down] : start vote for returning lobby if game started and you are host
 
 ### amqLadderAssist.user.js
+- This script is written to make IHI ladder game more comfortable.
 - You can open and close ladder info window by pressing [ALT+L].
 - Cloud button is for updating data manually. You can update by clicking it. It will receive match data from spreadsheet. Updating data takes a few seconds. just wait. It recieves data automatically when ladder window is opened first time only.
 - It shows your matches to play when match data is received.
