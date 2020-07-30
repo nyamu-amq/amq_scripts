@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Ladder Assist
 // @namespace    https://github.com/nyamu-amq
-// @version      0.7
+// @version      0.8
 // @description  
 // @author       nyamu
 // @grant        GM_xmlhttpRequest
@@ -72,7 +72,7 @@ function createLadderWindow() {
 				let users=[];
 				for(let data of matchData) {
 					if(users.indexOf("@"+data[2])===-1) {
-						users.push("@"+data[2]);
+						users.push("<@"+data[2]+">");
 					}
 				}
 				if(users.length>0)
@@ -117,7 +117,6 @@ function createLadderWindow() {
 	ladderWindow.panels[1].panel.append(ladderWindowTable);
 
 	clearTable();
-
 }
 function checkType(type) {
 	type=type.toLowerCase();
