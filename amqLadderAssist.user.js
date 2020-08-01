@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Ladder Assist
 // @namespace    https://github.com/nyamu-amq
-// @version      0.8
+// @version      0.9
 // @description  
 // @author       nyamu
 // @grant        GM_xmlhttpRequest
@@ -97,6 +97,8 @@ function createLadderWindow() {
 			.append($(`<option value="pendingrandomeds">Pending Random Eds</option>`))
 			.append($(`<option value="pendingrandomins">Pending Random Ins</option>`))
 			.append($(`<option value="pendingtop1000">Pending Top1000Anime</option>`))
+			.append($(`<option value="pendinglotsofsongs">Pending LotsOfSongs</option>`))
+
 			.append($(`<option value="completed">All Completed Matches</option>`))
 			.append($(`<option value="completedlistall">Completed List All</option>`))
 			.append($(`<option value="completedlistops">Completed List Ops</option>`))
@@ -107,6 +109,7 @@ function createLadderWindow() {
 			.append($(`<option value="completedrandomeds">Completed Random Eds</option>`))
 			.append($(`<option value="completedrandomins">Completed Random Ins</option>`))
 			.append($(`<option value="completedtop1000">Completed Top1000Anime</option>`))
+			.append($(`<option value="completedlotsofsongs">Completed LotsOfSongs</option>`))
 			.change(function () {
 				ChangeTableMode();
 			})
@@ -128,6 +131,9 @@ function checkType(type) {
 	}
 	else if(strMode.includes("1000")) {
 		if(!type.includes("1000")) return false;
+	}
+	else if(strMode.includes("lotsofsongs")) {
+		if(!type.includes("lotsofsongs")) return false;
 	}
 
 	if(strMode.endsWith("ops")) {
@@ -390,6 +396,15 @@ function getDifficulty(type, tier) {
 		settings={
 			"diamond":[0,40],
 			"platinum":[0,40],
+			"gold":[0,60],
+			"silver":[0,100],
+			"bronze":[20,100],
+		};
+	}
+	else if(type.includes('lotsofsongs')) {
+		settings={
+			"diamond":[0,60],
+			"platinum":[0,60],
 			"gold":[0,60],
 			"silver":[0,100],
 			"bronze":[20,100],
