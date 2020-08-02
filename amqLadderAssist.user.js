@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Ladder Assist
 // @namespace    https://github.com/nyamu-amq
-// @version      0.9
+// @version      0.10
 // @description  
 // @author       nyamu
 // @grant        GM_xmlhttpRequest
@@ -267,7 +267,7 @@ function updatePendingTable() {
 
 		let pingButton = $(`<div class="clickAble"><i aria-hidden="true" class="fa fa-phone"></i></div>`)
 		.click(function () {
-			copyToClipboard("@"+data[2]+" ");
+			copyToClipboard("<@"+data[2]+"> ");
 		})
 		.popover({
 			placement: "bottom",
