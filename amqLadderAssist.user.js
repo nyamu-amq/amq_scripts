@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Ladder Assist
 // @namespace    https://github.com/nyamu-amq
-// @version      0.10
+// @version      0.11
 // @description  
 // @author       nyamu
 // @grant        GM_xmlhttpRequest
@@ -98,6 +98,7 @@ function createLadderWindow() {
 			.append($(`<option value="pendingrandomins">Pending Random Ins</option>`))
 			.append($(`<option value="pendingtop1000">Pending Top1000Anime</option>`))
 			.append($(`<option value="pendinglotsofsongs">Pending LotsOfSongs</option>`))
+			.append($(`<option value="pending2011to2020">Pending 2011to2020</option>`))
 
 			.append($(`<option value="completed">All Completed Matches</option>`))
 			.append($(`<option value="completedlistall">Completed List All</option>`))
@@ -110,6 +111,7 @@ function createLadderWindow() {
 			.append($(`<option value="completedrandomins">Completed Random Ins</option>`))
 			.append($(`<option value="completedtop1000">Completed Top1000Anime</option>`))
 			.append($(`<option value="completedlotsofsongs">Completed LotsOfSongs</option>`))
+			.append($(`<option value="completed2011to2020">Completed 2011to2020</option>`))
 			.change(function () {
 				ChangeTableMode();
 			})
@@ -134,6 +136,9 @@ function checkType(type) {
 	}
 	else if(strMode.includes("lotsofsongs")) {
 		if(!type.includes("lotsofsongs")) return false;
+	}
+	else if(strMode.includes("2011to2020")) {
+		if(!type.includes("2011to2020")) return false;
 	}
 
 	if(strMode.endsWith("ops")) {
@@ -208,11 +213,11 @@ function ChangeTableMode() {
 }
 
 createLadderWindow();
+AllPlayersList.prototype.stopTracking=function(){};
 
 var lastRequest=0;
 function openLadderWindow() {
 	if(lastRequest===0) {
-		socialTab.allPlayerList.TRACKING_TIMEOUT=9999999999;
 		socialTab.allPlayerList.startTracking();
 		clearTable();
 		sendRequest();
@@ -375,36 +380,27 @@ function copyToClipboard(str) {
 function getDifficulty(type, tier) {
 	let settings={};
 	if(type.includes('random')) {
-		settings={
-			"diamond":[0,100],
-			"platinum":[0,100],
-			"gold":[10,100],
-			"silver":[20,100],
-			"bronze":[30,100],
-		};
+		settings={"diamond":[0,100],"platinum":[0,100],"gold":[10,100],"silver":[20,100],"bronze":[30,100]};
 	}
 	else if(type.includes('list')) {
-		settings={
-			"diamond":[0,40],
-			"platinum":[0,40],
-			"gold":[0,40],
-			"silver":[0,60],
-			"bronze":[0,100],
-		};
+		settings={"diamond":[0,40],"platinum":[0,40],"gold":[0,40],"silver":[0,60],"bronze":[0,100]};
 	}
 	else if(type.includes('1000')) {
-		settings={
-			"diamond":[0,40],
-			"platinum":[0,40],
-			"gold":[0,60],
-			"silver":[0,100],
-			"bronze":[20,100],
-		};
+		settings={"diamond":[0,40],"platinum":[0,40],"gold":[0,60],"silver":[0,100],"bronze":[20,100]};
 	}
 	else if(type.includes('lotsofsongs')) {
 		settings={
 			"diamond":[0,60],
 			"platinum":[0,60],
+			"gold":[0,60],
+			"silver":[0,100],
+			"bronze":[20,100],
+		};
+	}
+	else if(type.includes('2011to2020')) {
+		settings={
+			"diamond":[0,40],
+			"platinum":[0,40],
 			"gold":[0,60],
 			"silver":[0,100],
 			"bronze":[20,100],
@@ -428,7 +424,7 @@ function hostRoom(type, tier, matchid) {
 
 		hostModal.songDiffAdvancedSwitch.setOn(true);
 		hostModal.songDiffRangeSliderCombo.setValue(getDifficulty(type,tier));
-		if(type.includes('random')) hostModal.$songPool.slider('setValue',1);
+		if(type.includes('random') || type.includes('2011to2020')) hostModal.$songPool.slider('setValue',1);
 		else hostModal.$songPool.slider('setValue',3);
 		if(type.includes('opening')) {
 			hostModal.$songTypeEnding.prop("checked",false);
@@ -441,6 +437,10 @@ function hostRoom(type, tier, matchid) {
 		else if(type.includes('insert')) {
 			hostModal.$songTypeOpening.prop("checked",false);
 			hostModal.$songTypeEnding.prop("checked",false);
+		}
+
+		if(type.includes('2011to2020')) {
+			hostModal.vintageRangeSliderCombo.setValue([2011,2020]);
 		}
 
 		if(viewChanger.currentView==="roomBrowser") roomBrowser.host();
@@ -469,7 +469,7 @@ function sendRequest() {
 		headers: {
 			"Content-Type": "application/x-www-form-urlencoded"
 		},
-		data: "cm=user&user="+selfName,
+		data: "cm=user2&user="+selfName,
 		onload: function (response) {
 			var res=JSON.parse(response.responseText);
 			matchData=res.data;
