@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Ladder Assist
 // @namespace    https://github.com/nyamu-amq
-// @version      0.11
+// @version      0.12
 // @description  
 // @author       nyamu
 // @grant        GM_xmlhttpRequest
@@ -222,8 +222,9 @@ function openLadderWindow() {
 		clearTable();
 		sendRequest();
 	}
-	//socialTab.allPlayerList.loadAllOnline();
+	else socialTab.allPlayerList.loadAllOnline();
 	ladderWindow.open();
+	updateOpponentOnlineState();
 }
 
 function updateLadderWindow() {
@@ -449,6 +450,7 @@ function hostRoom(type, tier, matchid) {
 }
 
 function isOnline(username) {
+	if($.inArray(username,socialTab.onlineFriends)>-1) return true;
 	return socialTab.allPlayerList._playerEntries.hasOwnProperty(username);
 }
 
@@ -495,6 +497,9 @@ function inviteUser(playerName) {
 	});
 }
 
+new Listener("friend state change", function (change) {
+	setTimeout(() => {updateOpponentOnlineState();},1);
+}).bindListener();
 new Listener("online user change", function (change) {
 	setTimeout(() => {updateOpponentOnlineState();},1);
 }).bindListener();
