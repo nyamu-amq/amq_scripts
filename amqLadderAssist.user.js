@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Ladder Assist
 // @namespace    https://github.com/nyamu-amq
-// @version      0.12
+// @version      0.13
 // @description  
 // @author       nyamu
 // @grant        GM_xmlhttpRequest
@@ -449,9 +449,14 @@ function hostRoom(type, tier, matchid) {
 	},1);
 }
 
+function arrayToLower(arr) {
+	return arr.join('|').toLowerCase().split('|');
+}
+
 function isOnline(username) {
-	if($.inArray(username,socialTab.onlineFriends)>-1) return true;
-	return socialTab.allPlayerList._playerEntries.hasOwnProperty(username);
+	username=username.toLowerCase();
+	if($.inArray(username,arrayToLower(socialTab.onlineFriends))>-1) return true;
+	return $.inArray(arrayToLower(Object.keys(socialTab.allPlayerList._playerEntries)))>-1;
 }
 
 var matchData=[];
