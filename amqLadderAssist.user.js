@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Ladder Assist
 // @namespace    https://github.com/nyamu-amq
-// @version      0.13
+// @version      0.14
 // @description  
 // @author       nyamu
 // @grant        GM_xmlhttpRequest
@@ -413,37 +413,46 @@ function hostRoom(type, tier, matchid) {
 	if(viewChanger.currentView!=="roomBrowser" && !(lobby.inLobby && lobby.isHost) ) return;
 	type=type.toLowerCase();
 	tier=tier.toLowerCase();
-	hostModal.selectStandard();
-	hostModal.changeSettings(hostModal.DEFUALT_SETTINGS);
+
+	hostModal.setModeHostGame();
+	var roomSettings={};
+	roomSettings=JSON.parse(JSON.stringify(hostModal.DEFUALT_SETTINGS));
+	roomSettings.roomName=`IHI #${matchid}`;
+	roomSettings.privateRoom=true;
+	roomSettings.password=`ladder`;
+	roomSettings.roomSize=2;
+	if(type.includes('random') || type.includes('2011to2020')) {
+		roomSettings.songSelection.advancedValue.watched=0;
+		roomSettings.songSelection.advancedValue.unwatched=0;
+		roomSettings.songSelection.advancedValue.random=20;
+	}
+	else {
+		roomSettings.songSelection.advancedValue.watched=20;
+		roomSettings.songSelection.advancedValue.unwatched=0;
+		roomSettings.songSelection.advancedValue.random=0;
+	}
+	roomSettings.songDifficulity.advancedOn=true;
+	roomSettings.songDifficulity.advancedValue=getDifficulty(type,tier);
+	roomSettings.songType.standardValue.inserts=true;
+
+	if(type.includes('opening')) {
+		roomSettings.songType.standardValue.endings=false;
+		roomSettings.songType.standardValue.inserts=false;
+	}
+	else if(type.includes('ending')) {
+		roomSettings.songType.standardValue.openings=false;
+		roomSettings.songType.standardValue.inserts=false;
+	}
+	else if(type.includes('insert')) {
+		roomSettings.songType.standardValue.openings=false;
+		roomSettings.songType.standardValue.endings=false;
+	}
+	if(type.includes('2011to2020')) {
+		roomSettings.vintage.standardValue.years=[2011,2020];
+	}
+	hostModal.changeSettings(roomSettings);
+
 	setTimeout(()=>{
-		hostModal.$roomName.val(`IHI #${matchid}`);
-		hostModal.$privateCheckbox.prop("checked",true);
-		hostModal.$passwordInput.val("ladder");
-		hostModal.roomSizeSwitch.setOn(false);
-		hostModal.$roomSize.slider('setValue', 2, false, true);
-		hostModal.$songTypeInsert.prop("checked",true);
-
-		hostModal.songDiffAdvancedSwitch.setOn(true);
-		hostModal.songDiffRangeSliderCombo.setValue(getDifficulty(type,tier));
-		if(type.includes('random') || type.includes('2011to2020')) hostModal.$songPool.slider('setValue',1);
-		else hostModal.$songPool.slider('setValue',3);
-		if(type.includes('opening')) {
-			hostModal.$songTypeEnding.prop("checked",false);
-			hostModal.$songTypeInsert.prop("checked",false);
-		}
-		else if(type.includes('ending')) {
-			hostModal.$songTypeOpening.prop("checked",false);
-			hostModal.$songTypeInsert.prop("checked",false);
-		}
-		else if(type.includes('insert')) {
-			hostModal.$songTypeOpening.prop("checked",false);
-			hostModal.$songTypeEnding.prop("checked",false);
-		}
-
-		if(type.includes('2011to2020')) {
-			hostModal.vintageRangeSliderCombo.setValue([2011,2020]);
-		}
-
 		if(viewChanger.currentView==="roomBrowser") roomBrowser.host();
 		else lobby.changeGameSettings();
 	},1);
