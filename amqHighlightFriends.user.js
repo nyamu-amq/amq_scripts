@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Highlight Friends
 // @namespace    https://github.com/nyamu-amq
-// @version      0.19
+// @version      0.20
 // @description  Apply color to name of yourself and friends. and more
 // @author       nyamu, ensorcell
 // @match        https://animemusicquiz.com/*
@@ -581,18 +581,18 @@ function ColorChanged() {
 	let selfscorebox=$("#smColorSelfScorebox").prop("checked");
 	$(".qpsPlayerName.self").css("color", selfscorebox?selfcolor:"");
 	$(".qpsPlayerName.self").css("text-shadow", selfscorebox?"0 0 10px "+selfshadow:"");
-	$(".qpAvatarNameContainer.self").css("color", $("#smColorSelfName").prop("checked")?selfcolor:"");
-	$(".qpAvatarLevelText.self").css("color", $("#smColorSelfLevel").prop("checked")?selfcolor:"");
-	$(".qpAvatarPointText.self").css("color", $("#smColorSelfPoint").prop("checked")?selfcolor:"");
+	$(".qpAvatarName.self").css("color", $("#smColorSelfName").prop("checked")?selfcolor:"");
+	$(".qpAvatarLevel.self").css("color", $("#smColorSelfLevel").prop("checked")?selfcolor:"");
+	$(".qpAvatarScore.self").css("color", $("#smColorSelfPoint").prop("checked")?selfcolor:"");
 	$(".gcUserName.self").css("color", $("#smColorSelfChat").prop("checked")?selfcolor:"");
 	$(".gcSpectatorItem.self").children("h3").css("color", $("#smColorSelfSpec").prop("checked")?$("#smColorSelfColor").val():"");
 
 	let friendscorebox=$("#smColorFriendScorebox").prop("checked");
 	$(".qpsPlayerName.friend").css("color", friendscorebox?friendcolor:"");
 	$(".qpsPlayerName.friend").css("text-shadow", friendscorebox?"0 0 10px "+friendshadow:"");
-	$(".qpAvatarNameContainer.friend").css("color", $("#smColorFriendName").prop("checked")?friendcolor:"");
-	$(".qpAvatarLevelText.friend").css("color", $("#smColorFriendLevel").prop("checked")?friendcolor:"");
-	$(".qpAvatarPointText.friend").css("color", $("#smColorFriendPoint").prop("checked")?friendcolor:"");
+	$(".qpAvatarName.friend").css("color", $("#smColorFriendName").prop("checked")?friendcolor:"");
+	$(".qpAvatarLevel.friend").css("color", $("#smColorFriendLevel").prop("checked")?friendcolor:"");
+	$(".qpAvatarScore.friend").css("color", $("#smColorFriendPoint").prop("checked")?friendcolor:"");
 	$(".gcUserName.friend").css("color", $("#smColorFriendChat").prop("checked")?friendcolor:"");
 	$(".gcSpectatorItem.friend").children("h3").css("color", $("#smColorFriendSpec").prop("checked")?$("#smColorFriendColor").val():"");
 
@@ -634,40 +634,37 @@ function colorScorebox() {
 
 function colorAvatar() {
 	if(!quiz.inQuiz) return;
-	$(".qpAvatarNameContainer").not(".shadow").children("span").each((index, elem) => {
+	$(".qpAvatarName").each((index, elem) => {
 		if($(elem).text() === selfName) {
-			let parent=$(elem).parent();
-			parent.addClass("self")
+			$(elem).addClass("self")
 				.css("color", $("#smColorSelfName").prop("checked")?$("#smColorSelfColor").val():"");
-			let parent2=parent.parent();
-			parent2.find(".qpAvatarLevelText").not(".shadow")
+			let parent=$(elem).parent();
+			parent.find(".qpAvatarLevelBar > .qpAvatarLevel")
 				.addClass("self")
 				.css("color", $("#smColorSelfLevel").prop("checked")?$("#smColorSelfColor").val():"");
-			parent2.find(".qpAvatarPointText").not(".shadow")
+			parent.find(".qpAvatarScoreContainer > .qpAvatarScore")
 				.addClass("self")
 				.css("color", $("#smColorSelfPoint").prop("checked")?$("#smColorSelfColor").val():"");
 		}
 		else if(socialTab.isFriend($(elem).text())) {
-			let parent=$(elem).parent();
-			parent.addClass("friend")
+			$(elem).addClass("friend")
 				.css("color", $("#smColorFriendName").prop("checked")?$("#smColorFriendColor").val():"");
-			let parent2=parent.parent();
-			parent2.find(".qpAvatarLevelText").not(".shadow")
+			let parent=$(elem).parent();
+			parent.find(".qpAvatarLevelBar > .qpAvatarLevel")
 				.addClass("friend")
 				.css("color", $("#smColorFriendLevel").prop("checked")?$("#smColorFriendColor").val():"");
-			parent2.find(".qpAvatarPointText").not(".shadow")
+			parent.find(".qpAvatarScoreContainer > .qpAvatarScore")
 				.addClass("friend")
 				.css("color", $("#smColorFriendPoint").prop("checked")?$("#smColorFriendColor").val():"");
 		}
 		else {
-			let parent=$(elem).parent();
-			parent.removeClass("friend")
+			$(elem).removeClass("friend")
 				.css("color", "");
-			let parent2=parent.parent();
-			parent2.find(".qpAvatarLevelText").not(".shadow")
+			let parent=$(elem).parent();
+			parent.find(".qpAvatarLevelBar > .qpAvatarLevel")
 				.removeClass("friend")
 				.css("color", "");
-			parent2.find(".qpAvatarPointText").not(".shadow")
+			parent.find(".qpAvatarScoreContainer > .qpAvatarScore")
 				.removeClass("friend")
 				.css("color", "");
 		}
