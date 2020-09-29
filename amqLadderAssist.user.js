@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Ladder Assist
 // @namespace    https://github.com/nyamu-amq
-// @version      0.14
+// @version      0.15
 // @description  
 // @author       nyamu
 // @grant        GM_xmlhttpRequest
@@ -55,68 +55,68 @@ function createLadderWindow() {
 	});
 
 	ladderWindow.panels[0].panel
-		.append($(`<button class="btn btn-primary ladderPanelButton" type="button"><i aria-hidden="true" class="fa fa-cloud-download"></i></button`)
-			.click(() => {
-				sendRequest();
-			})
-			.popover({
-				placement: "bottom",
-				content: "Update match data",
-				trigger: "hover",
-				container: "body",
-				animation: false
-			})
+	.append($(`<button class="btn btn-primary ladderPanelButton" type="button"><i aria-hidden="true" class="fa fa-cloud-download"></i></button`)
+		.click(() => {
+			sendRequest();
+		})
+		.popover({
+			placement: "bottom",
+			content: "Update match data",
+			trigger: "hover",
+			container: "body",
+			animation: false
+		})
 		)
-		.append($(`<button class="btn btn-default ladderPanelButton" type="button"><i aria-hidden="true" class="fa fa-phone"></i></button`)
-			.click(() => {
-				let users=[];
-				for(let data of matchData) {
-					if(users.indexOf("@"+data[2])===-1) {
-						users.push("<@"+data[2]+">");
-					}
+	.append($(`<button class="btn btn-default ladderPanelButton" type="button"><i aria-hidden="true" class="fa fa-phone"></i></button`)
+		.click(() => {
+			let users=[];
+			for(let data of matchData) {
+				if(users.indexOf("@"+data[2])===-1) {
+					users.push("<@"+data[2]+">");
 				}
-				if(users.length>0)
-					copyToClipboard(users.join(" ")+" ");
-			})
-			.popover({
-				placement: "bottom",
-				content: "Copy discord id of all opponents to clipboard",
-				trigger: "hover",
-				container: "body",
-				animation: false
-			})
+			}
+			if(users.length>0)
+				copyToClipboard(users.join(" ")+" ");
+		})
+		.popover({
+			placement: "bottom",
+			content: "Copy discord id of all opponents to clipboard",
+			trigger: "hover",
+			container: "body",
+			animation: false
+		})
 		)
-		.append($(`<select id="tableViewMode"></select>`)
-			.append($(`<option value="pending" selected>All Pending Matches</option>`))
-			.append($(`<option value="pendinglistall">Pending List All</option>`))
-			.append($(`<option value="pendinglistops">Pending List Ops</option>`))
-			.append($(`<option value="pendinglisteds">Pending List Eds</option>`))
-			.append($(`<option value="pendinglistins">Pending List Ins</option>`))
-			.append($(`<option value="pendingrandomall">Pending Random All</option>`))
-			.append($(`<option value="pendingrandomops">Pending Random Ops</option>`))
-			.append($(`<option value="pendingrandomeds">Pending Random Eds</option>`))
-			.append($(`<option value="pendingrandomins">Pending Random Ins</option>`))
-			.append($(`<option value="pendingtop1000">Pending Top1000Anime</option>`))
-			.append($(`<option value="pendinglotsofsongs">Pending LotsOfSongs</option>`))
-			.append($(`<option value="pending2011to2020">Pending 2011to2020</option>`))
+	.append($(`<select id="tableViewMode"></select>`)
+		.append($(`<option value="pending" selected>All Pending Matches</option>`))
+		.append($(`<option value="pendinglistall">Pending List All</option>`))
+		.append($(`<option value="pendinglistops">Pending List Ops</option>`))
+		.append($(`<option value="pendinglisteds">Pending List Eds</option>`))
+		.append($(`<option value="pendinglistins">Pending List Ins</option>`))
+		.append($(`<option value="pendingrandomall">Pending Random All</option>`))
+		.append($(`<option value="pendingrandomops">Pending Random Ops</option>`))
+		.append($(`<option value="pendingrandomeds">Pending Random Eds</option>`))
+		.append($(`<option value="pendingrandomins">Pending Random Ins</option>`))
+		.append($(`<option value="pendingtop1000">Pending Top1000Anime</option>`))
+		.append($(`<option value="pendinglotsofsongs">Pending LotsOfSongs</option>`))
+		.append($(`<option value="pending2011to2020">Pending 2011to2020</option>`))
 
-			.append($(`<option value="completed">All Completed Matches</option>`))
-			.append($(`<option value="completedlistall">Completed List All</option>`))
-			.append($(`<option value="completedlistops">Completed List Ops</option>`))
-			.append($(`<option value="completedlisteds">Completed List Eds</option>`))
-			.append($(`<option value="completedlistins">Completed List Ins</option>`))
-			.append($(`<option value="completedrandomall">Completed Random All</option>`))
-			.append($(`<option value="completedrandomops">Completed Random Ops</option>`))
-			.append($(`<option value="completedrandomeds">Completed Random Eds</option>`))
-			.append($(`<option value="completedrandomins">Completed Random Ins</option>`))
-			.append($(`<option value="completedtop1000">Completed Top1000Anime</option>`))
-			.append($(`<option value="completedlotsofsongs">Completed LotsOfSongs</option>`))
-			.append($(`<option value="completed2011to2020">Completed 2011to2020</option>`))
-			.change(function () {
-				ChangeTableMode();
-			})
+		.append($(`<option value="completed">All Completed Matches</option>`))
+		.append($(`<option value="completedlistall">Completed List All</option>`))
+		.append($(`<option value="completedlistops">Completed List Ops</option>`))
+		.append($(`<option value="completedlisteds">Completed List Eds</option>`))
+		.append($(`<option value="completedlistins">Completed List Ins</option>`))
+		.append($(`<option value="completedrandomall">Completed Random All</option>`))
+		.append($(`<option value="completedrandomops">Completed Random Ops</option>`))
+		.append($(`<option value="completedrandomeds">Completed Random Eds</option>`))
+		.append($(`<option value="completedrandomins">Completed Random Ins</option>`))
+		.append($(`<option value="completedtop1000">Completed Top1000Anime</option>`))
+		.append($(`<option value="completedlotsofsongs">Completed LotsOfSongs</option>`))
+		.append($(`<option value="completed2011to2020">Completed 2011to2020</option>`))
+		.change(function () {
+			ChangeTableMode();
+		})
 		)
-		.append($(`<div class="ladderPanelMessage"></div>`));
+	.append($(`<div class="ladderPanelMessage"></div>`));
 
 	ladderWindowTable = $(`<table id="ladderWindowTable" class="table floatingContainer"></table>`);
 	ladderWindow.panels[1].panel.append(ladderWindowTable);
@@ -369,13 +369,13 @@ function updateOpponentOnlineState() {
 	})
 }
 function copyToClipboard(str) {
-  const el = document.createElement('textarea');
-  el.value = str;
-  document.body.appendChild(el);
-  el.select();
-  document.execCommand('copy');
-  document.body.removeChild(el);
-  displayMessage("Copied to clipboard", str);
+	const el = document.createElement('textarea');
+	el.value = str;
+	document.body.appendChild(el);
+	el.select();
+	document.execCommand('copy');
+	document.body.removeChild(el);
+	displayMessage("Copied to clipboard", str);
 };
 
 function getDifficulty(type, tier) {
@@ -465,7 +465,7 @@ function arrayToLower(arr) {
 function isOnline(username) {
 	username=username.toLowerCase();
 	if($.inArray(username,arrayToLower(socialTab.onlineFriends))>-1) return true;
-	return $.inArray(arrayToLower(Object.keys(socialTab.allPlayerList._playerEntries)))>-1;
+	return $.inArray(username,arrayToLower(Object.keys(socialTab.allPlayerList._playerEntries)))>-1;
 }
 
 var matchData=[];
@@ -537,17 +537,17 @@ AMQ_addScriptData({
 	name: "Ladder Assist",
 	author: "nyamu",
 	description: `
-		<p>This script is written to make IHI ladder game more comfortable.</p>
-		<p>You can open and close ladder info window by pressing [ALT+L].</p>
-		<p>Cloud button is for updating data manually. You can update by clicking it. It will receive match data from spreadsheet. Updating data takes a few seconds. just wait. It recieves data automatically when ladder window is opened first time only.</p>
-		<p>It shows your matches to play when match data is received.</p>
-		<p>Opponents of green rows are online, opponents of red rows are offline.</p>
-		<p>Tier is lower one of two.</p>
-		<p>R column button is for making room and changing settings. If you clicked it when you are outside of room, it makes room with match type and tier settings. If you clicked it when you are in a room and you are host, it changes settings.</p>
-		<p>I column button is for inviting opponent. You can invite opponent by clicking it. it works when you are in a room and opponent is online.</p>
-		<p>P column button is for copying opponent's discord id to clipboard. It is useful for pinging opponent.</p>
-		<p>W/L/D column buttons are for copying Win/Lose/Draw report command to clipboard. It is just for copying text. It doesn't report automatically.</p>
-		<p>Phone button on the left side of cloud button is for copying all opponent's discord id to clipboard. It is useful for pinging all opponents.</p>
+	<p>This script is written to make IHI ladder game more comfortable.</p>
+	<p>You can open and close ladder info window by pressing [ALT+L].</p>
+	<p>Cloud button is for updating data manually. You can update by clicking it. It will receive match data from spreadsheet. Updating data takes a few seconds. just wait. It recieves data automatically when ladder window is opened first time only.</p>
+	<p>It shows your matches to play when match data is received.</p>
+	<p>Opponents of green rows are online, opponents of red rows are offline.</p>
+	<p>Tier is lower one of two.</p>
+	<p>R column button is for making room and changing settings. If you clicked it when you are outside of room, it makes room with match type and tier settings. If you clicked it when you are in a room and you are host, it changes settings.</p>
+	<p>I column button is for inviting opponent. You can invite opponent by clicking it. it works when you are in a room and opponent is online.</p>
+	<p>P column button is for copying opponent's discord id to clipboard. It is useful for pinging opponent.</p>
+	<p>W/L/D column buttons are for copying Win/Lose/Draw report command to clipboard. It is just for copying text. It doesn't report automatically.</p>
+	<p>Phone button on the left side of cloud button is for copying all opponent's discord id to clipboard. It is useful for pinging all opponents.</p>
 	`
 });
 AMQ_addStyle(`
