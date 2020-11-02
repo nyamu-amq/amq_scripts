@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Ladder Assist
 // @namespace    https://github.com/nyamu-amq
-// @version      0.16
+// @version      0.17
 // @description  
 // @author       nyamu
 // @grant        GM_xmlhttpRequest
@@ -100,6 +100,7 @@ function createLadderWindow() {
 		.append($(`<option value="pendinglotsofsongs">Pending LotsOfSongs</option>`))
 		.append($(`<option value="pending2011to2020">Pending 2011to2020</option>`))
 		.append($(`<option value="pending2001to2010">Pending 2001to2010</option>`))
+		.append($(`<option value="pending1944to2000">Pending 1944to2000</option>`))
 
 		.append($(`<option value="completed">All Completed Matches</option>`))
 		.append($(`<option value="completedlistall">Completed List All</option>`))
@@ -114,6 +115,7 @@ function createLadderWindow() {
 		.append($(`<option value="completedlotsofsongs">Completed LotsOfSongs</option>`))
 		.append($(`<option value="completed2011to2020">Completed 2011to2020</option>`))
 		.append($(`<option value="completed2001to2010">Completed 2001to2010</option>`))
+		.append($(`<option value="completed1944to2000">Completed 1944to2000</option>`))
 		.change(function () {
 			ChangeTableMode();
 		})
@@ -144,6 +146,9 @@ function checkType(type) {
 	}
 	else if(strMode.includes("2001to2010")) {
 		if(!type.includes("2001to2010")) return false;
+	}
+	else if(strMode.includes("1944to2000")) {
+		if(!type.includes("1944to2000")) return false;
 	}
 
 	if(strMode.endsWith("ops")) {
@@ -421,6 +426,15 @@ function getDifficulty(type, tier) {
 			"bronze":[30,100],
 		};
 	}
+	else if(type.includes('1944to2000')) {
+		settings={
+			"diamond":[0,100],
+			"platinum":[0,100],
+			"gold":[10,100],
+			"silver":[20,100],
+			"bronze":[30,100],
+		};
+	}
 	return settings[tier];
 }
 function hostRoom(type, tier, matchid) {
@@ -435,7 +449,7 @@ function hostRoom(type, tier, matchid) {
 	roomSettings.privateRoom=true;
 	roomSettings.password=`ladder`;
 	roomSettings.roomSize=2;
-	if(type.includes('random') || type.includes('2011to2020') || type.includes('2001to2010')) {
+	if(type.includes('random') || type.includes('2011to2020') || type.includes('2001to2010') || type.includes('1944to2000') ) {
 		roomSettings.songSelection.advancedValue.watched=0;
 		roomSettings.songSelection.advancedValue.unwatched=0;
 		roomSettings.songSelection.advancedValue.random=20;
@@ -464,8 +478,11 @@ function hostRoom(type, tier, matchid) {
 	if(type.includes('2011to2020')) {
 		roomSettings.vintage.standardValue.years=[2011,2020];
 	}
-	if(type.includes('2001to2010')) {
+	else if(type.includes('2001to2010')) {
 		roomSettings.vintage.standardValue.years=[2001,2010];
+	}
+	else if(type.includes('1944to2000')) {
+		roomSettings.vintage.standardValue.years=[1944,2000];
 	}
 	hostModal.changeSettings(roomSettings);
 
