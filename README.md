@@ -65,12 +65,10 @@ im so lazy to write usage.... and english is too hard for me..../o\
 - adjust volume with mouse wheel when mouse cursor is over video area or avatar area
 - it works in expand library also
 
-### amqNoFriendRoomFilter.user.js
-- add no friend room filter
-- ~~this script might crash page design if you are using Elodie's custom style....~~
-  + i think it has been fixed since version 0.2
+### ~~amqNoFriendRoomFilter.user.js~~
+friend filter is official now. remove this script on your browser if you added it
 
-
+---
 im not good at javascript/html/css yet. so this scripts might have some bugs
 
 codes of Joseph and Klem helped me to study javascript. thank you very much
