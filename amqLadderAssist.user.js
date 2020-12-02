@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Ladder Assist
 // @namespace    https://github.com/nyamu-amq
-// @version      0.18
+// @version      0.19
 // @description  
 // @author       nyamu
 // @grant        GM_xmlhttpRequest
@@ -116,6 +116,7 @@ function createLadderWindow() {
 		.append($(`<option value="completedlotsofsongs">Completed LotsOfSongs</option>`))
 		.append($(`<option value="completed2011to2020">Completed 2011to2020</option>`))
 		.append($(`<option value="completed2001to2010">Completed 2001to2010</option>`))
+		.append($(`<option value="completed1944to2000">Completed 1944to2000</option>`))
 		.append($(`<option value="completedrandomtag">Completed RandomTag</option>`))
 		.change(function () {
 			ChangeTableMode();
