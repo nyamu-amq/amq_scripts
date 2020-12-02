@@ -101,6 +101,7 @@ function createLadderWindow() {
 		.append($(`<option value="pending2011to2020">Pending 2011to2020</option>`))
 		.append($(`<option value="pending2001to2010">Pending 2001to2010</option>`))
 		.append($(`<option value="pending1944to2000">Pending 1944to2000</option>`))
+		.append($(`<option value="pendingrandomtag">Pending RandomTag</option>`))
 
 		.append($(`<option value="completed">All Completed Matches</option>`))
 		.append($(`<option value="completedlistall">Completed List All</option>`))
@@ -115,7 +116,7 @@ function createLadderWindow() {
 		.append($(`<option value="completedlotsofsongs">Completed LotsOfSongs</option>`))
 		.append($(`<option value="completed2011to2020">Completed 2011to2020</option>`))
 		.append($(`<option value="completed2001to2010">Completed 2001to2010</option>`))
-		.append($(`<option value="completed1944to2000">Completed 1944to2000</option>`))
+		.append($(`<option value="completedrandomtag">Completed RandomTag</option>`))
 		.change(function () {
 			ChangeTableMode();
 		})
