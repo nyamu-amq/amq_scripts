@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Ladder Assist
 // @namespace    https://github.com/nyamu-amq
-// @version      0.17
+// @version      0.18
 // @description  
 // @author       nyamu
 // @grant        GM_xmlhttpRequest
@@ -71,7 +71,7 @@ function createLadderWindow() {
 		.click(() => {
 			let users=[];
 			for(let data of matchData) {
-				if(users.indexOf("@"+data[2])===-1) {
+				if(users.indexOf("<@"+data[2]+">")===-1) {
 					users.push("<@"+data[2]+">");
 				}
 			}
@@ -131,6 +131,9 @@ function checkType(type) {
 	type=type.toLowerCase();
 	if(strMode.includes("list")) {
 		if(!type.includes("list")) return false;
+	}
+	else if(strMode.includes("randomtag")) {
+		if(!type.includes("randomtag")) return false;
 	}
 	else if(strMode.includes("random")) {
 		if(!type.includes("random")) return false;
@@ -259,7 +262,7 @@ function updatePendingTable() {
 
 		let roomButton = $(`<div class="clickAble"><i aria-hidden="true" class="fa fa-home"></i></div>`)
 		.click(function () {
-			hostRoom(data[1],data[4],data[0]);
+			hostRoom(data);
 		})
 		.popover({
 			placement: "bottom",
@@ -390,6 +393,16 @@ function copyToClipboard(str) {
 
 function getDifficulty(type, tier) {
 	let settings={};
+
+	if(type.includes('randomtag')) {
+		settings={
+			"diamond":[0,40],
+			"platinum":[0,40],
+			"gold":[0,60],
+			"silver":[0,100],
+			"bronze":[20,100],
+		};
+	}
 	if(type.includes('random')) {
 		settings={"diamond":[0,100],"platinum":[0,100],"gold":[10,100],"silver":[20,100],"bronze":[30,100]};
 	}
@@ -437,7 +450,12 @@ function getDifficulty(type, tier) {
 	}
 	return settings[tier];
 }
-function hostRoom(type, tier, matchid) {
+function hostRoom(data) {
+	var type=data[1];
+	var tier=data[4];
+	var matchid=data[0];
+	var extra=data[5];
+
 	if(viewChanger.currentView!=="roomBrowser" && !(lobby.inLobby && lobby.isHost) ) return;
 	type=type.toLowerCase();
 	tier=tier.toLowerCase();
@@ -483,6 +501,10 @@ function hostRoom(type, tier, matchid) {
 	}
 	else if(type.includes('1944to2000')) {
 		roomSettings.vintage.standardValue.years=[1944,2000];
+	}
+	else if(type.includes('tag')) {
+		var tagid=hostModal.tagFilter.awesomepleteInstance._list.find(x=>x['name']==extra)['id'].toString();
+		roomSettings.tags=[{'id':tagid,'state':1}];
 	}
 	hostModal.changeSettings(roomSettings);
 
