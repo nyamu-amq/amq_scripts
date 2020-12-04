@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Ladder Assist
 // @namespace    https://github.com/nyamu-amq
-// @version      0.19
+// @version      0.20
 // @description  
 // @author       nyamu
 // @grant        GM_xmlhttpRequest
@@ -405,7 +405,7 @@ function getDifficulty(type, tier) {
 			"bronze":[20,100],
 		};
 	}
-	if(type.includes('random')) {
+	else if(type.includes('random')) {
 		settings={"diamond":[0,100],"platinum":[0,100],"gold":[10,100],"silver":[20,100],"bronze":[30,100]};
 	}
 	else if(type.includes('list')) {
