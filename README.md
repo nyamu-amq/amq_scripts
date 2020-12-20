@@ -16,6 +16,10 @@ im so lazy to write usage.... and english is too hard for me..../o\
 - convert emoji shortcode in answer box when press enter
 - it works on room name also now
 
+### amqExpandLibraryAutoplay.user.js
+- it plays automatically when you selected a song in expand library
+- the resolution you selected will be kept when you selected another song (but highest resolution if the resolution is not exist)
+
 ### amqFriendOnlineNotifier.user.js
 - show notification when your friend is online
 
