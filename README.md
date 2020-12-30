@@ -12,6 +12,32 @@ im so lazy to write usage.... and english is too hard for me..../o\
 ### amqBugfix.user.js
 - it fixes bug that wrong game type on game settings
 
+### amqChatCommands.user.js
+- it enables chat commands
+  - commands for host in lobby
+    - /t [oei] : change songtype
+      - ex) /t oi => openings inserts. /t ei => endings inserts. /t e => endings only.
+    - /n (number) : change number of songs
+    - /d (number1)-(number2) : change difficulty
+      - ex) /d 0-40 => change difficulty to 0-40
+    - /random : change song selection to random
+    - /watched : change song selection to watched only
+    - /s (number) : change speed. amq allow one of 1, 1.5, 2, 4 only
+    - /spec (someone) : send someone to spec
+    - /kick (someone) : kick someone
+    - /host (someone) : give someone host
+  - commands for host in game
+    - /lb : start a vote for returning to lobby
+    - /pause : pause or unpause game
+  - commands for everyone in lobby
+    - /spec : change to spectator
+    - /join : change to player
+    - /queue : toggle queue when you are in lobby while game is progressing
+  - commands for everyone in game
+    - /v (number) : change volume 0-100
+    - /skip : skip current song
+    - /autothrow (answer) : start throwing with answer automatically. you can stop it by /autothrow without answer
+
 ### amqEmojiAnswer.js
 - convert emoji shortcode in answer box when press enter
 - it works on room name also now
