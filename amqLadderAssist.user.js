@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Ladder Assist
 // @namespace    https://github.com/nyamu-amq
-// @version      0.20
+// @version      0.21
 // @description  
 // @author       nyamu
 // @grant        GM_xmlhttpRequest
@@ -102,6 +102,7 @@ function createLadderWindow() {
 		.append($(`<option value="pending2001to2010">Pending 2001to2010</option>`))
 		.append($(`<option value="pending1944to2000">Pending 1944to2000</option>`))
 		.append($(`<option value="pendingrandomtag">Pending RandomTag</option>`))
+		.append($(`<option value="pendingtagbattle">Pending TagBattle</option>`))
 
 		.append($(`<option value="completed">All Completed Matches</option>`))
 		.append($(`<option value="completedlistall">Completed List All</option>`))
@@ -118,6 +119,7 @@ function createLadderWindow() {
 		.append($(`<option value="completed2001to2010">Completed 2001to2010</option>`))
 		.append($(`<option value="completed1944to2000">Completed 1944to2000</option>`))
 		.append($(`<option value="completedrandomtag">Completed RandomTag</option>`))
+		.append($(`<option value="completedtagbattle">Completed TagBattle</option>`))
 		.change(function () {
 			ChangeTableMode();
 		})
@@ -136,6 +138,9 @@ function checkType(type) {
 	}
 	else if(strMode.includes("randomtag")) {
 		if(!type.includes("randomtag")) return false;
+	}
+	else if(strMode.includes("tagbattle")) {
+		if(!type.includes("tagbattle")) return false;
 	}
 	else if(strMode.includes("random")) {
 		if(!type.includes("random")) return false;
@@ -396,7 +401,7 @@ function copyToClipboard(str) {
 function getDifficulty(type, tier) {
 	let settings={};
 
-	if(type.includes('randomtag')) {
+	if(type.includes('randomtag') || type.includes('tagbattle')) {
 		settings={
 			"diamond":[0,40],
 			"platinum":[0,40],
@@ -469,7 +474,7 @@ function hostRoom(data) {
 	roomSettings.privateRoom=true;
 	roomSettings.password=`ladder`;
 	roomSettings.roomSize=2;
-	if(type.includes('random') || type.includes('2011to2020') || type.includes('2001to2010') || type.includes('1944to2000') ) {
+	if(type.includes('random') || type.includes('2011to2020') || type.includes('2001to2010') || type.includes('1944to2000') || type.includes('tagbattle') ) {
 		roomSettings.songSelection.advancedValue.watched=0;
 		roomSettings.songSelection.advancedValue.unwatched=0;
 		roomSettings.songSelection.advancedValue.random=20;
@@ -504,7 +509,7 @@ function hostRoom(data) {
 	else if(type.includes('1944to2000')) {
 		roomSettings.vintage.standardValue.years=[1944,2000];
 	}
-	else if(type.includes('tag')) {
+	else if(type.includes('randomtag')) {
 		var tagid=hostModal.tagFilter.awesomepleteInstance._list.find(x=>x['name']==extra)['id'].toString();
 		roomSettings.tags=[{'id':tagid,'state':1}];
 	}
@@ -513,6 +518,8 @@ function hostRoom(data) {
 	setTimeout(()=>{
 		if(viewChanger.currentView==="roomBrowser") roomBrowser.host();
 		else lobby.changeGameSettings();
+		if(type.includes('tagbattle'))
+            gameChat.systemMessage('TagBattle : Each player should choose one Negative tag, and then choose one Optional tag once both Negative tags have been decided.');
 	},1);
 }
 
