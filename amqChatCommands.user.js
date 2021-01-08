@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Chat Commands
 // @namespace    https://github.com/nyamu-amq
-// @version      0.2
+// @version      0.3
 // @description  enable chat commands
 // @description  - commands for host in lobby
 // @description  -- /t [oei] : change songtype. ex) /t oi => openings inserts. /t ei => endings inserts. /t e => endings only.
@@ -30,7 +30,15 @@
 
 // ==/UserScript==
 var autothrow='';
-let commandListener = new Listener("Game Chat Message", (payload) => {
+new Listener("Game Chat Message", (payload) => {
+	processChatCommand(payload);
+}).bindListener();
+new Listener("game chat update", (payload) => {
+	payload.messages.forEach(message => {
+		processChatCommand(message);
+	});
+}).bindListener();
+function processChatCommand(payload) {
 	if(payload.sender !== selfName) return;
 	if(payload.message.startsWith("/s ")) {
 		if(!lobby.inLobby) return;
@@ -196,7 +204,7 @@ let commandListener = new Listener("Game Chat Message", (payload) => {
 		if(index>0) autothrow=payload.message.substr(index+1);
 		else autothrow='';
 	}
-}).bindListener();
+}
 
 let playNextSongListener = new Listener("play next song", payload => {
 	if(quiz.isSpectator) return;

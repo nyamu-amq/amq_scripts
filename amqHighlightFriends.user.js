@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Highlight Friends
 // @namespace    https://github.com/nyamu-amq
-// @version      0.20
+// @version      0.21
 // @description  Apply color to name of yourself and friends. and more
 // @author       nyamu, ensorcell
 // @match        https://animemusicquiz.com/*
@@ -672,21 +672,31 @@ function colorAvatar() {
 }
 
 new Listener("Game Chat Message", function (payload) {
-	if(payload.sender === selfName) {
+	updateChatMessage(payload);
+}).bindListener();
+
+new Listener("game chat update", function (payload) {
+	payload.messages.forEach(message => {
+		updateChatMessage(message);
+	});
+}).bindListener();
+
+function updateChatMessage(message) {
+	if(message.sender === selfName) {
 		setTimeout(() => {
-			$(`#gcPlayerMessage-${payload.messageId}`).find(".gcUserName")
+			$(`#gcPlayerMessage-${message.messageId}`).find(".gcUserName")
 				.addClass("self")
 				.css("color", $("#smColorSelfChat").prop("checked")?$("#smColorSelfColor").val():"");
 		},0);
 	}
-	else if (socialTab.isFriend(payload.sender)) {
+	else if (socialTab.isFriend(message.sender)) {
 		setTimeout(() => {
 			$(`#gcPlayerMessage-${payload.messageId}`).find(".gcUserName")
 				.addClass("friend")
 				.css("color", $("#smColorFriendChat").prop("checked")?$("#smColorFriendColor").val():"");
 		},0);
 	}
-}).bindListener()
+}
 
 new Listener("New Spectator", function (spectator) {
 	colorSpectators();
