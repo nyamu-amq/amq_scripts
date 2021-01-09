@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Highlight Friends
 // @namespace    https://github.com/nyamu-amq
-// @version      0.21
+// @version      0.22
 // @description  Apply color to name of yourself and friends. and more
 // @author       nyamu, ensorcell
 // @match        https://animemusicquiz.com/*
@@ -691,7 +691,7 @@ function updateChatMessage(message) {
 	}
 	else if (socialTab.isFriend(message.sender)) {
 		setTimeout(() => {
-			$(`#gcPlayerMessage-${payload.messageId}`).find(".gcUserName")
+			$(`#gcPlayerMessage-${message.messageId}`).find(".gcUserName")
 				.addClass("friend")
 				.css("color", $("#smColorFriendChat").prop("checked")?$("#smColorFriendColor").val():"");
 		},0);
