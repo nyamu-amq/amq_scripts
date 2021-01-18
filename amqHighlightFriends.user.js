@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Highlight Friends
 // @namespace    https://github.com/nyamu-amq
-// @version      0.23
+// @version      0.24
 // @description  Apply color to name of yourself and friends. and more
 // @author       nyamu, ensorcell
 // @match        https://animemusicquiz.com/*
@@ -724,16 +724,16 @@ function colorSpectators(){
 	});},0);
 }
 function isSelf(username) {
-	var s=username.indexOf(' ');
+	var s=username.indexOf('(');
 	if(s>-1) {
-		username=username.slice(0, s);
+		username=username.slice(0, s).trim();
 	}
 	return username===selfName;
 }
 function isFriend(username) {
-	var s=username.indexOf(' ');
+	var s=username.indexOf('(');
 	if(s>-1) {
-		username=username.slice(0, s);
+		username=username.slice(0, s).trim();
 	}
 	return socialTab.isFriend(username);
 }
