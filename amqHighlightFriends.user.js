@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Highlight Friends
 // @namespace    https://github.com/nyamu-amq
-// @version      0.22
+// @version      0.23
 // @description  Apply color to name of yourself and friends. and more
 // @author       nyamu, ensorcell
 // @match        https://animemusicquiz.com/*
@@ -635,7 +635,7 @@ function colorScorebox() {
 function colorAvatar() {
 	if(!quiz.inQuiz) return;
 	$(".qpAvatarName").each((index, elem) => {
-		if($(elem).text() === selfName) {
+		if(isSelf($(elem).text())) {
 			$(elem).addClass("self")
 				.css("color", $("#smColorSelfName").prop("checked")?$("#smColorSelfColor").val():"");
 			let parent=$(elem).parent();
@@ -646,7 +646,7 @@ function colorAvatar() {
 				.addClass("self")
 				.css("color", $("#smColorSelfPoint").prop("checked")?$("#smColorSelfColor").val():"");
 		}
-		else if(socialTab.isFriend($(elem).text())) {
+		else if(isFriend($(elem).text())) {
 			$(elem).addClass("friend")
 				.css("color", $("#smColorFriendName").prop("checked")?$("#smColorFriendColor").val():"");
 			let parent=$(elem).parent();
@@ -709,11 +709,11 @@ new Listener("Player Changed To Spectator", function (payload) {
 function colorSpectators(){
 	if(!quiz.inQuiz && !lobby.inLobby) return;
 	setTimeout(() => {$(".gcSpectatorItem").children("h3").each((index,elem)=> {
-		if($(elem).text() === selfName) {
+		if(isSelf($(elem).text())) {
 			$(elem).parent().addClass("self")
 			$(elem).css("color", $("#smColorSelfSpec").prop("checked")?$("#smColorSelfColor").val():"");
 		}
-		else if(socialTab.isFriend($(elem).text())) {
+		else if(isFriend($(elem).text())) {
 			$(elem).parent().addClass("friend")
 			$(elem).css("color", $("#smColorFriendSpec").prop("checked")?$("#smColorFriendColor").val():"");
 		}
@@ -722,6 +722,20 @@ function colorSpectators(){
 			$(elem).css("color","");
 		}
 	});},0);
+}
+function isSelf(username) {
+	var s=username.indexOf(' ');
+	if(s>-1) {
+		username=username.slice(0, s);
+	}
+	return username===selfName;
+}
+function isFriend(username) {
+	var s=username.indexOf(' ');
+	if(s>-1) {
+		username=username.slice(0, s);
+	}
+	return socialTab.isFriend(username);
 }
 
 new Listener("New Player", function(){
@@ -735,11 +749,11 @@ new Listener("Spectator Change To Player", function(){
 function colorPlayers(){
 	if(!lobby.inLobby) return;
 	setTimeout(() => {$(".lobbyAvatarNameContainerInner").children("h2").each((index,elem)=> {
-		if($(elem).text() === selfName) {
+		if(isSelf($(elem).text())) {
 			$(elem).parent().addClass("self")
 			$(elem).css("color", $("#smColorSelfSpec").prop("checked")?$("#smColorSelfColor").val():"");
 		}
-        else if(socialTab.isFriend($(elem).text())) {
+        else if(isFriend($(elem).text())) {
 			$(elem).parent().addClass("friend")
 			$(elem).css("color", $("#smColorFriendSpec").prop("checked")?$("#smColorFriendColor").val():"");
 		}
