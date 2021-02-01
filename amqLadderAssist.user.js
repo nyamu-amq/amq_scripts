@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Ladder Assist
 // @namespace    https://github.com/nyamu-amq
-// @version      0.21
+// @version      0.22
 // @description  
 // @author       nyamu
 // @grant        GM_xmlhttpRequest
@@ -103,6 +103,7 @@ function createLadderWindow() {
 		.append($(`<option value="pending1944to2000">Pending 1944to2000</option>`))
 		.append($(`<option value="pendingrandomtag">Pending RandomTag</option>`))
 		.append($(`<option value="pendingtagbattle">Pending TagBattle</option>`))
+		.append($(`<option value="pendingmovie">Pending Movie</option>`))
 
 		.append($(`<option value="completed">All Completed Matches</option>`))
 		.append($(`<option value="completedlistall">Completed List All</option>`))
@@ -120,6 +121,7 @@ function createLadderWindow() {
 		.append($(`<option value="completed1944to2000">Completed 1944to2000</option>`))
 		.append($(`<option value="completedrandomtag">Completed RandomTag</option>`))
 		.append($(`<option value="completedtagbattle">Completed TagBattle</option>`))
+		.append($(`<option value="completedmovie">Completed Movie</option>`))
 		.change(function () {
 			ChangeTableMode();
 		})
@@ -399,63 +401,9 @@ function copyToClipboard(str) {
 };
 
 function getDifficulty(type, tier) {
-	let settings={};
-
-	if(type.includes('randomtag') || type.includes('tagbattle')) {
-		settings={
-			"diamond":[0,40],
-			"platinum":[0,40],
-			"gold":[0,60],
-			"silver":[0,100],
-			"bronze":[20,100],
-		};
-	}
-	else if(type.includes('random')) {
-		settings={"diamond":[0,100],"platinum":[0,100],"gold":[10,100],"silver":[20,100],"bronze":[30,100]};
-	}
-	else if(type.includes('list')) {
-		settings={"diamond":[0,40],"platinum":[0,40],"gold":[0,40],"silver":[0,60],"bronze":[0,100]};
-	}
-	else if(type.includes('1000')) {
-		settings={"diamond":[0,40],"platinum":[0,40],"gold":[0,60],"silver":[0,100],"bronze":[20,100]};
-	}
-	else if(type.includes('lotsofsongs')) {
-		settings={
-			"diamond":[0,60],
-			"platinum":[0,60],
-			"gold":[0,60],
-			"silver":[0,100],
-			"bronze":[20,100],
-		};
-	}
-	else if(type.includes('2011to2020')) {
-		settings={
-			"diamond":[0,40],
-			"platinum":[0,40],
-			"gold":[0,60],
-			"silver":[0,100],
-			"bronze":[20,100],
-		};
-	}
-	else if(type.includes('2001to2010')) {
-		settings={
-			"diamond":[0,100],
-			"platinum":[0,100],
-			"gold":[10,100],
-			"silver":[20,100],
-			"bronze":[30,100],
-		};
-	}
-	else if(type.includes('1944to2000')) {
-		settings={
-			"diamond":[0,100],
-			"platinum":[0,100],
-			"gold":[10,100],
-			"silver":[20,100],
-			"bronze":[30,100],
-		};
-	}
-	return settings[tier];
+	var tiers={"diamond":0, "platinum":1, "gold":2, "silver":3, "bronze":4};
+	var settings=JSON.parse(allSettings[type]['difficulties']);
+	return settings[tiers[tier]];
 }
 function hostRoom(data) {
 	var type=data[1];
@@ -469,47 +417,15 @@ function hostRoom(data) {
 
 	hostModal.setModeHostGame();
 	var roomSettings={};
-	roomSettings=JSON.parse(JSON.stringify(hostModal.DEFUALT_SETTINGS));
+	roomSettings=hostModal._settingStorage._serilizer.decode(allSettings[type]['settings']);
 	roomSettings.roomName=`IHI #${matchid}`;
 	roomSettings.privateRoom=true;
 	roomSettings.password=`ladder`;
 	roomSettings.roomSize=2;
-	if(type.includes('random') || type.includes('2011to2020') || type.includes('2001to2010') || type.includes('1944to2000') || type.includes('tagbattle') ) {
-		roomSettings.songSelection.advancedValue.watched=0;
-		roomSettings.songSelection.advancedValue.unwatched=0;
-		roomSettings.songSelection.advancedValue.random=20;
-	}
-	else {
-		roomSettings.songSelection.advancedValue.watched=20;
-		roomSettings.songSelection.advancedValue.unwatched=0;
-		roomSettings.songSelection.advancedValue.random=0;
-	}
 	roomSettings.songDifficulity.advancedOn=true;
 	roomSettings.songDifficulity.advancedValue=getDifficulty(type,tier);
-	roomSettings.songType.standardValue.inserts=true;
 
-	if(type.includes('opening')) {
-		roomSettings.songType.standardValue.endings=false;
-		roomSettings.songType.standardValue.inserts=false;
-	}
-	else if(type.includes('ending')) {
-		roomSettings.songType.standardValue.openings=false;
-		roomSettings.songType.standardValue.inserts=false;
-	}
-	else if(type.includes('insert')) {
-		roomSettings.songType.standardValue.openings=false;
-		roomSettings.songType.standardValue.endings=false;
-	}
-	if(type.includes('2011to2020')) {
-		roomSettings.vintage.standardValue.years=[2011,2020];
-	}
-	else if(type.includes('2001to2010')) {
-		roomSettings.vintage.standardValue.years=[2001,2010];
-	}
-	else if(type.includes('1944to2000')) {
-		roomSettings.vintage.standardValue.years=[1944,2000];
-	}
-	else if(type.includes('randomtag')) {
+	if(type.includes('randomtag')) {
 		var tagid=hostModal.tagFilter.awesomepleteInstance._list.find(x=>x['name']==extra)['id'].toString();
 		roomSettings.tags=[{'id':tagid,'state':1}];
 	}
@@ -533,34 +449,40 @@ function isOnline(username) {
 	return $.inArray(username,arrayToLower(Object.keys(socialTab.allPlayerList._playerEntries)))>-1;
 }
 
+var receivingdata=false;
 var matchData=[];
 var completedData=[];
 function sendRequest() {
-	let remainedTime=lastRequest+60000-Date.now();
+	if(receivingdata) return;
+	let remainedTime=lastRequest+10000-Date.now();
 	if(remainedTime>0) {
 		updateLadderMessage("You can update after "+Math.ceil(remainedTime*.001)+" sec");
 		return;
 	}
 	lastRequest=Date.now();
 	updateLadderMessage("Receiving data...");
-
+	receivingdata=true;
 	GM_xmlhttpRequest({
 		method: "POST",
-		url: "https://script.google.com/macros/s/AKfycbyoBo5WyPqYYGTYMBWfOpFlSJp9g3X9E6SXZghko0LGrfnj2G9T/exec",
+		url: "https://script.google.com/macros/s/AKfycbyhdVkXeRKdgoFsBQShG3uiA0CsOogD5ZS0o40_5ViKLN7xOIHNlL4wiA/exec",
 		headers: {
 			"Content-Type": "application/x-www-form-urlencoded"
 		},
-		data: "cm=user2&user="+selfName,
+		data: "cm=user3&user="+selfName,
 		onload: function (response) {
 			var res=JSON.parse(response.responseText);
 			matchData=res.data;
 			matchData.sort(function(a,b){return a[0]*1-b[0]*1;});
 			completedData=res.completed;
+			allSettings=res.settings;
 			updateLadderWindow();
 			updateLadderMessage("Update completed on "+new Date().toLocaleTimeString());
+			receivingdata=false;
 		},
 		onerror: function (response) {
+			updateLadderMessage("error... try again");
 			console.log(response.responseText);
+			receivingdata=false;
 		}
 	});
 }
@@ -597,6 +519,10 @@ function dockeyup(event) {
 	}
 }
 document.addEventListener('keyup', dockeyup, false);
+
+var allSettings={};
+
+
 
 AMQ_addScriptData({
 	name: "Ladder Assist",
