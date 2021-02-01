@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Ladder Assist
 // @namespace    https://github.com/nyamu-amq
-// @version      0.22
+// @version      0.23
 // @description  
 // @author       nyamu
 // @grant        GM_xmlhttpRequest
@@ -103,7 +103,7 @@ function createLadderWindow() {
 		.append($(`<option value="pending1944to2000">Pending 1944to2000</option>`))
 		.append($(`<option value="pendingrandomtag">Pending RandomTag</option>`))
 		.append($(`<option value="pendingtagbattle">Pending TagBattle</option>`))
-		.append($(`<option value="pendingmovie">Pending Movie</option>`))
+		.append($(`<option value="pendingmovies">Pending Movies</option>`))
 
 		.append($(`<option value="completed">All Completed Matches</option>`))
 		.append($(`<option value="completedlistall">Completed List All</option>`))
@@ -121,7 +121,7 @@ function createLadderWindow() {
 		.append($(`<option value="completed1944to2000">Completed 1944to2000</option>`))
 		.append($(`<option value="completedrandomtag">Completed RandomTag</option>`))
 		.append($(`<option value="completedtagbattle">Completed TagBattle</option>`))
-		.append($(`<option value="completedmovie">Completed Movie</option>`))
+		.append($(`<option value="completedmovies">Completed Movies</option>`))
 		.change(function () {
 			ChangeTableMode();
 		})
