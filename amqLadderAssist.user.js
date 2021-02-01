@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Ladder Assist
 // @namespace    https://github.com/nyamu-amq
-// @version      0.23
+// @version      0.24
 // @description  
 // @author       nyamu
 // @grant        GM_xmlhttpRequest
@@ -161,6 +161,9 @@ function checkType(type) {
 	}
 	else if(strMode.includes("1944to2000")) {
 		if(!type.includes("1944to2000")) return false;
+	}
+	else if(strMode.includes("movies")) {
+		if(!type.includes("movies")) return false;
 	}
 
 	if(strMode.endsWith("ops")) {
