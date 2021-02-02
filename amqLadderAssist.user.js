@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Ladder Assist
 // @namespace    https://github.com/nyamu-amq
-// @version      0.24
+// @version      0.25
 // @description  
 // @author       nyamu
 // @grant        GM_xmlhttpRequest
@@ -10,6 +10,7 @@
 // @match        https://animemusicquiz.com/*
 // @require      https://raw.githubusercontent.com/TheJoseph98/AMQ-Scripts/master/common/amqScriptInfo.js
 // @require      https://raw.githubusercontent.com/TheJoseph98/AMQ-Scripts/master/common/amqWindows.js
+// @require      https://github.com/amq-script-project/AMQ-Scripts/raw/master/gameplay/amqGetOriginalNameUtility.user.js
 
 // ==/UserScript==
 
@@ -309,7 +310,7 @@ function updatePendingTable() {
 
 		let winButton = $(`<div class="clickAble">💪</div>`)
 		.click(function () {
-			copyToClipboard("m!r "+data[0]+" "+selfName);
+			copyToClipboard("m!r "+data[0]+" "+selfOriginalname);
 		})
 		.popover({
 			placement: "bottom",
@@ -370,7 +371,7 @@ function updateCompletedTable() {
 		matchRow.append(opponentCol);
 		matchRow.append(tierCol);
 		matchRow.append(resultCol);
-		if(data[4].toLowerCase()===selfName.toLowerCase()) {
+		if(data[4].toLowerCase()===selfOriginalname.toLowerCase()) {
 			matchRow.addClass("onlineOpponent");
 		}
 		else if(data[4].toLowerCase()===data[2].toLowerCase()) {
@@ -455,7 +456,8 @@ function isOnline(username) {
 var receivingdata=false;
 var matchData=[];
 var completedData=[];
-function sendRequest() {
+var selfOriginalname;
+async function sendRequest() {
 	if(receivingdata) return;
 	let remainedTime=lastRequest+10000-Date.now();
 	if(remainedTime>0) {
@@ -465,13 +467,16 @@ function sendRequest() {
 	lastRequest=Date.now();
 	updateLadderMessage("Receiving data...");
 	receivingdata=true;
+	if(!selfOriginalname) {
+		selfOriginalname=await getOriginalName(selfName);
+	}
 	GM_xmlhttpRequest({
 		method: "POST",
 		url: "https://script.google.com/macros/s/AKfycbyhdVkXeRKdgoFsBQShG3uiA0CsOogD5ZS0o40_5ViKLN7xOIHNlL4wiA/exec",
 		headers: {
 			"Content-Type": "application/x-www-form-urlencoded"
 		},
-		data: "cm=user3&user="+selfName,
+		data: "cm=user3&user="+selfOriginalname,
 		onload: function (response) {
 			var res=JSON.parse(response.responseText);
 			matchData=res.data;
