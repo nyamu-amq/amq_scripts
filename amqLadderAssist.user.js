@@ -450,7 +450,7 @@ function hostRoom(data) {
 }
 
 function arrayToLower(arr) {
-	return arr.join('|').toLowerCase().split('|');
+	return arr.map(entry => typeof entry === "string"?entry.toLowerCase():entry.toString());
 }
 
 function isOnline(username) {
