@@ -250,21 +250,22 @@ function updateLadderWindow() {
 }
 function updatePendingTable() {
 	clearTable();
-	for(let data of matchData) {
-		if(!checkType(data[1])) continue;
-		let matchRow=$(`<tr id="match`+data[0]+`" class="matchRow"></tr>`);
-		let idCol = $(`<td class="matchId">`+data[0]+`</td>`);
-		let typeCol = $(`<td class="matchType">`+data[1]+`</td>`);
-		let opponentCol = $(`<td class="matchOpponent">`+data[3]+`</td>`);
-		let tierCol = $(`<td class="matchTier">`+data[4]+`</td>`);
-		let roomCol = $(`<td class="matchButtons"></td>`);
-		let inviteCol = $(`<td class="matchButtons"></td>`);
-		let pingCol = $(`<td class="matchButtons"></td>`);
-		let winCol = $(`<td class="matchButtons"></td>`);
-		let loseCol = $(`<td class="matchButtons"></td>`);
-		let drawCol = $(`<td class="matchButtons"></td>`);
+	for(const data of matchData) {
+		const [matchId, matchType, opponentDiscordId, opponentName, tier] = data
+		if(!checkType(matchType)) continue;
+		
+		const matchRow = $(`<tr id="match${matchId}" class="matchRow"></tr>`);
 
-		let roomButton = $(`<div class="clickAble"><i aria-hidden="true" class="fa fa-home"></i></div>`)
+		const idCol = $(`<td class="matchId">${matchId}</td>`);
+		const typeCol = $(`<td class="matchType">${matchType}</td>`);
+		const opponentCol = $(`<td class="matchOpponent">${opponentName}</td>`);
+		const tierCol = $(`<td class="matchTier">${tier}</td>`);
+
+		const matchButtonContainer = () => $(`<td class="matchButtons"></td>`);
+		const clickableButton = text => $(`<div class="clickAble">${text}</div>`);
+
+		const roomCol = matchButtonContainer();
+		const roomButton = clickableButton(`<i aria-hidden="true" class="fa fa-home"></i>`)
 		.click(function () {
 			hostRoom(data);
 		})
@@ -275,22 +276,24 @@ function updatePendingTable() {
 		});
 		roomCol.append(roomButton);
 
-		let inviteButton = $(`<div class="clickAble"><i aria-hidden="true" class="fa fa-envelope"></i></div>`)
+		const inviteCol = matchButtonContainer();
+		const inviteButton = clickableButton(`<i aria-hidden="true" class="fa fa-envelope"></i>`)
 		.click(function () {
-			if(isOnline(data[3])) {
-				inviteUser(data[3]);
+			if(isOnline(opponentName)) {
+				inviteUser(opponentName);
 			}
 		})
 		.popover({
 			placement: "bottom",
-			content: "Invite "+data[3],
+			content: `Invite ${opponentName}`,
 			trigger: "hover"
 		});
 		inviteCol.append(inviteButton);
 
-		let pingButton = $(`<div class="clickAble"><i aria-hidden="true" class="fa fa-phone"></i></div>`)
+		const pingCol = matchButtonContainer();
+		const pingButton = clickableButton(`<i aria-hidden="true" class="fa fa-phone"></i>`)
 		.click(function () {
-			copyToClipboard("<@"+data[2]+"> ");
+			copyToClipboard(`<@${opponentDiscordId}> `);
 		})
 		.popover({
 			placement: "bottom",
@@ -299,9 +302,10 @@ function updatePendingTable() {
 		});
 		pingCol.append(pingButton);
 
-		let winButton = $(`<div class="clickAble">💪</div>`)
+		const winCol = matchButtonContainer();
+		const winButton = clickableButton(`💪`)
 		.click(function () {
-			copyToClipboard("m!r "+data[0]+" "+selfOriginalname);
+			copyToClipboard(`m!r ${matchId} ${selfOriginalname}`);
 		})
 		.popover({
 			placement: "bottom",
@@ -309,9 +313,11 @@ function updatePendingTable() {
 			trigger: "hover"
 		});
 		winCol.append(winButton);
-		let loseButton = $(`<div class="clickAble">💀</div>`)
+
+		const loseCol = matchButtonContainer();
+		const loseButton = clickableButton(`💀`)
 		.click(function () {
-			copyToClipboard("m!r "+data[0]+" "+data[3]);
+			copyToClipboard(`m!r ${matchId} ${opponentName}`);
 		})
 		.popover({
 			placement: "bottom",
@@ -319,9 +325,11 @@ function updatePendingTable() {
 			trigger: "hover"
 		});
 		loseCol.append(loseButton);
-		let drawButton = $(`<div class="clickAble">😓</div>`)
+
+		const drawCol = matchButtonContainer();
+		const drawButton = clickableButton(`😓`)
 		.click(function () {
-			copyToClipboard("m!r "+data[0]+" draw");
+			copyToClipboard(`m!r ${matchId} draw`);
 		})
 		.popover({
 			placement: "bottom",
@@ -330,16 +338,18 @@ function updatePendingTable() {
 		});
 		drawCol.append(drawButton);
 
-		matchRow.append(idCol);
-		matchRow.append(typeCol);
-		matchRow.append(opponentCol);
-		matchRow.append(tierCol);
-		matchRow.append(roomCol);
-		matchRow.append(inviteCol);
-		matchRow.append(pingCol);
-		matchRow.append(winCol);
-		matchRow.append(loseCol);
-		matchRow.append(drawCol);
+		[
+			idCol,
+			typeCol,
+			opponentCol,
+			tierCol,
+			roomCol,
+			inviteCol,
+			pingCol,
+			winCol,
+			loseCol,
+			drawCol
+		].forEach(entry => matchRow.append(entry))
 
 		ladderWindowTable.append(matchRow);
 	}
