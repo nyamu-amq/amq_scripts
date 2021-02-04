@@ -175,47 +175,47 @@ function checkType(type) {
 }
 function clearTable() {
 	ladderWindowTable.children().remove();
+	const header = $(`<tr class="header"></tr>`)
+	const idCol = $(`<td class="matchId"><b>ID#</b></td>`);
+	const typeCol = $(`<td class="matchType"><b>Type<b></td>`);
+	const opponentCol = $(`<td class="matchOpponent"><b>Opponent</b></td>`);
+	const tierCol = $(`<td class="matchTier"><b>Tier</b></td>`);
+	
+	const appendHeader = entry => header.append(entry);
 
-	if(tableViewMode===0) {
-		let header = $(`<tr class="header"></tr>`)
-		let idCol = $(`<td class="matchId"><b>ID#</b></td>`);
-		let typeCol = $(`<td class="matchType"><b>Type<b></td>`);
-		let opponentCol = $(`<td class="matchOpponent"><b>Opponent</b></td>`);
-		let tierCol = $(`<td class="matchTier"><b>Tier</b></td>`);
-		let roomCol = $(`<td class="matchButtons"><b>R</b></td>`);
-		let inviteCol = $(`<td class="matchButtons"><b>I</b></td>`);
-		let pingCol = $(`<td class="matchButtons"><b>P</b></td>`);
-		let winCol = $(`<td class="matchButtons"><b>W</b></td>`);
-		let loseCol = $(`<td class="matchButtons"><b>L</b></td>`);
-		let drawCol = $(`<td class="matchButtons"><b>D</b></td>`);
-
-		header.append(idCol);
-		header.append(typeCol);
-		header.append(opponentCol);
-		header.append(tierCol);
-		header.append(roomCol);
-		header.append(inviteCol);
-		header.append(pingCol);
-		header.append(winCol);
-		header.append(loseCol);
-		header.append(drawCol);
-		ladderWindowTable.append(header);
+	if(tableViewMode === 0) {
+		const matchButton = letter => $(`<td class="matchButtons"><b>${letter}</b></td>`);
+		const roomCol   = matchButton("R");
+		const inviteCol = matchButton("I");
+		const pingCol   = matchButton("P");
+		const winCol    = matchButton("W");
+		const loseCol   = matchButton("L");
+		const drawCol   = matchButton("D");
+		[
+			idCol,
+			typeCol,
+			opponentCol,
+			tierCol,
+			roomCol,
+			inviteCol,
+			pingCol,
+			winCol,
+			loseCol,
+			drawCol
+		].forEach(appendHeader);
 	}
 	else {
-		let header = $(`<tr class="header"></tr>`)
-		let idCol = $(`<td class="matchId"><b>ID#</b></td>`);
-		let typeCol = $(`<td class="matchType"><b>Type<b></td>`);
-		let opponentCol = $(`<td class="matchOpponent"><b>Opponent</b></td>`);
-		let tierCol = $(`<td class="matchTier"><b>Tier</b></td>`);
-		let resultCol = $(`<td class="matchResult"><b>Result</b></td>`);
-
-		header.append(idCol);
-		header.append(typeCol);
-		header.append(opponentCol);
-		header.append(tierCol);
-		header.append(resultCol);
-		ladderWindowTable.append(header);
+		const resultCol = $(`<td class="matchResult"><b>Result</b></td>`);
+		[
+			idCol,
+			typeCol,
+			opponentCol,
+			tierCol,
+			resultCol
+		].forEach(appendHeader);
 	}
+
+	ladderWindowTable.append(header);
 }
 function updateLadderMessage(text) {
 	$(".ladderPanelMessage").text(text);
