@@ -454,9 +454,9 @@ function arrayToLower(arr) {
 }
 
 function isOnline(username) {
-	username=username.toLowerCase();
-	if($.inArray(username,arrayToLower(socialTab.onlineFriends))>-1) return true;
-	return $.inArray(username,arrayToLower(Object.keys(socialTab.allPlayerList._playerEntries)))>-1;
+	username = username.toLowerCase();
+	return arrayToLower(socialTab.onlineFriends).includes(username) ||
+		arrayToLower(Object.keys(socialTab.allPlayerList._playerEntries)).includes(username);
 }
 
 var receivingdata=false;
