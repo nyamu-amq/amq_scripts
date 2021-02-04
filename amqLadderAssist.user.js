@@ -136,50 +136,41 @@ function createLadderWindow() {
 }
 function checkType(type) {
 	type=type.toLowerCase();
-	if(strMode.includes("list")) {
-		if(!type.includes("list")) return false;
+	const includesArray = [
+		"list",
+		"randomtag",
+		"tagbattle",
+		"random",
+		"1000",
+		"lotsofsongs",
+		"2011to2020",
+		"2001to2010",
+		"1944to2000",
+		"movies"
+	];
+	const endsWithArray = [
+		["ops", "opening"],
+		["eds", "ending"],
+		["ins", "insert"],
+		["all", "all"]
+	];
+	//const includesCheck = (entry => !strMode.includes(entry) || (strMode.includes(entry) && type.includes(entry)));
+	//const endsWithCheck = (entry => !strMode.includes(entry[0]) || (strMode.includes(entry[0]) && type.includes(entry[1])));
+	//return includesArray.every(includesCheck) && endsWithArray.every(endsWithCheck)
+	for(let i = 0; i < includesArray.length; i++){
+		const entry = includesArray[i]
+		if(strMode.includes(entry)) {
+			if(!type.includes(entry)) return false;
+			else break;
+		}
 	}
-	else if(strMode.includes("randomtag")) {
-		if(!type.includes("randomtag")) return false;
+	for(let i = 0; i < endsWithArray.length; i++){
+		const [modeValue, typeValue] = endsWithArray[i]
+		if(strMode.includes(modeValue)) {
+			if(!type.includes(typeValue)) return false;
+			else break;
+		}
 	}
-	else if(strMode.includes("tagbattle")) {
-		if(!type.includes("tagbattle")) return false;
-	}
-	else if(strMode.includes("random")) {
-		if(!type.includes("random")) return false;
-	}
-	else if(strMode.includes("1000")) {
-		if(!type.includes("1000")) return false;
-	}
-	else if(strMode.includes("lotsofsongs")) {
-		if(!type.includes("lotsofsongs")) return false;
-	}
-	else if(strMode.includes("2011to2020")) {
-		if(!type.includes("2011to2020")) return false;
-	}
-	else if(strMode.includes("2001to2010")) {
-		if(!type.includes("2001to2010")) return false;
-	}
-	else if(strMode.includes("1944to2000")) {
-		if(!type.includes("1944to2000")) return false;
-	}
-	else if(strMode.includes("movies")) {
-		if(!type.includes("movies")) return false;
-	}
-
-	if(strMode.endsWith("ops")) {
-		if(!type.includes("opening")) return false;
-	}
-	else if(strMode.endsWith("eds")) {
-		if(!type.includes("ending")) return false;
-	}
-	else if(strMode.endsWith("ins")) {
-		if(!type.includes("insert")) return false;
-	}
-	else if(strMode.endsWith("all")) {
-		if(!type.includes("all")) return false;
-	}
-
 	return true;
 }
 function clearTable() {
