@@ -253,7 +253,7 @@ function updatePendingTable() {
 	for(const data of matchData) {
 		const [matchId, matchType, opponentDiscordId, opponentName, tier] = data
 		if(!checkType(matchType)) continue;
-		
+
 		const matchRow = $(`<tr id="match${matchId}" class="matchRow"></tr>`);
 
 		const idCol = $(`<td class="matchId">${matchId}</td>`);
@@ -356,26 +356,31 @@ function updatePendingTable() {
 
 	updateOpponentOnlineState()
 }
+
 function updateCompletedTable() {
 	clearTable();
-	for(let data of completedData) {
-		if(!checkType(data[1])) continue;
-		let matchRow=$(`<tr id="match`+data[0]+`" class="matchRow"></tr>`);
-		let idCol = $(`<td class="matchId">`+data[0]+`</td>`);
-		let typeCol = $(`<td class="matchType">`+data[1]+`</td>`);
-		let opponentCol = $(`<td class="matchOpponent">`+data[2]+`</td>`);
-		let tierCol = $(`<td class="matchTier">`+data[3]+`</td>`);
-		let resultCol = $(`<td class="matchResult">`+data[4]+`</td>`);
+	for(const data of completedData) {
+		const [matchId, matchType, opponentName, tier, winnerName] = data
+		if(!checkType(matchType)) continue;
+		const matchRow = $(`<tr id="match${matchId}" class="matchRow"></tr>`);
+		const idCol = $(`<td class="matchId">${matchId}</td>`);
+		const typeCol = $(`<td class="matchType">${matchType}</td>`);
+		const opponentCol = $(`<td class="matchOpponent">${opponentName}</td>`);
+		const tierCol = $(`<td class="matchTier">${tier}</td>`);
+		const resultCol = $(`<td class="matchResult">${winnerName}</td>`);
 
-		matchRow.append(idCol);
-		matchRow.append(typeCol);
-		matchRow.append(opponentCol);
-		matchRow.append(tierCol);
-		matchRow.append(resultCol);
-		if(data[4].toLowerCase()===selfOriginalname.toLowerCase()) {
+		[
+			idCol,
+			typeCol,
+			opponentCol,
+			tierCol,
+			resultCol
+		].forEach(entry => matchRow.append(entry))
+
+		if(winnerName.toLowerCase() === selfOriginalname.toLowerCase()) {
 			matchRow.addClass("onlineOpponent");
 		}
-		else if(data[4].toLowerCase()===data[2].toLowerCase()) {
+		else if(winnerName.toLowerCase() === opponentName.toLowerCase()) {
 			matchRow.addClass("offlineOpponent");
 		}
 
