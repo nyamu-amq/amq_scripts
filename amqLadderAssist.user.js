@@ -67,16 +67,11 @@ function createLadderWindow() {
 			container: "body",
 			animation: false
 		})
-		)
+	)
 	.append($(`<button class="btn btn-default ladderPanelButton" type="button"><i aria-hidden="true" class="fa fa-phone"></i></button`)
 		.click(() => {
-			let users=[];
-			for(let data of matchData) {
-				if(users.indexOf("<@"+data[2]+">")===-1) {
-					users.push("<@"+data[2]+">");
-				}
-			}
-			if(users.length>0)
+			const users = Array.from(new Set(matchData.map(data => data[2]))).map(discordId => `<@${discordId}>`);
+			if(users.length)
 				copyToClipboard(users.join(" ")+" ");
 		})
 		.popover({
@@ -86,47 +81,38 @@ function createLadderWindow() {
 			container: "body",
 			animation: false
 		})
-		)
-	.append($(`<select id="tableViewMode"></select>`)
-		.append($(`<option value="pending" selected>All Pending Matches</option>`))
-		.append($(`<option value="pendinglistall">Pending List All</option>`))
-		.append($(`<option value="pendinglistops">Pending List Ops</option>`))
-		.append($(`<option value="pendinglisteds">Pending List Eds</option>`))
-		.append($(`<option value="pendinglistins">Pending List Ins</option>`))
-		.append($(`<option value="pendingrandomall">Pending Random All</option>`))
-		.append($(`<option value="pendingrandomops">Pending Random Ops</option>`))
-		.append($(`<option value="pendingrandomeds">Pending Random Eds</option>`))
-		.append($(`<option value="pendingrandomins">Pending Random Ins</option>`))
-		.append($(`<option value="pendingtop1000">Pending Top1000Anime</option>`))
-		.append($(`<option value="pendinglotsofsongs">Pending LotsOfSongs</option>`))
-		.append($(`<option value="pending2011to2020">Pending 2011to2020</option>`))
-		.append($(`<option value="pending2001to2010">Pending 2001to2010</option>`))
-		.append($(`<option value="pending1944to2000">Pending 1944to2000</option>`))
-		.append($(`<option value="pendingrandomtag">Pending RandomTag</option>`))
-		.append($(`<option value="pendingtagbattle">Pending TagBattle</option>`))
-		.append($(`<option value="pendingmovies">Pending Movies</option>`))
+	);
+	const tableView = $(`<select id="tableViewMode"></select>`);
+	const matchTypes = [
+		["listall", "List All"],
+		["listops", "List Ops"],
+		["listeds", "List Eds"],
+		["listins", "List Ins"],
+		["randomall", "Random All"],
+		["randomops", "Random Ops"],
+		["randomeds", "Random Eds"],
+		["randomins", "Random Ins"],
+		["top1000", "Top1000Anime"],
+		["lotsofsongs", "LotsOfSongs"],
+		["2011to2020", "2011to2020"],
+		["2001to2010", "2001to2010"],
+		["1944to2000", "1944to2000"],
+		["randomtag", "RandomTag"],
+		["tagbattle", "TagBattle"],
+		["movies", "Movies"]
+	];
+	const optionConstructor = (valueStart, valueNameStart) => (valueEnd, valueNameEnd) => $(`<option value="${valueStart}${valueEnd}">${valueNameStart} ${valueNameEnd}</option>`);
+	tableView.append($(`<option value="pending" selected>All Pending Matches</option>`));
+	matchTypes.forEach(entry => tableView.append(optionConstructor("pending", "Pending")(entry[0], entry[1])));
+	tableView.append($(`<option value="completed">All Completed Matches</option>`));
+	matchTypes.forEach(entry => tableView.append(optionConstructor("completed", "Completed")(entry[0], entry[1])));
+	tableView.change(function () {
+		ChangeTableMode();
+	})
 
-		.append($(`<option value="completed">All Completed Matches</option>`))
-		.append($(`<option value="completedlistall">Completed List All</option>`))
-		.append($(`<option value="completedlistops">Completed List Ops</option>`))
-		.append($(`<option value="completedlisteds">Completed List Eds</option>`))
-		.append($(`<option value="completedlistins">Completed List Ins</option>`))
-		.append($(`<option value="completedrandomall">Completed Random All</option>`))
-		.append($(`<option value="completedrandomops">Completed Random Ops</option>`))
-		.append($(`<option value="completedrandomeds">Completed Random Eds</option>`))
-		.append($(`<option value="completedrandomins">Completed Random Ins</option>`))
-		.append($(`<option value="completedtop1000">Completed Top1000Anime</option>`))
-		.append($(`<option value="completedlotsofsongs">Completed LotsOfSongs</option>`))
-		.append($(`<option value="completed2011to2020">Completed 2011to2020</option>`))
-		.append($(`<option value="completed2001to2010">Completed 2001to2010</option>`))
-		.append($(`<option value="completed1944to2000">Completed 1944to2000</option>`))
-		.append($(`<option value="completedrandomtag">Completed RandomTag</option>`))
-		.append($(`<option value="completedtagbattle">Completed TagBattle</option>`))
-		.append($(`<option value="completedmovies">Completed Movies</option>`))
-		.change(function () {
-			ChangeTableMode();
-		})
-		)
+
+	ladderWindow.panels[0].panel
+	.append(tableView)
 	.append($(`<div class="ladderPanelMessage"></div>`));
 
 	ladderWindowTable = $(`<table id="ladderWindowTable" class="table floatingContainer"></table>`);
