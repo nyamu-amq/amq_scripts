@@ -159,6 +159,32 @@ function checkType(type) {
 	}
 	return true;
 }
+
+function pendingTableOrder(data) {
+	return [
+		data.idCol,
+		data.typeCol,
+		data.opponentCol,
+		data.tierCol,
+		data.roomCol,
+		data.inviteCol,
+		data.pingCol,
+		data.winCol,
+		data.loseCol,
+		data.drawCol
+	]
+}
+
+function completedTableOrder(data){
+	return [
+		data.idCol,
+		data.typeCol,
+		data.opponentCol,
+		data.tierCol,
+		data.resultCol
+	]
+}
+
 function clearTable() {
 	ladderWindowTable.children().remove();
 	const header = $(`<tr class="header"></tr>`)
@@ -177,7 +203,7 @@ function clearTable() {
 		const winCol    = matchButton("W");
 		const loseCol   = matchButton("L");
 		const drawCol   = matchButton("D");
-		[
+		pendingTableOrder({
 			idCol,
 			typeCol,
 			opponentCol,
@@ -188,17 +214,17 @@ function clearTable() {
 			winCol,
 			loseCol,
 			drawCol
-		].forEach(appendHeader);
+		}).forEach(appendHeader);
 	}
 	else {
 		const resultCol = $(`<td class="matchResult"><b>Result</b></td>`);
-		[
+		completedTableOrder({
 			idCol,
 			typeCol,
 			opponentCol,
 			tierCol,
 			resultCol
-		].forEach(appendHeader);
+		}).forEach(appendHeader);
 	}
 
 	ladderWindowTable.append(header);
@@ -324,7 +350,7 @@ function updatePendingTable() {
 		});
 		drawCol.append(drawButton);
 
-		[
+		pendingTableOrder({
 			idCol,
 			typeCol,
 			opponentCol,
@@ -335,7 +361,7 @@ function updatePendingTable() {
 			winCol,
 			loseCol,
 			drawCol
-		].forEach(entry => matchRow.append(entry))
+		}).forEach(entry => matchRow.append(entry))
 
 		ladderWindowTable.append(matchRow);
 	}
@@ -355,13 +381,13 @@ function updateCompletedTable() {
 		const tierCol = $(`<td class="matchTier">${tier}</td>`);
 		const resultCol = $(`<td class="matchResult">${winnerName}</td>`);
 
-		[
+		completedTableOrder({
 			idCol,
 			typeCol,
 			opponentCol,
 			tierCol,
 			resultCol
-		].forEach(entry => matchRow.append(entry))
+		}).forEach(entry => matchRow.append(entry))
 
 		if(winnerName.toLowerCase() === selfOriginalname.toLowerCase()) {
 			matchRow.addClass("onlineOpponent");
