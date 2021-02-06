@@ -18,6 +18,59 @@ if (document.getElementById('startPage')) {
 	return
 }
 
+//this function mandates the order of the elements in the "Pending" tables, reorder the lines to change the order
+
+function pendingTableOrder(data) {
+	return [
+		data.idCol,
+		data.typeCol,
+		data.opponentCol,
+		data.tierCol,
+		data.roomCol,
+		data.inviteCol,
+		data.pingCol,
+		data.winCol,
+		data.loseCol,
+		data.drawCol
+	]
+}
+
+//this function mandates the order of the elements in the "Completed" tables, reorder the lines to change the order
+function completedTableOrder(data){
+	return [
+		data.idCol,
+		data.typeCol,
+		data.opponentCol,
+		data.tierCol,
+		data.resultCol
+	]
+}
+
+//this is the matchtypes array
+//it consists of array containing three strings
+//the first value is for checkType, this is a substring of the second value, but is ultimately limited by the source of data
+//the second is for the selection value, which will be compared to checkType
+//The third is the value displayed to the user for the selection
+
+const matchTypesArray = [
+	["list", "listall", "List All"],
+	["list", "listops", "List Ops"],
+	["list", "listeds", "List Eds"],
+	["list", "listins", "List Ins"],
+	["random", "randomall", "Random All"],
+	["random", "randomops", "Random Ops"],
+	["random", "randomeds", "Random Eds"],
+	["random", "randomins", "Random Ins"],
+	["1000", "top1000", "Top1000Anime"],
+	["lotsofsongs", "lotsofsongs", "LotsOfSongs"],
+	["2011to2020", "2011to2020", "2011to2020"],
+	["2001to2010", "2001to2010", "2001to2010"],
+	["1944to2000", "1944to2000", "1944to2000"],
+	["randomtag", "randomtag", "RandomTag"],
+	["tagbattle", "tagbattle", "TagBattle"],
+	["movies", "movies", "Movies"]
+]
+
 let ladderWindow;
 let ladderWindowTable;
 function createLadderWindow() {
@@ -83,24 +136,7 @@ function createLadderWindow() {
 		})
 	);
 	const tableView = $(`<select id="tableViewMode"></select>`);
-	const matchTypes = [
-		["listall", "List All"],
-		["listops", "List Ops"],
-		["listeds", "List Eds"],
-		["listins", "List Ins"],
-		["randomall", "Random All"],
-		["randomops", "Random Ops"],
-		["randomeds", "Random Eds"],
-		["randomins", "Random Ins"],
-		["top1000", "Top1000Anime"],
-		["lotsofsongs", "LotsOfSongs"],
-		["2011to2020", "2011to2020"],
-		["2001to2010", "2001to2010"],
-		["1944to2000", "1944to2000"],
-		["randomtag", "RandomTag"],
-		["tagbattle", "TagBattle"],
-		["movies", "Movies"]
-	];
+	const matchTypes = matchTypesArray.map(entry => [entry[1], entry[2]]);
 	const optionConstructor = (valueStart, valueNameStart) => (valueEnd, valueNameEnd) => $(`<option value="${valueStart}${valueEnd}">${valueNameStart} ${valueNameEnd}</option>`);
 	tableView.append($(`<option value="pending" selected>All Pending Matches</option>`));
 	matchTypes.forEach(entry => tableView.append(optionConstructor("pending", "Pending")(entry[0], entry[1])));
@@ -122,18 +158,7 @@ function createLadderWindow() {
 }
 function checkType(type) {
 	type=type.toLowerCase();
-	const includesArray = [
-		"list",
-		"randomtag",
-		"tagbattle",
-		"random",
-		"1000",
-		"lotsofsongs",
-		"2011to2020",
-		"2001to2010",
-		"1944to2000",
-		"movies"
-	];
+	const includesArray = matchTypesArray.map(entry => entry[0]);
 	const endsWithArray = [
 		["ops", "opening"],
 		["eds", "ending"],
@@ -160,30 +185,6 @@ function checkType(type) {
 	return true;
 }
 
-function pendingTableOrder(data) {
-	return [
-		data.idCol,
-		data.typeCol,
-		data.opponentCol,
-		data.tierCol,
-		data.roomCol,
-		data.inviteCol,
-		data.pingCol,
-		data.winCol,
-		data.loseCol,
-		data.drawCol
-	]
-}
-
-function completedTableOrder(data){
-	return [
-		data.idCol,
-		data.typeCol,
-		data.opponentCol,
-		data.tierCol,
-		data.resultCol
-	]
-}
 
 function clearTable() {
 	ladderWindowTable.children().remove();
