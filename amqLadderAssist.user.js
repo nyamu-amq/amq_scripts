@@ -536,7 +536,7 @@ new Listener("all online users", function (change) {
 }).bindListener();
 
 function dockeyup(event) {
-	if(event.altKey && event.key === "l") {
+	if(event.altKey && event.code=='KeyL') {
 		if (ladderWindow.isVisible()) {
 			ladderWindow.close();
 		}
