@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Ladder Assist
 // @namespace    https://github.com/nyamu-amq
-// @version      0.26
+// @version      0.27
 // @description  
 // @author       nyamu
 // @grant        GM_xmlhttpRequest
@@ -17,6 +17,59 @@
 if (document.getElementById('startPage')) {
 	return
 }
+
+//this function mandates the order of the elements in the "Pending" tables, reorder the lines to change the order
+
+function pendingTableOrder(data) {
+	return [
+		data.idCol,
+		data.typeCol,
+		data.opponentCol,
+		data.tierCol,
+		data.roomCol,
+		data.inviteCol,
+		data.pingCol,
+		data.winCol,
+		data.loseCol,
+		data.drawCol
+	]
+}
+
+//this function mandates the order of the elements in the "Completed" tables, reorder the lines to change the order
+function completedTableOrder(data){
+	return [
+		data.idCol,
+		data.typeCol,
+		data.opponentCol,
+		data.tierCol,
+		data.resultCol
+	]
+}
+
+//this is the matchtypes array
+//it consists of array containing three strings
+//the first value is for checkType, this is a substring of the second value, but is ultimately limited by the source of data
+//the second is for the selection value, which will be compared to checkType
+//The third is the value displayed to the user for the selection
+
+const matchTypesArray = [
+	["list", "listall", "List All"],
+	["list", "listops", "List Ops"],
+	["list", "listeds", "List Eds"],
+	["list", "listins", "List Ins"],
+	["random", "randomall", "Random All"],
+	["random", "randomops", "Random Ops"],
+	["random", "randomeds", "Random Eds"],
+	["random", "randomins", "Random Ins"],
+	["1000", "top1000", "Top1000Anime"],
+	["lotsofsongs", "lotsofsongs", "LotsOfSongs"],
+	["2011to2020", "2011to2020", "2011to2020"],
+	["2001to2010", "2001to2010", "2001to2010"],
+	["1944to2000", "1944to2000", "1944to2000"],
+	["randomtag", "randomtag", "RandomTag"],
+	["tagbattle", "tagbattle", "TagBattle"],
+	["movies", "movies", "Movies"]
+]
 
 let ladderWindow;
 let ladderWindowTable;
@@ -67,16 +120,11 @@ function createLadderWindow() {
 			container: "body",
 			animation: false
 		})
-		)
+	)
 	.append($(`<button class="btn btn-default ladderPanelButton" type="button"><i aria-hidden="true" class="fa fa-phone"></i></button`)
 		.click(() => {
-			let users=[];
-			for(let data of matchData) {
-				if(users.indexOf("<@"+data[2]+">")===-1) {
-					users.push("<@"+data[2]+">");
-				}
-			}
-			if(users.length>0)
+			const users = Array.from(new Set(matchData.map(data => data[2]))).map(discordId => `<@${discordId}>`);
+			if(users.length)
 				copyToClipboard(users.join(" ")+" ");
 		})
 		.popover({
@@ -86,47 +134,21 @@ function createLadderWindow() {
 			container: "body",
 			animation: false
 		})
-		)
-	.append($(`<select id="tableViewMode"></select>`)
-		.append($(`<option value="pending" selected>All Pending Matches</option>`))
-		.append($(`<option value="pendinglistall">Pending List All</option>`))
-		.append($(`<option value="pendinglistops">Pending List Ops</option>`))
-		.append($(`<option value="pendinglisteds">Pending List Eds</option>`))
-		.append($(`<option value="pendinglistins">Pending List Ins</option>`))
-		.append($(`<option value="pendingrandomall">Pending Random All</option>`))
-		.append($(`<option value="pendingrandomops">Pending Random Ops</option>`))
-		.append($(`<option value="pendingrandomeds">Pending Random Eds</option>`))
-		.append($(`<option value="pendingrandomins">Pending Random Ins</option>`))
-		.append($(`<option value="pendingtop1000">Pending Top1000Anime</option>`))
-		.append($(`<option value="pendinglotsofsongs">Pending LotsOfSongs</option>`))
-		.append($(`<option value="pending2011to2020">Pending 2011to2020</option>`))
-		.append($(`<option value="pending2001to2010">Pending 2001to2010</option>`))
-		.append($(`<option value="pending1944to2000">Pending 1944to2000</option>`))
-		.append($(`<option value="pendingrandomtag">Pending RandomTag</option>`))
-		.append($(`<option value="pendingtagbattle">Pending TagBattle</option>`))
-		.append($(`<option value="pendingmovies">Pending Movies</option>`))
+	);
+	const tableView = $(`<select id="tableViewMode"></select>`);
+	const matchTypes = matchTypesArray.map(entry => [entry[1], entry[2]]);
+	const optionConstructor = (valueStart, valueNameStart) => (valueEnd, valueNameEnd) => $(`<option value="${valueStart}${valueEnd}">${valueNameStart} ${valueNameEnd}</option>`);
+	tableView.append($(`<option value="pending" selected>All Pending Matches</option>`));
+	matchTypes.forEach(entry => tableView.append(optionConstructor("pending", "Pending")(entry[0], entry[1])));
+	tableView.append($(`<option value="completed">All Completed Matches</option>`));
+	matchTypes.forEach(entry => tableView.append(optionConstructor("completed", "Completed")(entry[0], entry[1])));
+	tableView.change(function () {
+		ChangeTableMode();
+	})
 
-		.append($(`<option value="completed">All Completed Matches</option>`))
-		.append($(`<option value="completedlistall">Completed List All</option>`))
-		.append($(`<option value="completedlistops">Completed List Ops</option>`))
-		.append($(`<option value="completedlisteds">Completed List Eds</option>`))
-		.append($(`<option value="completedlistins">Completed List Ins</option>`))
-		.append($(`<option value="completedrandomall">Completed Random All</option>`))
-		.append($(`<option value="completedrandomops">Completed Random Ops</option>`))
-		.append($(`<option value="completedrandomeds">Completed Random Eds</option>`))
-		.append($(`<option value="completedrandomins">Completed Random Ins</option>`))
-		.append($(`<option value="completedtop1000">Completed Top1000Anime</option>`))
-		.append($(`<option value="completedlotsofsongs">Completed LotsOfSongs</option>`))
-		.append($(`<option value="completed2011to2020">Completed 2011to2020</option>`))
-		.append($(`<option value="completed2001to2010">Completed 2001to2010</option>`))
-		.append($(`<option value="completed1944to2000">Completed 1944to2000</option>`))
-		.append($(`<option value="completedrandomtag">Completed RandomTag</option>`))
-		.append($(`<option value="completedtagbattle">Completed TagBattle</option>`))
-		.append($(`<option value="completedmovies">Completed Movies</option>`))
-		.change(function () {
-			ChangeTableMode();
-		})
-		)
+
+	ladderWindow.panels[0].panel
+	.append(tableView)
 	.append($(`<div class="ladderPanelMessage"></div>`));
 
 	ladderWindowTable = $(`<table id="ladderWindowTable" class="table floatingContainer"></table>`);
@@ -136,95 +158,77 @@ function createLadderWindow() {
 }
 function checkType(type) {
 	type=type.toLowerCase();
-	if(strMode.includes("list")) {
-		if(!type.includes("list")) return false;
+	const includesArray = matchTypesArray.map(entry => entry[0]);
+	const endsWithArray = [
+		["ops", "opening"],
+		["eds", "ending"],
+		["ins", "insert"],
+		["all", "all"]
+	];
+	//const includesCheck = (entry => !strMode.includes(entry) || (strMode.includes(entry) && type.includes(entry)));
+	//const endsWithCheck = (entry => !strMode.includes(entry[0]) || (strMode.includes(entry[0]) && type.includes(entry[1])));
+	//return includesArray.every(includesCheck) && endsWithArray.every(endsWithCheck)
+	for(let i = 0; i < includesArray.length; i++){
+		const entry = includesArray[i]
+		if(strMode.includes(entry)) {
+			if(!type.includes(entry)) return false;
+			else break;
+		}
 	}
-	else if(strMode.includes("randomtag")) {
-		if(!type.includes("randomtag")) return false;
+	for(let i = 0; i < endsWithArray.length; i++){
+		const [modeValue, typeValue] = endsWithArray[i]
+		if(strMode.includes(modeValue)) {
+			if(!type.includes(typeValue)) return false;
+			else break;
+		}
 	}
-	else if(strMode.includes("tagbattle")) {
-		if(!type.includes("tagbattle")) return false;
-	}
-	else if(strMode.includes("random")) {
-		if(!type.includes("random")) return false;
-	}
-	else if(strMode.includes("1000")) {
-		if(!type.includes("1000")) return false;
-	}
-	else if(strMode.includes("lotsofsongs")) {
-		if(!type.includes("lotsofsongs")) return false;
-	}
-	else if(strMode.includes("2011to2020")) {
-		if(!type.includes("2011to2020")) return false;
-	}
-	else if(strMode.includes("2001to2010")) {
-		if(!type.includes("2001to2010")) return false;
-	}
-	else if(strMode.includes("1944to2000")) {
-		if(!type.includes("1944to2000")) return false;
-	}
-	else if(strMode.includes("movies")) {
-		if(!type.includes("movies")) return false;
-	}
-
-	if(strMode.endsWith("ops")) {
-		if(!type.includes("opening")) return false;
-	}
-	else if(strMode.endsWith("eds")) {
-		if(!type.includes("ending")) return false;
-	}
-	else if(strMode.endsWith("ins")) {
-		if(!type.includes("insert")) return false;
-	}
-	else if(strMode.endsWith("all")) {
-		if(!type.includes("all")) return false;
-	}
-
 	return true;
 }
+
+
 function clearTable() {
 	ladderWindowTable.children().remove();
+	const header = $(`<tr class="header"></tr>`)
+	const idCol = $(`<td class="matchId"><b>ID#</b></td>`);
+	const typeCol = $(`<td class="matchType"><b>Type<b></td>`);
+	const opponentCol = $(`<td class="matchOpponent"><b>Opponent</b></td>`);
+	const tierCol = $(`<td class="matchTier"><b>Tier</b></td>`);
+	
+	const appendHeader = entry => header.append(entry);
 
-	if(tableViewMode===0) {
-		let header = $(`<tr class="header"></tr>`)
-		let idCol = $(`<td class="matchId"><b>ID#</b></td>`);
-		let typeCol = $(`<td class="matchType"><b>Type<b></td>`);
-		let opponentCol = $(`<td class="matchOpponent"><b>Opponent</b></td>`);
-		let tierCol = $(`<td class="matchTier"><b>Tier</b></td>`);
-		let roomCol = $(`<td class="matchButtons"><b>R</b></td>`);
-		let inviteCol = $(`<td class="matchButtons"><b>I</b></td>`);
-		let pingCol = $(`<td class="matchButtons"><b>P</b></td>`);
-		let winCol = $(`<td class="matchButtons"><b>W</b></td>`);
-		let loseCol = $(`<td class="matchButtons"><b>L</b></td>`);
-		let drawCol = $(`<td class="matchButtons"><b>D</b></td>`);
-
-		header.append(idCol);
-		header.append(typeCol);
-		header.append(opponentCol);
-		header.append(tierCol);
-		header.append(roomCol);
-		header.append(inviteCol);
-		header.append(pingCol);
-		header.append(winCol);
-		header.append(loseCol);
-		header.append(drawCol);
-		ladderWindowTable.append(header);
+	if(tableViewMode === 0) {
+		const matchButton = letter => $(`<td class="matchButtons"><b>${letter}</b></td>`);
+		const roomCol   = matchButton("R");
+		const inviteCol = matchButton("I");
+		const pingCol   = matchButton("P");
+		const winCol    = matchButton("W");
+		const loseCol   = matchButton("L");
+		const drawCol   = matchButton("D");
+		pendingTableOrder({
+			idCol,
+			typeCol,
+			opponentCol,
+			tierCol,
+			roomCol,
+			inviteCol,
+			pingCol,
+			winCol,
+			loseCol,
+			drawCol
+		}).forEach(appendHeader);
 	}
 	else {
-		let header = $(`<tr class="header"></tr>`)
-		let idCol = $(`<td class="matchId"><b>ID#</b></td>`);
-		let typeCol = $(`<td class="matchType"><b>Type<b></td>`);
-		let opponentCol = $(`<td class="matchOpponent"><b>Opponent</b></td>`);
-		let tierCol = $(`<td class="matchTier"><b>Tier</b></td>`);
-		let resultCol = $(`<td class="matchResult"><b>Result</b></td>`);
-
-		header.append(idCol);
-		header.append(typeCol);
-		header.append(opponentCol);
-		header.append(tierCol);
-		header.append(resultCol);
-		ladderWindowTable.append(header);
+		const resultCol = $(`<td class="matchResult"><b>Result</b></td>`);
+		completedTableOrder({
+			idCol,
+			typeCol,
+			opponentCol,
+			tierCol,
+			resultCol
+		}).forEach(appendHeader);
 	}
+
+	ladderWindowTable.append(header);
 }
 function updateLadderMessage(text) {
 	$(".ladderPanelMessage").text(text);
@@ -259,21 +263,22 @@ function updateLadderWindow() {
 }
 function updatePendingTable() {
 	clearTable();
-	for(let data of matchData) {
-		if(!checkType(data[1])) continue;
-		let matchRow=$(`<tr id="match`+data[0]+`" class="matchRow"></tr>`);
-		let idCol = $(`<td class="matchId">`+data[0]+`</td>`);
-		let typeCol = $(`<td class="matchType">`+data[1]+`</td>`);
-		let opponentCol = $(`<td class="matchOpponent">`+data[3]+`</td>`);
-		let tierCol = $(`<td class="matchTier">`+data[4]+`</td>`);
-		let roomCol = $(`<td class="matchButtons"></td>`);
-		let inviteCol = $(`<td class="matchButtons"></td>`);
-		let pingCol = $(`<td class="matchButtons"></td>`);
-		let winCol = $(`<td class="matchButtons"></td>`);
-		let loseCol = $(`<td class="matchButtons"></td>`);
-		let drawCol = $(`<td class="matchButtons"></td>`);
+	for(const data of matchData) {
+		const [matchId, matchType, opponentDiscordId, opponentName, tier] = data
+		if(!checkType(matchType)) continue;
 
-		let roomButton = $(`<div class="clickAble"><i aria-hidden="true" class="fa fa-home"></i></div>`)
+		const matchRow = $(`<tr id="match${matchId}" class="matchRow"></tr>`);
+
+		const idCol = $(`<td class="matchId">${matchId}</td>`);
+		const typeCol = $(`<td class="matchType">${matchType}</td>`);
+		const opponentCol = $(`<td class="matchOpponent">${opponentName}</td>`);
+		const tierCol = $(`<td class="matchTier">${tier}</td>`);
+
+		const matchButtonContainer = () => $(`<td class="matchButtons"></td>`);
+		const clickableButton = text => $(`<div class="clickAble">${text}</div>`);
+
+		const roomCol = matchButtonContainer();
+		const roomButton = clickableButton(`<i aria-hidden="true" class="fa fa-home"></i>`)
 		.click(function () {
 			hostRoom(data);
 		})
@@ -284,22 +289,24 @@ function updatePendingTable() {
 		});
 		roomCol.append(roomButton);
 
-		let inviteButton = $(`<div class="clickAble"><i aria-hidden="true" class="fa fa-envelope"></i></div>`)
+		const inviteCol = matchButtonContainer();
+		const inviteButton = clickableButton(`<i aria-hidden="true" class="fa fa-envelope"></i>`)
 		.click(function () {
-			if(isOnline(data[3])) {
-				inviteUser(data[3]);
+			if(isOnline(opponentName)) {
+				inviteUser(opponentName);
 			}
 		})
 		.popover({
 			placement: "bottom",
-			content: "Invite "+data[3],
+			content: `Invite ${opponentName}`,
 			trigger: "hover"
 		});
 		inviteCol.append(inviteButton);
 
-		let pingButton = $(`<div class="clickAble"><i aria-hidden="true" class="fa fa-phone"></i></div>`)
+		const pingCol = matchButtonContainer();
+		const pingButton = clickableButton(`<i aria-hidden="true" class="fa fa-phone"></i>`)
 		.click(function () {
-			copyToClipboard("<@"+data[2]+"> ");
+			copyToClipboard(`<@${opponentDiscordId}> `);
 		})
 		.popover({
 			placement: "bottom",
@@ -308,9 +315,10 @@ function updatePendingTable() {
 		});
 		pingCol.append(pingButton);
 
-		let winButton = $(`<div class="clickAble">💪</div>`)
+		const winCol = matchButtonContainer();
+		const winButton = clickableButton(`💪`)
 		.click(function () {
-			copyToClipboard("m!r "+data[0]+" "+selfIHIname);
+			copyToClipboard(`m!r ${matchId} ${selfIHIname}`);
 		})
 		.popover({
 			placement: "bottom",
@@ -318,9 +326,11 @@ function updatePendingTable() {
 			trigger: "hover"
 		});
 		winCol.append(winButton);
-		let loseButton = $(`<div class="clickAble">💀</div>`)
+
+		const loseCol = matchButtonContainer();
+		const loseButton = clickableButton(`💀`)
 		.click(function () {
-			copyToClipboard("m!r "+data[0]+" "+data[3]);
+			copyToClipboard(`m!r ${matchId} ${opponentName}`);
 		})
 		.popover({
 			placement: "bottom",
@@ -328,9 +338,11 @@ function updatePendingTable() {
 			trigger: "hover"
 		});
 		loseCol.append(loseButton);
-		let drawButton = $(`<div class="clickAble">😓</div>`)
+
+		const drawCol = matchButtonContainer();
+		const drawButton = clickableButton(`😓`)
 		.click(function () {
-			copyToClipboard("m!r "+data[0]+" draw");
+			copyToClipboard(`m!r ${matchId} draw`);
 		})
 		.popover({
 			placement: "bottom",
@@ -339,42 +351,49 @@ function updatePendingTable() {
 		});
 		drawCol.append(drawButton);
 
-		matchRow.append(idCol);
-		matchRow.append(typeCol);
-		matchRow.append(opponentCol);
-		matchRow.append(tierCol);
-		matchRow.append(roomCol);
-		matchRow.append(inviteCol);
-		matchRow.append(pingCol);
-		matchRow.append(winCol);
-		matchRow.append(loseCol);
-		matchRow.append(drawCol);
+		pendingTableOrder({
+			idCol,
+			typeCol,
+			opponentCol,
+			tierCol,
+			roomCol,
+			inviteCol,
+			pingCol,
+			winCol,
+			loseCol,
+			drawCol
+		}).forEach(entry => matchRow.append(entry))
 
 		ladderWindowTable.append(matchRow);
 	}
 
 	updateOpponentOnlineState()
 }
+
 function updateCompletedTable() {
 	clearTable();
-	for(let data of completedData) {
-		if(!checkType(data[1])) continue;
-		let matchRow=$(`<tr id="match`+data[0]+`" class="matchRow"></tr>`);
-		let idCol = $(`<td class="matchId">`+data[0]+`</td>`);
-		let typeCol = $(`<td class="matchType">`+data[1]+`</td>`);
-		let opponentCol = $(`<td class="matchOpponent">`+data[2]+`</td>`);
-		let tierCol = $(`<td class="matchTier">`+data[3]+`</td>`);
-		let resultCol = $(`<td class="matchResult">`+data[4]+`</td>`);
+	for(const data of completedData) {
+		const [matchId, matchType, opponentName, tier, winnerName] = data
+		if(!checkType(matchType)) continue;
+		const matchRow = $(`<tr id="match${matchId}" class="matchRow"></tr>`);
+		const idCol = $(`<td class="matchId">${matchId}</td>`);
+		const typeCol = $(`<td class="matchType">${matchType}</td>`);
+		const opponentCol = $(`<td class="matchOpponent">${opponentName}</td>`);
+		const tierCol = $(`<td class="matchTier">${tier}</td>`);
+		const resultCol = $(`<td class="matchResult">${winnerName}</td>`);
 
-		matchRow.append(idCol);
-		matchRow.append(typeCol);
-		matchRow.append(opponentCol);
-		matchRow.append(tierCol);
-		matchRow.append(resultCol);
-		if(data[4].toLowerCase()===selfIHIname.toLowerCase()) {
+		completedTableOrder({
+			idCol,
+			typeCol,
+			opponentCol,
+			tierCol,
+			resultCol
+		}).forEach(entry => matchRow.append(entry))
+
+		if(winnerName.toLowerCase() === selfIHIname.toLowerCase()) {
 			matchRow.addClass("onlineOpponent");
 		}
-		else if(data[4].toLowerCase()===data[2].toLowerCase()) {
+		else if(winnerName.toLowerCase() === opponentName.toLowerCase()) {
 			matchRow.addClass("offlineOpponent");
 		}
 
@@ -444,13 +463,13 @@ function hostRoom(data) {
 }
 
 function arrayToLower(arr) {
-	return arr.join('|').toLowerCase().split('|');
+	return arr.map(entry => typeof entry === "string"?entry.toLowerCase():entry.toString());
 }
 
 function isOnline(username) {
-	username=username.toLowerCase();
-	if($.inArray(username,arrayToLower(socialTab.onlineFriends))>-1) return true;
-	return $.inArray(username,arrayToLower(Object.keys(socialTab.allPlayerList._playerEntries)))>-1;
+	username = username.toLowerCase();
+	return arrayToLower(socialTab.onlineFriends).includes(username) ||
+		arrayToLower(Object.keys(socialTab.allPlayerList._playerEntries)).includes(username);
 }
 
 var receivingdata=false;
@@ -519,7 +538,7 @@ new Listener("all online users", function (change) {
 }).bindListener();
 
 function dockeyup(event) {
-	if(event.altKey && event.code=='KeyL') {
+	if(event.altKey && (event.key=='L' || event.key=='l')) {
 		if (ladderWindow.isVisible()) {
 			ladderWindow.close();
 		}
