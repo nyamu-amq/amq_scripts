@@ -92,8 +92,11 @@ im so lazy to write usage.... and english is too hard for me..../o\
 - Phone button on the left side of cloud button is for copying all opponent's discord id to clipboard. It is useful for pinging all opponents.
 
 ### amqMousewheelVolumeControl.user.js
-- adjust volume with mouse wheel when mouse cursor is over video area or avatar area
+- you can adjust volume with mouse wheel when mouse cursor is over video area or avatar area
 - it works in expand library also
+
+### catboxVolume.user.js
+- you can adjust volume with mouse wheel when you opened some media on catbox
 
 ### ~~amqNoFriendRoomFilter.user.js~~
 friend filter is official now. remove this script on your browser if you added it
