@@ -69,6 +69,7 @@ im so lazy to write usage.... and english is too hard for me..../o\
 - [PgDn] : decrease volume
 - [Ctrl + M] : toggle mute
 - [Shift + Enter] : skip
+- [Shift + Alt + S] : toggle autoskip
 - [Shift + PgUp] : move box focus to upper box
 - [Shift + PgDn] : move box focus to lower box
 - [Shift + Home] : move box focus to box 1
