@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Hotkey Functions
 // @namespace    https://github.com/nyamu-amq
-// @version      0.12
+// @version      0.13
 // @description  enable hotkey functions
 // @description  ESC: remove zombie tooltips
 // @description  TAB: move cursor focus to chat box and answer box
@@ -9,6 +9,7 @@
 // @description  PgDn: decrease volume
 // @description  Ctrl + M : toggle mute
 // @description  Shift + Enter: skip
+// @description  Shift + Alt + S: toggle autoskip
 // @description  Shift + PgUp: move box focus to upper box
 // @description  Shift + PgDn: move box focus to lower box
 // @description  Shift + Home: move box focus to box 1
@@ -50,8 +51,12 @@ function doc_keyUp(event) {
 		volumeController.setMuted(!volumeController.muted);
 		volumeController.adjustVolume();
 	}
-	else if(lobby.inLobby && hostModal.gameMode !== 'Ranked') {
-		if(event.keyCode=='37' && event.ctrlKey) {
+	else if(event.keyCode=='83' && event.shiftKey && event.altKey) {
+		isAutoSkip=!isAutoSkip;
+		chatSystemMessage(isAutoSkip?"Enabled Auto Skip":"Disabled Auto Skip");
+	}
+	else if(lobby.inLobby && event.ctrlKey && hostModal.gameMode !== 'Ranked') {
+		if(event.keyCode=='37') {
 			if(lobby.isSpectator) {
 				let changeToListner = new Listener("Change To Player", function (succes) {
 					if (!succes) {
@@ -76,12 +81,12 @@ function doc_keyUp(event) {
 				lobby.updateMainButton();
 			}
 		}
-		else if(event.keyCode=='39' && event.ctrlKey) {
+		else if(event.keyCode=='39') {
 			if(!lobby.isSpectator) {
 				lobby.changeToSpectator(selfName);
 			}
 		}
-		else if(event.keyCode=='38' && event.ctrlKey) {
+		else if(event.keyCode=='38') {
 			if(lobby.isHost && isAllPlayerReady()) {
 				lobby.fireMainButtonEvent();
 			}
@@ -155,6 +160,36 @@ function SelectAvatarGroup(number) {
 document.addEventListener('keyup', doc_keyUp, false);
 document.addEventListener('keydown', doc_keyDown, false);
 
+var isAutoSkip = false;
+new Listener("play next song", payload => {
+	if(quiz.isSpectator) return;
+	setTimeout(function () {
+		if(isAutoSkip) {
+			quiz.skipClicked();
+		}
+	}, 500);
+}).bindListener();
+
+new Listener("Join Game", (response) => {
+	if(response.error) return;
+	notifyAutoSkip();
+}).bindListener();
+
+new Listener("Spectate Game", (response) => {
+	if(response.error) return;
+	notifyAutoSkip();
+}).bindListener();
+
+function notifyAutoSkip() {
+	if(quiz.gameMode === "Ranked") return;
+	gameChat.systemMessage(isAutoSkip?"Auto Skip is Enabled. Press [SHIFT+ALT+S] to disable.":"Auto Skip is Disabled. Press [SHIFT+ALT+S] to enable.");
+}
+
+function chatSystemMessage(msg) {
+	if(!gameChat.isShown()) return;
+	gameChat.systemMessage(msg);
+}
+
 AMQ_addScriptData({
     name: "Hotkey Functions",
     author: "nyamu",
@@ -166,6 +201,7 @@ AMQ_addScriptData({
         <p>[PgDn] : decrease volume</p>
         <p>[Ctrl + M]  : toggle mute</p>
         <p>[Shift + Enter] : skip</p>
+        <p>[Shift + Alt + S] : toggle autoskip</p>
         <p>[Shift + PgUp] : move box focus to upper box</p>
         <p>[Shift + PgDn] : move box focus to lower box</p>
         <p>[Shift + Home] : move box focus to box 1</p>
