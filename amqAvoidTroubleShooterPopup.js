@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         AMQ Aviod Trouble Shooter Popup
+// @name         AMQ Avoid Trouble Shooter Popup
 // @namespace    https://github.com/nyamu-amq
 // @version      0.1
 // @description  for video buffering experts
