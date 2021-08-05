@@ -9,6 +9,11 @@ im so lazy to write usage.... and english is too hard for me..../o\
 - You can toggle it with [Alt+R]. Default is off.
 - Dedicated to lazists.
 
+### amqAvoidTroubleShooterPopup.user.js
+- it prevents trouble shooter popup.
+- **DON'T USE THIS SCRIPT UNLESS YOU KNOW WELL WHAT TO DO WHEN BUFFERING PROBLEM HAPPENED**
+- [amq official buffering troubleshooter here](https://animemusicquiz.com/troubleshooting), just in case
+
 ### amqBugfix.user.js
 - it fixes bug that wrong game type on game settings
 
