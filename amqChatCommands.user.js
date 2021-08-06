@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Chat Commands
 // @namespace    https://github.com/nyamu-amq
-// @version      0.3
+// @version      0.5
 // @description  enable chat commands
 // @description  - commands for host in lobby
 // @description  -- /t [oei] : change songtype. ex) /t oi => openings inserts. /t ei => endings inserts. /t e => endings only.
@@ -9,7 +9,7 @@
 // @description  -- /d (number1)-(number2) : change difficulty. ex) /d 0-40 => change difficulty to 0-40
 // @description  -- /random : change song selection to random
 // @description  -- /watched : change song selection to watched only
-// @description  -- /s (number) : change speed. amq allow one of 1, 1.5, 2, 4 only
+// @description  -- /s (number) : change speed. amq allows one of 1, 1.5, 2, 4 only
 // @description  -- /spec (someone) : send someone to spec
 // @description  -- /kick (someone) : kick someone
 // @description  -- /host (someone) : give someone host
@@ -137,7 +137,7 @@ function processChatCommand(payload) {
 		});
 	}
 	else if(payload.message.startsWith("/queue")) {
-		if(hostModal.gameMode === 'Ranked') return;
+		if(quiz.gameMode === 'Ranked') return;
 		if(!quiz.inQuiz) return;
 		if(!quiz.isSpectator) return;
 		gameChat.joinLeaveQueue();
@@ -187,7 +187,7 @@ function processChatCommand(payload) {
 		}
 	}
 	else if(payload.message.startsWith("/inv ")) {
-		if(hostModal.gameMode === 'Ranked') return;
+		if(quiz.gameMode === 'Ranked') return;
 		if(!quiz.inQuiz && !lobby.inLobby) return;
 		if(payload.message.length>5) {
 			socket.sendCommand({
@@ -201,13 +201,23 @@ function processChatCommand(payload) {
 	}
 	else if(payload.message.startsWith("/autothrow")) {
 		var index=payload.message.indexOf(' ');
-		if(index>0) autothrow=payload.message.substr(index+1);
+		if(index>0) autothrow=translateShortcodeToUnicode(payload.message.substr(index+1));
 		else autothrow='';
+	}
+	else if(payload.message.startsWith("/prof ")) {
+		var index=payload.message.indexOf(' ');
+		if(index>0) {
+			var username=payload.message.substr(index+1);
+			if(username.length>0) {
+				playerProfileController.loadProfileIfClosed(payload.message.substr(index+1), $("#gameChatContainer"), {}, () => {}, false, true);
+			}
+		}
 	}
 }
 
 let playNextSongListener = new Listener("play next song", payload => {
 	if(quiz.isSpectator) return;
+	if(quiz.gameMode === 'Ranked') return;
 	setTimeout(function () {
 		if(autothrow.length>0) {
 			quiz.skipClicked();
