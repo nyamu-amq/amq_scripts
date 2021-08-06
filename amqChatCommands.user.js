@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Chat Commands
 // @namespace    https://github.com/nyamu-amq
-// @version      0.5
+// @version      0.6
 // @description  enable chat commands
 // @description  - commands for host in lobby
 // @description  -- /t [oei] : change songtype. ex) /t oi => openings inserts. /t ei => endings inserts. /t e => endings only.
@@ -201,7 +201,7 @@ function processChatCommand(payload) {
 	}
 	else if(payload.message.startsWith("/autothrow")) {
 		var index=payload.message.indexOf(' ');
-		if(index>0) autothrow=translateShortcodeToUnicode(payload.message.substr(index+1));
+		if(index>0) autothrow=translateShortcodeToUnicode(payload.message.substr(index+1)).text;
 		else autothrow='';
 	}
 	else if(payload.message.startsWith("/prof ")) {
