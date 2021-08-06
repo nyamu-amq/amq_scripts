@@ -42,6 +42,7 @@ im so lazy to write usage.... and english is too hard for me..../o\
     - /v (number) : change volume 0-100
     - /skip : skip current song
     - /autothrow (answer) : start throwing with answer automatically. you can stop it by /autothrow without answer
+    - **DON'T USE /autothrow COMMAND IN RANKED GAME. YOU MAY GET BANNED FROM GAME IF YOU TRY THIS**
 
 ### amqEmojiAnswer.js
 - convert emoji shortcode in answer box when press enter
