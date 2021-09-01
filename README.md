@@ -106,7 +106,8 @@ im so lazy to write usage.... and english is too hard for me..../o\
 - you can adjust volume with mouse wheel when you opened some media on catbox
 
 ### ~~amqNoFriendRoomFilter.user.js~~
-friend filter is official now. remove this script on your browser if you added it
+- friend room filter is official now. remove this script on your browser if you added it
+- literally [OBSOLETE](https://files.catbox.moe/hwb7zh.webm)
 
 ---
 im not good at javascript/html/css yet. so this scripts might have some bugs
