@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Highlight Friends
 // @namespace    https://github.com/nyamu-amq
-// @version      0.24
+// @version      0.25
 // @description  Apply color to name of yourself and friends. and more
 // @author       nyamu, ensorcell
 // @match        https://animemusicquiz.com/*
@@ -484,6 +484,7 @@ startGameListner.bindListener();
 
 let resultListner = new Listener("answer results", (data) => {
 	updateFriendTable(data.players);
+	if(data.lateJoinPlayers) refreshColors();
 });
 resultListner.bindListener();
 
@@ -793,21 +794,22 @@ GameChat.prototype.systemMessage = function (title, msg) {
 
 new Listener("new friend", (friend) => {
 	setTimeout(() => {
-		colorScorebox();
-		colorPlayers();
-		colorAvatar();
-		colorSpectators();
+		refreshColors();
 	},0);
 }).bindListener();
 new Listener("friend removed", (target) => {
 	setTimeout(() => {
-		colorScorebox();
-		colorPlayers();
-		colorAvatar();
-		colorSpectators();
+		refreshColors();
 		removeFriendFromTable(target.name);
 	},0);
 }).bindListener();
+
+function refreshColors() {
+	colorScorebox();
+	colorPlayers();
+	colorAvatar();
+	colorSpectators();
+}
 
 
 
