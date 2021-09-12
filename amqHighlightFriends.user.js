@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Highlight Friends
 // @namespace    https://github.com/nyamu-amq
-// @version      0.25
+// @version      0.26
 // @description  Apply color to name of yourself and friends. and more
 // @author       nyamu, ensorcell
 // @match        https://animemusicquiz.com/*
@@ -456,15 +456,14 @@ function updateFriendTable(players) {
 	},1);
 }
 
-let specGameListner = new Listener("Spectate Game", (data) => {
+new Listener("Spectate Game", (data) => {
 	if(!data.error) {
 		if(data.quizState) {
 			if(data.settings.gameMode === 'Battle Royale' && data.quizState.state === quiz.QUIZ_STATES.BATTLE_ROYAL) return;
 			updateFriendTable(data.quizState.players);
 		}
 	}
-});
-specGameListner.bindListener();
+}).bindListener();
 
 function removeFriendFromTable(friendname) {
 	if(!quiz.inQuiz) return;
@@ -477,16 +476,16 @@ function removeFriendFromTable(friendname) {
 	}
 }
 
-let startGameListner = new Listener("Game Starting", (data) => {
+new Listener("Game Starting", (data) => {
 	updateFriendTable(Object.values(lobby.players));
-});
-startGameListner.bindListener();
+}).bindListener();
 
-let resultListner = new Listener("answer results", (data) => {
-	updateFriendTable(data.players);
-	if(data.lateJoinPlayers) refreshColors();
-});
-resultListner.bindListener();
+new Listener("answer results", (data) => {
+	setTimeout(() => {
+		updateFriendTable(data.players);
+		if(data.lateJoinPlayers) refreshColors();
+	},0);
+}).bindListener();
 
 function SelectAvatarGroup(number) {
 	quiz.avatarContainer.currentGroup = number;
