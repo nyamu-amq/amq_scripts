@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Auto Ready
 // @namespace    https://github.com/nyamu-amq
-// @version      0.6
+// @version      0.7
 // @description  
 // @author       nyamu
 // @match        https://animemusicquiz.com/*
@@ -52,9 +52,9 @@ function checkStart() {
 }
 
 function checkAllPlayersReady() {
-	Object.values(lobby.players).forEach((player) => {
+	for(var player of Object.values(lobby.players)) {
 		if(!player.ready) return false;
-	});
+	}
 	return true;
 };
 
