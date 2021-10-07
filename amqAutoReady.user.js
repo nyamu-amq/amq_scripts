@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Auto Ready
 // @namespace    https://github.com/nyamu-amq
-// @version      0.5
+// @version      0.6
 // @description  
 // @author       nyamu
 // @match        https://animemusicquiz.com/*
@@ -24,23 +24,39 @@ if (document.getElementById('startPage')) {
 
 var isAutoReady=localStorage.getItem('auto_ready')=="true";
 var isAutoSpec=false;
+var isAutoStart=false;
 
-let settingChangeListener = new Listener("Room Settings Changed", (changes) => {
+new Listener("Room Settings Changed", (changes) => {
 	setTimeout(() => { checkReady(); },1);
-});
-let spectatorChangeToPlayer = new Listener("Spectator Change To Player", (player) => {
+}).bindListener();
+new Listener("Spectator Change To Player", (player) => {
 	if (player.name === selfName) {
-		setTimeout(() => { checkReady(); },1);
+		setTimeout(() => { checkReady(); checkStart(); },1);
 	}
-});
-let hostPromotionListner = new Listener("Host Promotion", (payload) => {
+}).bindListener();
+new Listener("Host Promotion", (payload) => {
 	setTimeout(() => { checkReady(); },1);
-});
+}).bindListener();
 
 function checkReady() {
 	if(!isAutoReady || !lobby.inLobby || lobby.isHost || lobby.isSpectator || lobby.isReady || quiz.gameMode === "Ranked") return;
 	lobby.fireMainButtonEvent();
 }
+
+function checkStart() {
+	if(!isAutoStart || !lobby.inLobby || !lobby.isHost || quiz.gameMode === "Ranked") return;
+	setTimeout(() => {
+		if(!checkAllPlayersReady()) return;
+		lobby.fireMainButtonEvent();
+	},1);
+}
+
+function checkAllPlayersReady() {
+	Object.values(lobby.players).forEach((player) => {
+		if(!player.ready) return false;
+	});
+	return true;
+};
 
 ViewChanger.prototype.changeView = (function() {
 	var old=ViewChanger.prototype.changeView;
@@ -55,7 +71,10 @@ function onViewChanged() {
 		if(isAutoSpec) {
 			if(!lobby.isSpectator) lobby.changeToSpectator(selfName)
 		}
-		else checkReady();
+		else {
+			checkReady();
+			if(lobby.numberOfPlayers<2) checkStart();
+		}
 	}
 	isAutoSpec=false;
 }
@@ -71,6 +90,9 @@ function dockeyup(event) {
 			chatSystemMessage(isAutoReady?"Enabled Auto Ready":"Disabled Auto Ready");
 		}
 	}
+	if(event.shiftKey && event.ctrlKey && event.keyCode=='83') {
+		toggleAutoStart();
+	}
 }
 document.addEventListener('keyup', dockeyup, false);
 
@@ -80,37 +102,42 @@ function toggleAutoSpec() {
 	chatSystemMessage(isAutoSpec?"Enabled Auto Spec":"Disabled Auto Spec");
 }
 
+function toggleAutoStart() {
+	isAutoStart=!isAutoStart;
+	chatSystemMessage(isAutoStart?"Enabled Auto Start":"Disabled Auto Start");
+}
+
 function chatSystemMessage(msg) {
 	if(!gameChat.isShown()) return;
 	gameChat.systemMessage(msg);
 }
 
-settingChangeListener.bindListener();
-spectatorChangeToPlayer.bindListener();
-hostPromotionListner.bindListener();
-
-let joinGameListener = new Listener("Join Game", (response) => {
+new Listener("Join Game", (response) => {
 	if(response.error) return;
 	notifyAutoReady();
-});
+}).bindListener();
 
-let spectateGameListener = new Listener("Spectate Game", (response) => {
+new Listener("Spectate Game", (response) => {
 	if(response.error) return;
 	notifyAutoReady();
-});
+}).bindListener();
+
 function notifyAutoReady() {
 	if(quiz.gameMode === "Ranked") return;
 	gameChat.systemMessage(isAutoReady?"Auto Ready is Enabled. Press [ALT+R] to disable.":"Auto Ready is Disabled. Press [ALT+R] to enable.");
+	gameChat.systemMessage(isAutoStart?"Auto Start is Enabled. Press [CTRL+SHIFT+S] to disable.":"Auto Start is Disabled. Press [CTRL+SHIFT+S] to enable.");
 }
-joinGameListener.bindListener();
-spectateGameListener.bindListener();
+
+new Listener("Player Ready Change",  (change) => {
+	checkStart();
+}).bindListener();
 
 AMQ_addScriptData({
-    name: "Auto Ready",
-    author: "nyamu",
-    description: `
-        <p>It changes your state to ready automatically when you are in lobby. Even when settings are changed. You can unready by clicking unready button manually.</p>
-        <p>You can toggle it with [ALT+R]. Default is off.</p>
-        <p>Dedicated to lazists.</p>
-    `
+	name: "Auto Ready",
+	author: "nyamu",
+	description: `
+		<p>It changes your state to ready automatically when you are in lobby. Even when settings are changed. You can unready by clicking unready button manually.</p>
+		<p>You can toggle it with [ALT+R]. Default is off.</p>
+		<p>Dedicated to lazists.</p>
+	`
 });
