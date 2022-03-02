@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         Catbox Volume
 // @namespace    https://github.com/nyamu-amq
-// @version      0.1
+// @version      0.2
 // @description
 // @author       nyamu
-// @match        https://files.catbox.moe/*
+// @match        https://*.catbox.moe/*
 // @grant        none
 
 // ==/UserScript==
