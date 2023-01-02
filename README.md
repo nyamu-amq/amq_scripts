@@ -116,4 +116,4 @@ im so lazy to write usage.... and english is too hard for me..../o\
 ---
 im not good at javascript/html/css yet. so this scripts might have some bugs
 
-codes of Joseph and Klem helped me to study javascript. thank you very much
+codes of Joseph and Klem and zol helped me to study javascript. thank you very much coding gods :place_of_worship:
