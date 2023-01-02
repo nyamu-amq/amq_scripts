@@ -2,22 +2,22 @@
 
 im so lazy to write usage.... and english is too hard for me..../o\
 
-### amqAutoReady.user.js
+### [amqAutoReady.user.js](https://github.com/nyamu-amq/amq_scripts/raw/master/amqAutoReady.user.js)
 - It changes your state to ready automatically when you are in lobby.
 - Even when settings are changed.
 - You can unready by clicking unready button manually.
 - You can toggle it with [Alt+R]. Default is off.
 - Dedicated to lazists.
 
-### amqAvoidTroubleShooterPopup.user.js
+### [amqAvoidTroubleShooterPopup.user.js](https://github.com/nyamu-amq/amq_scripts/raw/master/amqAvoidTroubleShooterPopup.user.js)
 - it prevents trouble shooter popup.
 - **DON'T USE THIS SCRIPT UNLESS YOU KNOW WELL WHAT TO DO WHEN BUFFERING PROBLEM HAPPENED**
 - [amq official buffering troubleshooter here](https://animemusicquiz.com/troubleshooting), just in case
 
-### amqBugfix.user.js
+### [amqBugfix.user.js](https://github.com/nyamu-amq/amq_scripts/raw/master/amqBugfix.user.js)
 - it fixes bug that wrong game type on game settings
 
-### amqChatCommands.user.js
+### [amqChatCommands.user.js](https://github.com/nyamu-amq/amq_scripts/raw/master/amqChatCommands.user.js)
 - it enables chat commands
   - commands for host in lobby
     - /t [oei] : change songtype
@@ -44,18 +44,18 @@ im so lazy to write usage.... and english is too hard for me..../o\
     - /autothrow (answer) : start throwing with answer automatically. you can stop it by /autothrow without answer
     - **DON'T USE /autothrow COMMAND IN RANKED GAME. YOU MAY GET BANNED FROM GAME IF YOU TRY THIS**
 
-### amqEmojiAnswer.js
+### [amqEmojiAnswer.js](https://github.com/nyamu-amq/amq_scripts/raw/master/amqEmojiAnswer.user.js)
 - convert emoji shortcode in answer box when press enter
 - it works on room name also now
 
-### amqExpandLibraryAutoplay.user.js
+### [amqExpandLibraryAutoplay.user.js](https://github.com/nyamu-amq/amq_scripts/raw/master/amqExpandLibraryAutoplay.user.js)
 - it plays automatically when you selected a song in expand library
 - the resolution you selected will be kept when you selected another song (but highest resolution if the resolution is not exist)
 
-### amqFriendOnlineNotifier.user.js
+### [amqFriendOnlineNotifier.user.js](https://github.com/nyamu-amq/amq_scripts/raw/master/amqFriendOnlineNotifier.user.js)
 - show notification when your friend is online
 
-### amqHighlightFriends.user.js
+### [amqHighlightFriends.user.js](https://github.com/nyamu-amq/amq_scripts/raw/master/amqHighlightFriends.user.js)
 - apply color to yourself and friends in scorebox and avatarbox
 - apply color to name of yourself and friends on chat
 - apply color to join/spec/leave system message on chat
@@ -67,7 +67,7 @@ im so lazy to write usage.... and english is too hard for me..../o\
 - codes that applying colors to friend name on chat and lobby was provided by ensorcell. thanks a lot
 - thanks a lot TheJoseph98 for providing window script and mentoring
 
-### amqHotkeyFunctions.user.js
+### [amqHotkeyFunctions.user.js](https://github.com/nyamu-amq/amq_scripts/raw/master/amqHotkeyFunctions.user.js)
 - enables some hotkey functions. im so lazy to use mouse for this functions
 - [TAB] : move cursor focus to answer box and chat box
 - [ESC] : remove zombie tooltips
@@ -85,24 +85,28 @@ im so lazy to write usage.... and english is too hard for me..../o\
 - [Ctrl + Up] : start game if you are host and all players are ready
 - [Ctrl + Down] : start vote for returning lobby if game started and you are host
 
-### amqLadderAssist.user.js
-- This script is written to make IHI ladder game more comfortable.
-- You can open and close ladder info window by pressing [ALT+L].
-- Cloud button is for updating data manually. You can update by clicking it. It will receive match data from spreadsheet. Updating data takes a few seconds. just wait. It recieves data automatically when ladder window is opened first time only.
-- It shows your matches to play when match data is received.
-- Opponents of green rows are online, opponents of red rows are offline.
-- Tier is lower one of two.
-- R column button is for making room and changing settings. If you clicked it when you are outside of room, it makes room with match type and tier settings. If you clicked it when you are in a room and you are host, it changes settings.
-- I column button is for inviting opponent. You can invite opponent by clicking it. it works when you are in a room and opponent is online.
-- P column button is for copying opponent's discord id to clipboard. It is useful for pinging opponent.
-- W/L/D column buttons are for copying Win/Lose/Draw report command to clipboard. It is just for copying text. It doesn't report automatically.
-- Phone button on the left side of cloud button is for copying all opponent's discord id to clipboard. It is useful for pinging all opponents.
+### ~~amqLadderAssist.user.js~~
+- not supported :runner:
+- ~~This script is written to make IHI ladder game more comfortable.~~
+- ~~You can open and close ladder info window by pressing [ALT+L].~~
+- ~~Cloud button is for updating data manually. You can update by clicking it. It will receive match data from spreadsheet. Updating data takes a few seconds. just wait. It recieves data automatically when ladder window is opened first time only.~~
+- ~~It shows your matches to play when match data is received.~~
+- ~~Opponents of green rows are online, opponents of red rows are offline.~~
+- ~~Tier is lower one of two.~~
+- ~~R column button is for making room and changing settings. If you clicked it when you are outside of room, it makes room with match type and tier settings. If you clicked it when you are in a room and you are host, it changes settings.~~
+- ~~I column button is for inviting opponent. You can invite opponent by clicking it. it works when you are in a room and opponent is online.~~
+- ~~P column button is for copying opponent's discord id to clipboard. It is useful for pinging opponent.~~
+- ~~W/L/D column buttons are for copying Win/Lose/Draw report command to clipboard. It is just for copying text. It doesn't report automatically.~~
+- ~~Phone button on the left side of cloud button is for copying all opponent's discord id to clipboard. It is useful for pinging all opponents.~~
 
-### amqMousewheelVolumeControl.user.js
+### [amqMousewheelVolumeControl.user.js](https://github.com/nyamu-amq/amq_scripts/raw/master/amqMousewheelVolumeControl.user.js)
 - you can adjust volume with mouse wheel when mouse cursor is over video area or avatar area
 - it works in expand library also
 
-### catboxVolume.user.js
+### [amqOneGroupGlow.user.js](https://github.com/nyamu-amq/amq_scripts/raw/master/amqOneGroupGlow.user.js)
+- correct answer players glowing works even stadings box is only one box.
+
+### [catboxVolume.user.js](https://github.com/nyamu-amq/amq_scripts/raw/master/catboxVolume.user.js)
 - you can adjust volume with mouse wheel when you opened some media on catbox
 
 ### ~~amqNoFriendRoomFilter.user.js~~
