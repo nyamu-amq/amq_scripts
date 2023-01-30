@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Highlight Friends
 // @namespace    https://github.com/nyamu-amq
-// @version      0.28
+// @version      0.29
 // @description  Apply color to name of yourself and friends. and more
 // @author       nyamu, ensorcell
 // @match        https://animemusicquiz.com/*
@@ -163,21 +163,11 @@ let colorSettingData = [
 						width: 90,
 						colspan: 2 ,
 						label: "Leave"
-					},
-					{
-						width: 30,
-						colspan: 1 ,
-						label: ""
-					},
-					{
-						width: 300,
-						colspan: 4 ,
-						label: "Disable Ranked Reward Effects"
 					}
 				]
 			},
 			{
-				height:30,
+				height:60,
 				columns:
 				[
 					{
@@ -203,23 +193,67 @@ let colorSettingData = [
 					{
 						id: "smColorLeaveColor",
 						type: "color"
-					},
+					}
+				]
+			}
+        ]
+    },
+    {
+        id:"smDisableRankedRewardEffects",
+        rows:
+        [
+			{
+				columns:
+				[
 					{
-						label: ""
-					},
+						colspan: 4,
+						label: "Disable Ranked Reward Effects"
+					}
+				]
+			},
+			{
+				height:30,
+				columns:
+				[
 					{
+                        width: 60,
 						label: "Color",
 					},
+					{
+                        width: 60,
+						label: "Glow",
+					},
+					{
+                        width: 120,
+						label: "Friend Color",
+					},
+					{
+                        width: 120,
+						label: "Friend Glow",
+					}
+				]
+			},
+			{
+				height:30,
+				columns:
+				[
 					{
 						id: "smRemoveColor",
 						type: "checkbox",
 						val: false
 					},
 					{
-						label: "Glow",
+						id: "smRemoveGlow",
+						type: "checkbox",
+						val: false
 					},
 					{
-						id: "smRemoveGlow",
+						id: "smRemoveFriendColor",
+						type: "checkbox",
+						val: false
+					},
+					{
+						id: "smRemoveFriendGlow",
 						type: "checkbox",
 						val: false
 					}
@@ -237,8 +271,6 @@ var saveData = {
 	"smColorJoinColor":"#8080ff",
 	"smColorSpecColor":"#ffff80",
 	"smColorLeaveColor":"#ff8080",
-	"smRemoveColor":false,
-	"smRemoveGlow":false
 };
 
 function saveSettings() {
@@ -723,10 +755,9 @@ new Listener("game chat update", function (payload) {
 function updateChatMessage(message) {
 	if(message.sender === selfName) {
 		setTimeout(() => {
-			var gcUserName=$(`#gcPlayerMessage-${message.messageId}`).find(".gcUserName")
+			$(`#gcPlayerMessage-${message.messageId}`).find(".gcUserName")
 				.addClass("self")
 				.css("color", $("#smColorSelfChat").prop("checked")?$("#smColorSelfColor").val():"");
-			removeRankedRewards(gcUserName)
 		},1);
 	}
 	else if (socialTab.isFriend(message.sender)) {
@@ -734,19 +765,17 @@ function updateChatMessage(message) {
 			var gcUserName=$(`#gcPlayerMessage-${message.messageId}`).find(".gcUserName")
 				.addClass("friend")
 				.css("color", $("#smColorFriendChat").prop("checked")?$("#smColorFriendColor").val():"");
-			removeRankedRewards(gcUserName)
+			if($("#smRemoveFriendColor").prop("checked")) gcUserName.removeClass("gcNameColor");
+			if($("#smRemoveFriendGlow").prop("checked")) gcUserName.removeClass("gcNameGlow");
 		},1);
 	}
 	else {
 		setTimeout(() => {
 			var gcUserName=$(`#gcPlayerMessage-${message.messageId}`).find(".gcUserName");
-			removeRankedRewards(gcUserName)
+			if($("#smRemoveColor").prop("checked")) gcUserName.removeClass("gcNameColor");
+			if($("#smRemoveGlow").prop("checked")) gcUserName.removeClass("gcNameGlow");
 		},1);
 	}
-}
-function removeRankedRewards(gcUserName) {
-	if($("#smRemoveColor").prop("checked")) gcUserName.removeClass("gcNameColor");
-	if($("#smRemoveGlow").prop("checked")) gcUserName.removeClass("gcNameGlow");
 }
 
 new Listener("New Spectator", function (spectator) {
