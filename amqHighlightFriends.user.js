@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Highlight Friends
 // @namespace    https://github.com/nyamu-amq
-// @version      0.29
+// @version      0.30
 // @description  Apply color to name of yourself and friends. and more
 // @author       nyamu, ensorcell
 // @match        https://animemusicquiz.com/*
@@ -230,6 +230,10 @@ let colorSettingData = [
 					{
                         width: 120,
 						label: "Friend Glow",
+					},
+					{
+                        width: 200,
+						label: "Override Ranked Color",
 					}
 				]
 			},
@@ -254,6 +258,11 @@ let colorSettingData = [
 					},
 					{
 						id: "smRemoveFriendGlow",
+						type: "checkbox",
+						val: false
+					},
+					{
+						id: "smOverrideRankedColor",
 						type: "checkbox",
 						val: false
 					}
@@ -756,17 +765,19 @@ function updateChatMessage(message) {
 	if(message.sender === selfName) {
 		setTimeout(() => {
 			$(`#gcPlayerMessage-${message.messageId}`).find(".gcUserName")
-				.addClass("self")
-				.css("color", $("#smColorSelfChat").prop("checked")?$("#smColorSelfColor").val():"");
+				.addClass("self");
+			if($("#smOverrideRankedColor").prop("checked") || !gcUserName.hasClass("gcNameColor") )
+				gcUserName.css("color", $("#smColorSelfChat").prop("checked")?$("#smColorSelfColor").val():"");
 		},1);
 	}
 	else if (socialTab.isFriend(message.sender)) {
 		setTimeout(() => {
 			var gcUserName=$(`#gcPlayerMessage-${message.messageId}`).find(".gcUserName")
-				.addClass("friend")
-				.css("color", $("#smColorFriendChat").prop("checked")?$("#smColorFriendColor").val():"");
+				.addClass("friend");
 			if($("#smRemoveFriendColor").prop("checked")) gcUserName.removeClass("gcNameColor");
 			if($("#smRemoveFriendGlow").prop("checked")) gcUserName.removeClass("gcNameGlow");
+			if($("#smOverrideRankedColor").prop("checked") || $("#smRemoveFriendColor").prop("checked") || !gcUserName.hasClass("gcNameColor") )
+				gcUserName.css("color", $("#smColorFriendChat").prop("checked")?$("#smColorFriendColor").val():"");
 		},1);
 	}
 	else {
