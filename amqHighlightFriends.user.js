@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Highlight Friends
 // @namespace    https://github.com/nyamu-amq
-// @version      0.32
+// @version      0.33
 // @description  Apply color to name of yourself and friends. and more
 // @author       nyamu, ensorcell
 // @match        https://animemusicquiz.com/*
@@ -719,7 +719,7 @@ function colorAvatar() {
 			$(elem).addClass("self")
 				.css("color", $("#smColorSelfName").prop("checked")?$("#smColorSelfColor").val():"");
 			let parent=$(elem).parent();
-			parent.find(".qpAvatarLevelBar > .qpAvatarLevel")
+			parent.find(".qpAvatarLevelBar > .qpAvatarLevelOuter > .qpAvatarLevel")
 				.addClass("self")
 				.css("color", $("#smColorSelfLevel").prop("checked")?$("#smColorSelfColor").val():"");
 			parent.find(".qpAvatarScoreContainer > .qpAvatarScore")
@@ -730,7 +730,7 @@ function colorAvatar() {
 			$(elem).addClass("friend")
 				.css("color", $("#smColorFriendName").prop("checked")?$("#smColorFriendColor").val():"");
 			let parent=$(elem).parent();
-			parent.find(".qpAvatarLevelBar > .qpAvatarLevel")
+			parent.find(".qpAvatarLevelBar > .qpAvatarLevelOuter > .qpAvatarLevel")
 				.addClass("friend")
 				.css("color", $("#smColorFriendLevel").prop("checked")?$("#smColorFriendColor").val():"");
 			parent.find(".qpAvatarScoreContainer > .qpAvatarScore")
@@ -741,7 +741,7 @@ function colorAvatar() {
 			$(elem).removeClass("friend")
 				.css("color", "");
 			let parent=$(elem).parent();
-			parent.find(".qpAvatarLevelBar > .qpAvatarLevel")
+			parent.find(".qpAvatarLevelBar > .qpAvatarLevelOuter > .qpAvatarLevel")
 				.removeClass("friend")
 				.css("color", "");
 			parent.find(".qpAvatarScoreContainer > .qpAvatarScore")
