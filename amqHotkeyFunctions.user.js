@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Hotkey Functions
 // @namespace    https://github.com/nyamu-amq
-// @version      0.14
+// @version      0.15
 // @description  enable hotkey functions
 // @description  ESC: remove zombie tooltips
 // @description  TAB: move cursor focus to chat box and answer box
@@ -18,6 +18,8 @@
 // @description  Ctrl + Right: change to spec in lobby if you joined
 // @description  Ctrl + Up: start game if you are host and all players are ready
 // @description  Ctrl + Down: start vote for returning lobby if game started and you are host
+// @description  Alt + 1: show song history window
+// @description  Alt + 2: show song history info window
 // @author       nyamu
 // @match        https://animemusicquiz.com/*
 // @grant        none
@@ -26,30 +28,12 @@
 // ==/UserScript==
 
 if (document.getElementById('startPage')) {
-    return
+	return
 }
 
 function doc_keyUp(event) {
 	if(event.keyCode=='27') {
 		$("[id^=tooltip]").remove(); $("[id^=popover]").remove();
-	}
-	else if(event.keyCode=='9' && !event.altKey) {
-		let focusedinput=getFocused();
-		if(!quiz.isSpectator) {
-			if(event.shiftKey) focusedinput--;
-			else focusedinput++;
-			if(focusedinput<0) focusedinput+=answerinput.length+1;
-			if(focusedinput>-1 && focusedinput<answerinput.length) {
-				if(!answerinput[focusedinput].getAttribute('disabled')) {
-					$("#gcInput").blur();
-					quiz.setInputInFocus(true);
-					answerinput[focusedinput].focus();
-					return;
-				}
-			}
-		}
-		quiz.setInputInFocus(false);
-		$("#gcInput").focus();
 	}
 	else if(event.keyCode=='13' && !quiz.isSpectator && event.shiftKey) {
 		quiz.skipClicked()
@@ -62,48 +46,26 @@ function doc_keyUp(event) {
 		isAutoSkip=!isAutoSkip;
 		chatSystemMessage(isAutoSkip?"Enabled Auto Skip":"Disabled Auto Skip");
 	}
-	else if(lobby.inLobby && event.ctrlKey && hostModal.gameMode !== 'Ranked') {
-		if(event.keyCode=='37') {
-			if(lobby.isSpectator) {
-				let changeToListner = new Listener("Change To Player", function (succes) {
-					if (!succes) {
-						displayMessage("Error changing to player");
-					}
-					changeToListner.unbindListener();
-				}.bind(lobby));
-				changeToListner.bindListener();
-
-				socket.sendCommand({
-					type: "lobby",
-					command: "change to player"
-				});
-			}
-			else if(!lobby.isHost) {
-				lobby.isReady = !lobby.isReady;
-				socket.sendCommand({
-					type: "lobby",
-					command: "set ready",
-					data: { ready: lobby.isReady }
-				});
-				lobby.updateMainButton();
-			}
+	else if(event.keyCode=='9' && !event.altKey) {
+		let focusedinput=getFocused();
+		console.log(focusedinput);
+		if(quiz.isSpectator) {
+			quiz.setInputInFocus(false);
+			$("#gcInput").focus();
+			return;
 		}
-		else if(event.keyCode=='39') {
-			if(!lobby.isSpectator) {
-				lobby.changeToSpectator(selfName);
-			}
+		if(event.shiftKey) focusedinput--;
+		else focusedinput++;
+		if(focusedinput<0) focusedinput+=answerinput.length+1;
+		console.log(focusedinput);
+		if(focusedinput>-1 && focusedinput<answerinput.length) {
+			quiz.setInputInFocus(true);
+			answerinput[focusedinput].focus();
+			$("#gcInput").blur();
 		}
-		else if(event.keyCode=='38') {
-			if(lobby.isHost && isAllPlayerReady()) {
-				lobby.fireMainButtonEvent();
-			}
-		}
-	}
-	else if(quiz.inQuiz && hostModal.gameMode !== 'Ranked') {
-		if(event.keyCode=='40' && event.ctrlKey) {
-			if(lobby.isHost) {
-				quiz.startReturnLobbyVote();
-			}
+		else {
+			$("#gcInput").focus();
+			quiz.setInputInFocus(false);
 		}
 	}
 }
@@ -120,6 +82,8 @@ function getFocused() {
 		if(answerinput[i]==focused) return i;
 	}
 	return -1;
+}
+function focusInput() {
 }
 
 function isAllPlayerReady() {
@@ -151,6 +115,20 @@ function doc_keyDown(event) {
 			}
 		}
 	}
+	if(event.altKey) {
+		if(event.keyCode=='49') {
+			if(songHistoryWindow.displayed)
+				songHistoryWindow.hide();
+			else
+				songHistoryWindow.show();
+		}
+		else if(event.keyCode=='50') {
+			if(songHistoryInfoWindow.displayed)
+				songHistoryInfoWindow.hide();
+			else
+				songHistoryInfoWindow.show();
+		}
+	}
 	else {
 		if(event.keyCode=='33') {
 			AdjustVolume(.05);
@@ -177,6 +155,75 @@ function SelectAvatarGroup(number) {
 		}, 300);
 	}
 }
+
+SongHistoryWindow.prototype.updatePositionOnDrag = (function(pageX, pageY) {
+	var old=SongHistoryWindow.prototype.updatePositionOnDrag;
+	return function() {
+		old.apply(this,arguments);
+		localStorage.setItem("songHistoryWindowX",songHistoryWindow.$container.position().left);
+		localStorage.setItem("songHistoryWindowY",songHistoryWindow.$container.position().top);
+	}
+})();
+SongHistoryInfoWindow.prototype.updatePositionOnDrag = (function(pageX, pageY) {
+	var old=SongHistoryInfoWindow.prototype.updatePositionOnDrag;
+	return function() {
+		old.apply(this,arguments);
+		localStorage.setItem("songHistoryInfoWindowX",songHistoryInfoWindow.$container.position().left);
+		localStorage.setItem("songHistoryInfoWindowY",songHistoryInfoWindow.$container.position().top);
+	}
+})();
+SongHistoryWindow.prototype.show = (function() {
+	var old=SongHistoryWindow.prototype.show;
+	return function() {
+		old.apply(this,arguments);
+		let left=localStorage.getItem("songHistoryWindowX");
+		let top=localStorage.getItem("songHistoryWindowY");
+		if(left && top) {
+			songHistoryWindow.$container.css("transform", `translate(${left}px, ${top}px)`);
+		}
+		let width=localStorage.getItem("songHistoryWindowWidth");
+		let height=localStorage.getItem("songHistoryWindowHeight");
+		if(width && height) {
+			songHistoryWindow.$container.css('width',`${width}px`);
+			songHistoryWindow.$container.css('height',`${height}px`);
+		}
+	}
+})();
+SongHistoryInfoWindow.prototype.show = (function() {
+	var old=SongHistoryInfoWindow.prototype.show;
+	return function() {
+		old.apply(this,arguments);
+		let left=localStorage.getItem("songHistoryInfoWindowX");
+		let top=localStorage.getItem("songHistoryInfoWindowY");
+		if(left && top) {
+			songHistoryInfoWindow.$container.css("transform", `translate(${left}px, ${top}px)`);
+		}
+		let width=localStorage.getItem("songHistoryInfoWindowWidth");
+		let height=localStorage.getItem("songHistoryInfoWindowHeight");
+		if(width && height) {
+			songHistoryInfoWindow.$container.css('width',`${width}px`);
+			songHistoryInfoWindow.$container.css('height',`${height}px`);
+		}
+	}
+})();
+
+function onSongHistoryWindowResize(){
+	if(songHistoryWindow.$container.width()>475 || songHistoryWindow.$container.height()>250) {
+		localStorage.setItem("songHistoryWindowWidth",songHistoryWindow.$container.width());
+		localStorage.setItem("songHistoryWindowHeight",songHistoryWindow.$container.height());
+	}
+}
+new ResizeObserver(onSongHistoryWindowResize).observe(document.querySelector('#songHistoryWindow'));
+
+function onSongHistoryInfoWindowResize(){
+	if(songHistoryInfoWindow.$container.width()>500 || songHistoryInfoWindow.$container.height()>250) {
+		localStorage.setItem("songHistoryInfoWindowWidth",songHistoryInfoWindow.$container.width());
+		localStorage.setItem("songHistoryInfoWindowHeight",songHistoryInfoWindow.$container.height());
+	}
+}
+new ResizeObserver(onSongHistoryInfoWindowResize).observe(document.querySelector('#songHistoryInfoWindow'));
+
+
 
 document.addEventListener('keyup', doc_keyUp, false);
 document.addEventListener('keydown', doc_keyDown, false);
@@ -212,24 +259,26 @@ function chatSystemMessage(msg) {
 }
 
 AMQ_addScriptData({
-    name: "Hotkey Functions",
-    author: "nyamu",
-    description: `
-        <p>It enables some hotkey functions.</p>
-        <p>[ESC] : remove zombie tooltips</p>
-        <p>[TAB] : move cursor focus to chat box and answer box</p>
-        <p>[PgUp] : increase volume</p>
-        <p>[PgDn] : decrease volume</p>
-        <p>[Ctrl + M]  : toggle mute</p>
-        <p>[Shift + Enter] : skip</p>
-        <p>[Shift + Alt + S] : toggle autoskip</p>
-        <p>[Shift + PgUp] : move box focus to upper box</p>
-        <p>[Shift + PgDn] : move box focus to lower box</p>
-        <p>[Shift + Home] : move box focus to box 1</p>
-        <p>[Shift + End] : move box focus to my box</p>
-        <p>[Ctrl + Left] : join game in lobby. toggle ready if you joined</p>
-        <p>[Ctrl + Right] : change to spec in lobby if you joined</p>
-        <p>[Ctrl + Up] : start game if you are host and all players are ready</p>
-        <p>[Ctrl + Down] : start vote for returning lobby if game started and you are host</p>
-    `
+	name: "Hotkey Functions",
+	author: "nyamu",
+	description: `
+		<p>It enables some hotkey functions.</p>
+		<p>[ESC] : remove zombie tooltips</p>
+		<p>[TAB] : move cursor focus to chat box and answer box</p>
+		<p>[PgUp] : increase volume</p>
+		<p>[PgDn] : decrease volume</p>
+		<p>[Ctrl + M]  : toggle mute</p>
+		<p>[Shift + Enter] : skip</p>
+		<p>[Shift + Alt + S] : toggle autoskip</p>
+		<p>[Shift + PgUp] : move box focus to upper box</p>
+		<p>[Shift + PgDn] : move box focus to lower box</p>
+		<p>[Shift + Home] : move box focus to box 1</p>
+		<p>[Shift + End] : move box focus to my box</p>
+		<p>[Ctrl + Left] : join game in lobby. toggle ready if you joined</p>
+		<p>[Ctrl + Right] : change to spec in lobby if you joined</p>
+		<p>[Ctrl + Up] : start game if you are host and all players are ready</p>
+		<p>[Ctrl + Down] : start vote for returning lobby if game started and you are host</p>
+		<p>[Alt + 1]: show song history window</p>
+		<p>[Alt + 2]: show song history info window</p>
+	`
 });
