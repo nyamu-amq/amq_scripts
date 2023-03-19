@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Hotkey Functions
 // @namespace    https://github.com/nyamu-amq
-// @version      0.16
+// @version      0.17
 // @description  enable hotkey functions
 // @description  ESC: remove zombie tooltips
 // @description  TAB: move cursor focus to chat box and answer box
@@ -157,7 +157,7 @@ function doc_keyDown(event) {
 			}
 		}
 	}
-	if(event.altKey) {
+	else if(event.altKey) {
 		if(event.keyCode=='49') {
 			if(songHistoryWindow.displayed)
 				songHistoryWindow.hide();
