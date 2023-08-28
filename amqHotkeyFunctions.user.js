@@ -48,7 +48,6 @@ function doc_keyUp(event) {
 	}
 	else if(event.keyCode=='9' && !event.altKey) {
 		let focusedinput=getFocused();
-		console.log(focusedinput);
 		if(quiz.isSpectator) {
 			quiz.setInputInFocus(false);
 			$("#gcInput").focus();
@@ -57,7 +56,6 @@ function doc_keyUp(event) {
 		if(event.shiftKey) focusedinput--;
 		else focusedinput++;
 		if(focusedinput<0) focusedinput+=answerinput.length+1;
-		console.log(focusedinput);
 		if(focusedinput>-1 && focusedinput<answerinput.length) {
 			quiz.setInputInFocus(true);
 			answerinput[focusedinput].focus();
