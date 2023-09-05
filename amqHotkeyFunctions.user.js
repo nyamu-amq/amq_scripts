@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Hotkey Functions
 // @namespace    https://github.com/nyamu-amq
-// @version      0.17
+// @version      0.18
 // @description  enable hotkey functions
 // @description  ESC: remove zombie tooltips
 // @description  TAB: move cursor focus to chat box and answer box
@@ -47,23 +47,14 @@ function doc_keyUp(event) {
 		chatSystemMessage(isAutoSkip?"Enabled Auto Skip":"Disabled Auto Skip");
 	}
 	else if(event.keyCode=='9' && !event.altKey) {
-		let focusedinput=getFocused();
-		if(quiz.isSpectator) {
+		if(quiz.answerInput.inFocus || quiz.isSpectator) {
 			quiz.setInputInFocus(false);
 			$("#gcInput").focus();
-			return;
-		}
-		if(event.shiftKey) focusedinput--;
-		else focusedinput++;
-		if(focusedinput<0) focusedinput+=answerinput.length+1;
-		if(focusedinput>-1 && focusedinput<answerinput.length) {
-			quiz.setInputInFocus(true);
-			answerinput[focusedinput].focus();
-			$("#gcInput").blur();
 		}
 		else {
-			$("#gcInput").focus();
-			quiz.setInputInFocus(false);
+			$("#gcInput").blur();
+			quiz.setInputInFocus(true);
+			$("#qpAnswerInput").focus();
 		}
 	}
 	else if(lobby.inLobby && event.ctrlKey && hostModal.gameMode !== 'Ranked') {
@@ -110,20 +101,6 @@ function doc_keyUp(event) {
 			}
 		}
 	}
-}
-
-let answerinput;
-function getFocused() {
-	if(!answerinput) {
-		answerinput=[];
-		let arr=$('input[id="qpAnswerInput"]');
-		for(let i=0;i<arr.length;i++) answerinput.push(arr[i]);
-	}
-	let focused=document.activeElement;
-	for(let i=0;i<answerinput.length;i++) {
-		if(answerinput[i]==focused) return i;
-	}
-	return -1;
 }
 
 function isAllPlayerReady() {
