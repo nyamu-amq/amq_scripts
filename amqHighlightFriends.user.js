@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Highlight Friends
 // @namespace    https://github.com/nyamu-amq
-// @version      0.34
+// @version      0.35
 // @description  Apply color to name of yourself and friends. and more
 // @author       nyamu, ensorcell
 // @match        https://animemusicquiz.com/*
@@ -557,12 +557,36 @@ function removeFriendFromTable(friendname) {
 	}
 }
 
+function removePlayerFromTable(playerid) {
+	if(!quiz.inQuiz) return;
+    let row=playerSummaryWindowTable.find("#friendScore"+playerid);
+    if(row!==undefined)
+        row.remove();
+}
+
+function removeLeftPlayer() {
+	if(!quiz.inQuiz) return;
+
+	var playeridlist=[];
+	playerSummaryWindowTable.find('tr').each(function(i) {
+		if(i>0) {
+			playeridlist.push(Number(this.id.substring(11)));
+		}
+	});
+	playeridlist.forEach(playerid => {
+		if(playerid in quiz.players == false) {
+			removePlayerFromTable(playerid);
+		}
+	});
+}
+
 new Listener("Game Starting", (data) => {
 	updateFriendTable(Object.values(lobby.players));
 }).bindListener();
 
 new Listener("answer results", (data) => {
 	setTimeout(() => {
+		removeLeftPlayer();
 		if(data.lateJoinPlayers) refreshColors();
 		updateFriendTable(data.players);
 	},1);
