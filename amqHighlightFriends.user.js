@@ -1,13 +1,16 @@
 // ==UserScript==
 // @name         AMQ Highlight Friends
 // @namespace    https://github.com/nyamu-amq
-// @version      0.33
+// @version      0.34
 // @description  Apply color to name of yourself and friends. and more
 // @author       nyamu, ensorcell
 // @match        https://animemusicquiz.com/*
 // @grant        none
 // @require      https://raw.githubusercontent.com/TheJoseph98/AMQ-Scripts/master/common/amqScriptInfo.js
 // @require      https://raw.githubusercontent.com/TheJoseph98/AMQ-Scripts/master/common/amqWindows.js
+// @downloadURL  https://github.com/nyamu-amq/amq_scripts/raw/master/amqHighlightFriends.user.js
+// @updateURL    https://github.com/nyamu-amq/amq_scripts/raw/master/amqHighlightFriends.user.js
+
 
 // ==/UserScript==
 
@@ -417,7 +420,7 @@ function createPlayerSummaryWindow() {
 function clearTable() {
 	playerSummaryWindowTable.children().remove();
 
-	playerSummaryWindow.setTitle(quiz.gameMode==="Ranked"?"Friend Summary":"Player Summary");
+	playerSummaryWindow.setTitle(isMassivePlayerMode()?"Friend Summary":"Player Summary");
 
 	let header = $(`<tr class="header"></tr>`)
 	let rankCol = $(`<td class="fstRank"><b>Rank</b></td>`);
@@ -512,12 +515,16 @@ function findBoxById(id) {
 	return Object.keys(object).find(key => object[key].indexOf(id) !==-1);
 }
 
+function isMassivePlayerMode() {
+	return quiz.gameMode == "Ranked" || quiz.gameMode =="Annivesary"
+}
+
 function updateFriendTable(players) {
 	setTimeout(() => {
 		if(viewChanger.currentView!=="quiz") return;
 		players.forEach((player) => {
 			if(quiz.players[player.gamePlayerId]) {
-				if(quiz.gameMode !== "Ranked" || socialTab.isFriend(quiz.players[player.gamePlayerId]._name) || quiz.players[player.gamePlayerId]._name==selfName)
+				if(!isMassivePlayerMode() || socialTab.isFriend(quiz.players[player.gamePlayerId]._name) || quiz.players[player.gamePlayerId]._name==selfName)
 					updatePlayerRow(player);
 			}
 		});
@@ -541,7 +548,7 @@ new Listener("Spectate Game", (data) => {
 
 function removeFriendFromTable(friendname) {
 	if(!quiz.inQuiz) return;
-	if(quiz.gameMode !== "Ranked") return;
+	if(!isMassivePlayerMode()) return;
 	let id = Object.keys(quiz.players).find(key=>quiz.players[key]._name===friendname);
 	if(id!==undefined) {
 		let row=playerSummaryWindowTable.find("#friendScore"+id);
