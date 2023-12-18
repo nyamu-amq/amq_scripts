@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Auto Ready
 // @namespace    https://github.com/nyamu-amq
-// @version      0.7
+// @version      0.8
 // @description  
 // @author       nyamu
 // @match        https://animemusicquiz.com/*
