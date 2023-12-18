@@ -6,8 +6,8 @@
 // @author       nyamu, ensorcell
 // @match        https://animemusicquiz.com/*
 // @grant        none
-// @require      https://raw.githubusercontent.com/TheJoseph98/AMQ-Scripts/master/common/amqScriptInfo.js
-// @require      https://raw.githubusercontent.com/TheJoseph98/AMQ-Scripts/master/common/amqWindows.js
+// @require      https://raw.githubusercontent.com/joske2865/AMQ-Scripts/master/common/amqScriptInfo.js
+// @require      https://raw.githubusercontent.com/joske2865/AMQ-Scripts/master/common/amqWindows.js
 // @downloadURL  https://github.com/nyamu-amq/amq_scripts/raw/master/amqHighlightFriends.user.js
 // @updateURL    https://github.com/nyamu-amq/amq_scripts/raw/master/amqHighlightFriends.user.js
 
