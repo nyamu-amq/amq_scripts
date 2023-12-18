@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Mousewheel Volume Control
 // @namespace    https://github.com/nyamu-amq
-// @version      0.3
+// @version      0.4
 // @description  you can adjust volume with mouse wheel. it works in expand library also
 // @author       nyamu
 // @match        https://animemusicquiz.com/*
