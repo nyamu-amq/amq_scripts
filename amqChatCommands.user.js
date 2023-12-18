@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Chat Commands
 // @namespace    https://github.com/nyamu-amq
-// @version      0.6
+// @version      0.7
 // @description  enable chat commands
 // @description  - commands for host in lobby
 // @description  -- /t [oei] : change songtype. ex) /t oi => openings inserts. /t ei => endings inserts. /t e => endings only.
