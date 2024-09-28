@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         AMQ Friend Online Notifier
 // @namespace    https://github.com/nyamu-amq
-// @version      0.3
+// @version      0.4
 // @description  show notification when your friend is online
 // @author       nyamu
-// @match        https://animemusicquiz.com/*
+// @match        https://*.animemusicquiz.com/*
 // @grant        none
 // @require      https://raw.githubusercontent.com/joske2865/AMQ-Scripts/master/common/amqScriptInfo.js
 
