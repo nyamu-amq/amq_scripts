@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         AMQ One Group Glow
 // @namespace    https://github.com/nyamu-amq
-// @version      0.1
+// @version      0.2
 // @description  
 // @author       nyamu
-// @match        https://animemusicquiz.com/*
+// @match        https://*.animemusicquiz.com/*
 // @grant        none
 
 // ==/UserScript==
