@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         AMQ Highlight Friends
 // @namespace    https://github.com/nyamu-amq
-// @version      0.36
+// @version      0.37
 // @description  Apply color to name of yourself and friends. and more
 // @author       nyamu, ensorcell
-// @match        https://animemusicquiz.com/*
+// @match        https://*.animemusicquiz.com/*
 // @grant        none
 // @require      https://raw.githubusercontent.com/joske2865/AMQ-Scripts/master/common/amqScriptInfo.js
 // @require      https://raw.githubusercontent.com/joske2865/AMQ-Scripts/master/common/amqWindows.js
