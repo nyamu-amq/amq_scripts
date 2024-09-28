@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         AMQ Bugfix
 // @namespace    https://github.com/nyamu-amq
-// @version      0.1
+// @version      0.2
 // @description  Fix bug that wrong game type on game settings
 // @author       nyamu
-// @match        https://animemusicquiz.com/*
+// @match        https://*.animemusicquiz.com/*
 // @grant        none
 
 // ==/UserScript==
