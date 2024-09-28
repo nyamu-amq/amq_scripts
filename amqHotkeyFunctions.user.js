@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Hotkey Functions
 // @namespace    https://github.com/nyamu-amq
-// @version      0.19
+// @version      0.20
 // @description  enable hotkey functions
 // @description  ESC: remove zombie tooltips
 // @description  TAB: move cursor focus to chat box and answer box
@@ -21,7 +21,7 @@
 // @description  Alt + 1: show song history window
 // @description  Alt + 2: show song history info window
 // @author       nyamu
-// @match        https://animemusicquiz.com/*
+// @match        https://*.animemusicquiz.com/*
 // @grant        none
 // @require      https://raw.githubusercontent.com/joske2865/AMQ-Scripts/master/common/amqScriptInfo.js
 
