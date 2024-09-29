@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Mousewheel Volume Control
 // @namespace    https://github.com/nyamu-amq
-// @version      0.5
+// @version      0.6
 // @description  you can adjust volume with mouse wheel. it works in expand library also
 // @author       nyamu
 // @match        https://*.animemusicquiz.com/*
@@ -25,8 +25,6 @@
 	$("#elInputContainer")
 		.on("wheel", volumeControl);
 
-	var volumetemp=Cookies.get('volume')*1;
-	setElVolume(volumetemp);
 })();
 
 function volumeControl(event) {
@@ -37,11 +35,6 @@ function volumeControl(event) {
 	volumeController.volume=volumetemp;
 	volumeController.adjustVolume();
 	volumeController.setMuted(false);
-	setElVolume(volumetemp);
-}
-function setElVolume(volume) {
-	let elplayer = document.getElementById('elInputVideo');
-	elplayer.volume=volume;
 }
 
 AMQ_addScriptData({
@@ -49,6 +42,5 @@ AMQ_addScriptData({
     author: "nyamu",
     description: `
         <p>You can adjust volume with mouse wheel when mouse cursor is over video area or avatar area.</p>
-        <p>It works in expand library also.</p>
     `
 });
