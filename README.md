@@ -102,7 +102,6 @@ im so lazy to write usage.... and english is too hard for me..../o\
 
 ### [amqMousewheelVolumeControl.user.js](https://github.com/nyamu-amq/amq_scripts/raw/master/amqMousewheelVolumeControl.user.js)
 - you can adjust volume with mouse wheel when mouse cursor is over video area or avatar area
-- it works in expand library also
 
 ### [amqOneGroupGlow.user.js](https://github.com/nyamu-amq/amq_scripts/raw/master/amqOneGroupGlow.user.js)
 - correct answer players glowing works even stadings box is only one box.
