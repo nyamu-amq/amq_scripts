@@ -516,7 +516,7 @@ function findBoxById(id) {
 }
 
 function isMassivePlayerMode() {
-	return quiz.gameMode == "Ranked" || quiz.gameMode =="Annivesary"
+	return quiz.gameMode == "Ranked" || quiz.gameMode =="Annivesary" || quiz.gameMode == "Themed"
 }
 
 function updateFriendTable(players) {
