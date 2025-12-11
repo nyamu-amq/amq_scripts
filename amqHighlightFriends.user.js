@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         AMQ Highlight Friends
 // @namespace    https://github.com/nyamu-amq
-// @version      0.37
+// @version      0.38
 // @description  Apply color to name of yourself and friends. and more
-// @author       nyamu, ensorcell
+// @author       nyamu, ensorcell, Zolhungaj
 // @match        https://*.animemusicquiz.com/*
 // @grant        none
 // @require      https://raw.githubusercontent.com/joske2865/AMQ-Scripts/master/common/amqScriptInfo.js
@@ -733,7 +733,7 @@ function colorScorebox() {
 	$(".qpsPlayerName.self").css("color", $("#smColorSelfScorebox").prop("checked")?$("#smColorSelfColor").val():"")
 		.css("text-shadow", $("#smColorSelfScorebox").prop("checked")?"0 0 10px "+$("#smColorSelfShadow").val():"");
 	$(".qpsPlayerName").each((index, elem) => {
-		if(socialTab.isFriend($(elem).text())) {
+		if(socialTab.isFriend($(elem).text().trim())) {
 			$(elem).addClass("friend").css("color", $("#smColorFriendScorebox").prop("checked")?$("#smColorFriendColor").val():"")
 				.css("text-shadow", $("#smColorFriendScorebox").prop("checked")?"0 0 10px "+$("#smColorFriendShadow").val():"");
 		}
