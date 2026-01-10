@@ -373,7 +373,7 @@ function createPlayerSummaryWindow() {
 			x: 0,
 			y: 34
 		},
-		width: 400,
+		width: 444,
 		height: 374,
 		minWidth: 400,
 		minHeight: 300,
@@ -428,12 +428,14 @@ function clearTable() {
 	let nameCol = $(`<td class="fstName"><b>Name</b></td>`);
 	let boxCol = $(`<td class="fstBox"><b>Box</b></td>`);
 	let answerCol = $(`<td class="fstAnswer"><b>Last Answer</b></td>`);
+    let speedCol = $(`<td class="fstSpeed"><b>Speed</b></td>`);
 
 	header.append(rankCol);
 	header.append(scoreCol);
 	header.append(nameCol);
 	header.append(boxCol);
 	header.append(answerCol);
+    header.append(speedCol);
 	playerSummaryWindowTable.append(header);
 }
 
@@ -470,11 +472,13 @@ function updatePlayerRow(player) {
 		let nameCol = $(`<td class="fstName">`+quiz.players[player.gamePlayerId]._name+`</td>`);
 		let boxCol = $(`<td class="fstBox">`+findBoxById(player.gamePlayerId)+`</td>`);
 		let answerCol = $(`<td class="fstAnswer">`+quiz.players[player.gamePlayerId].avatarSlot.$answerContainerText.text()+`</td>`);
+        let speedCol = $(`<td class="fstSpeed">`+quiz.players[player.gamePlayerId].avatarSlot.$answerTime.text()+`</td>`);
 		playerrow.append(rankCol);
 		playerrow.append(scoreCol);
 		playerrow.append(nameCol);
 		playerrow.append(boxCol);
 		playerrow.append(answerCol);
+        playerrow.append(speedCol);
 		playerrow.click(function () {
 			SelectAvatarGroup($(this).find(".fstBox").text());
 		});
@@ -495,6 +499,7 @@ function updatePlayerRow(player) {
 
 		$(row).find(".fstBox").text(findBoxById(player.gamePlayerId));
 		$(row).find(".fstAnswer").text(quiz.players[player.gamePlayerId].avatarSlot.$answerContainerText.text());
+        $(row).find(".fstSpeed").text(quiz.players[player.gamePlayerId].avatarSlot.$answerTime.text());
 	}
 	if(player.correct===undefined) {
 		$(row).removeClass("correctGuess");
@@ -979,6 +984,9 @@ AMQ_addStyle(`
 	.fstAnswer {
 		min-width: 80px;
 	}
+    .fstSpeed {
+        min-width: 44px;
+    }
 	.correctGuess {
 		background-color: rgba(0, 200, 0, 0.07);
 	}
