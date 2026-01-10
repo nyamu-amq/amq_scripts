@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Highlight Friends
 // @namespace    https://github.com/nyamu-amq
-// @version      0.38
+// @version      0.39
 // @description  Apply color to name of yourself and friends. and more
 // @author       nyamu, ensorcell, Zolhungaj
 // @match        https://*.animemusicquiz.com/*
@@ -632,7 +632,6 @@ $("#smColorSettings")
 	.append($("<div></div>")
 		.attr("id", "smColorContainer")
 		.addClass("col-xs-12")
-		.addClass("checkboxContainer")
 		.addClass("text-center")
 	);
 for(let table of colorSettingData) {
@@ -999,3 +998,4 @@ AMQ_addStyle(`
 		margin-right: 5px;
 	}
 `);
+
