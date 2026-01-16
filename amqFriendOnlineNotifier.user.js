@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Friend Online Notifier
 // @namespace    https://github.com/nyamu-amq
-// @version      0.4
+// @version      0.5
 // @description  show notification when your friend is online
 // @author       nyamu
 // @match        https://*.animemusicquiz.com/*
@@ -15,9 +15,10 @@ if (document.getElementById('startPage')) {
 }
 
 let commandListener = new Listener("friend state change", (friend) => {
-	if (friend.online) {
-		popoutMessages.displayStandardMessage("",friend.name+" is online");
-	}
+    if (friend.online) {
+        let messageHtml = format(popoutMessages.STANDARD_TEMPLATE, "",friend.name+" is online");
+        popoutMessages.displayPopoutMessage(messageHtml);
+    }
 });
 commandListener.bindListener();
 
