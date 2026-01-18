@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         AMQ Highlight Friends
 // @namespace    https://github.com/nyamu-amq
-// @version      0.39
+// @version      0.40
 // @description  Apply color to name of yourself and friends. and more
-// @author       nyamu, ensorcell, Zolhungaj
+// @author       nyamu, ensorcell, Zolhungaj, speedtest002
 // @match        https://*.animemusicquiz.com/*
 // @grant        none
 // @require      https://raw.githubusercontent.com/joske2865/AMQ-Scripts/master/common/amqScriptInfo.js
@@ -889,32 +889,38 @@ function colorPlayers(){
 	});},0);
 }
 
-GameChat.prototype.systemMessage = function (title, msg) {
-	let template=`
-		<li{2}>
-			<span>{0}</span><br>
-			<div class="gcMsgIndent">{1}</div>
-		</li>
-	`;
-	let typestr="";
-	if(title.includes("started spec") || title.includes("to spec")) {
-		typestr=' class="csmSpec"';
-	}
-	else if(title.includes("joined the") || title.includes("to player")) {
-		typestr=' class="csmJoin"';
-	}
-	else if(title.includes("stopped spec") || title.includes("left the") || title.includes("kicked from")) {
-		typestr=' class="csmLeft"';
-	}
-	if (!msg) {
+GameChat.prototype.systemMsgCueue=[];
+GameChat.prototype.systemMessage = function (title, msg, teamMessage) {
+    if (!msg) {
 		msg = "";
 	}
-	this.insertMsg(format(template, title, msg, typestr));
 
-	$(".csmJoin").css("color", $("#smColorJoin").prop("checked")?$("#smColorJoinColor").val():"");
+	let $msg = $(format(this.serverMsgTemplate, title, msg));
+
+	if (teamMessage) {
+		$msg.find(".gcTeamMessageIcon").removeClass("hide");
+	}
+    if(this.systemMsgCueue.length>0) {
+        let type=this.systemMsgCueue.shift();
+        if(type=='s') $msg.addClass("csmSpec");
+        else if(type=='j') $msg.addClass("csmJoin");
+        else if(type=='l') $msg.addClass("csmLeft");
+    }
+
+	this.insertMsg($msg);
+
+    $(".csmJoin").css("color", $("#smColorJoin").prop("checked")?$("#smColorJoinColor").val():"");
 	$(".csmSpec").css("color", $("#smColorSpec").prop("checked")?$("#smColorSpecColor").val():"");
 	$(".csmLeft").css("color", $("#smColorLeave").prop("checked")?$("#smColorLeaveColor").val():"");
 };
+
+new Listener("New Spectator", (target) => { gameChat.systemMsgCueue.push('s'); },0).bindListener();
+new Listener("Spectator Left", (target) => { gameChat.systemMsgCueue.push('l'); },0).bindListener();
+new Listener("Player Left", (target) => { gameChat.systemMsgCueue.push('l'); },0).bindListener();
+new Listener("Player Changed To Spectator", (target) => { gameChat.systemMsgCueue.push('s'); },0).bindListener();
+new Listener("Rejoining Player", (target) => { gameChat.systemMsgCueue.push('j'); },0).bindListener();
+new Listener("New Player", (target) => { gameChat.systemMsgCueue.push('j'); },0).bindListener();
+new Listener("Spectator Change To Player", (target) => { gameChat.systemMsgCueue.push('j'); },0).bindListener();
 
 new Listener("new friend", (friend) => {
 	setTimeout(() => {
@@ -998,4 +1004,3 @@ AMQ_addStyle(`
 		margin-right: 5px;
 	}
 `);
-
