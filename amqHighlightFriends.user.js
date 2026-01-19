@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Highlight Friends
 // @namespace    https://github.com/nyamu-amq
-// @version      0.40
+// @version      0.41
 // @description  Apply color to name of yourself and friends. and more
 // @author       nyamu, ensorcell, Zolhungaj, speedtest002
 // @match        https://*.animemusicquiz.com/*
@@ -889,7 +889,7 @@ function colorPlayers(){
 	});},0);
 }
 
-GameChat.prototype.systemMsgCueue=[];
+GameChat.prototype.systemMsgQueue=[];
 GameChat.prototype.systemMessage = function (title, msg, teamMessage) {
     if (!msg) {
 		msg = "";
@@ -900,8 +900,8 @@ GameChat.prototype.systemMessage = function (title, msg, teamMessage) {
 	if (teamMessage) {
 		$msg.find(".gcTeamMessageIcon").removeClass("hide");
 	}
-    if(this.systemMsgCueue.length>0) {
-        let type=this.systemMsgCueue.shift();
+    if(this.systemMsgQueue.length>0) {
+        let type=this.systemMsgQueue.shift();
         if(type=='s') $msg.addClass("csmSpec");
         else if(type=='j') $msg.addClass("csmJoin");
         else if(type=='l') $msg.addClass("csmLeft");
@@ -914,13 +914,15 @@ GameChat.prototype.systemMessage = function (title, msg, teamMessage) {
 	$(".csmLeft").css("color", $("#smColorLeave").prop("checked")?$("#smColorLeaveColor").val():"");
 };
 
-new Listener("New Spectator", (target) => { gameChat.systemMsgCueue.push('s'); },0).bindListener();
-new Listener("Spectator Left", (target) => { gameChat.systemMsgCueue.push('l'); },0).bindListener();
-new Listener("Player Left", (target) => { gameChat.systemMsgCueue.push('l'); },0).bindListener();
-new Listener("Player Changed To Spectator", (target) => { gameChat.systemMsgCueue.push('s'); },0).bindListener();
-new Listener("Rejoining Player", (target) => { gameChat.systemMsgCueue.push('j'); },0).bindListener();
-new Listener("New Player", (target) => { gameChat.systemMsgCueue.push('j'); },0).bindListener();
-new Listener("Spectator Change To Player", (target) => { gameChat.systemMsgCueue.push('j'); },0).bindListener();
+new Listener("New Spectator", (target) => { if(gameChat.displayJoinLeaveMessages) gameChat.systemMsgQueue.push('s'); },0).bindListener();
+new Listener("Spectator Left", (target) => { if(gameChat.displayJoinLeaveMessages) gameChat.systemMsgQueue.push('l'); },0).bindListener();
+new Listener("Player Left", (target) => { if(gameChat.displayJoinLeaveMessages) gameChat.systemMsgQueue.push('l'); },0).bindListener();
+new Listener("Player Changed To Spectator", (target) => { if(gameChat.displayJoinLeaveMessages) gameChat.systemMsgQueue.push('s'); },0).bindListener();
+new Listener("Rejoining Player", (target) => { if(gameChat.displayJoinLeaveMessages) gameChat.systemMsgQueue.push('j'); },0).bindListener();
+new Listener("New Player", (target) => { if(gameChat.displayJoinLeaveMessages) gameChat.systemMsgQueue.push('j'); },0).bindListener();
+new Listener("Spectator Change To Player", (target) => { if(gameChat.displayJoinLeaveMessages) gameChat.systemMsgQueue.push('j'); },0).bindListener();
+new Listener("Join Game", (target) => { gameChat.systemMsgQueue=[]; },0).bindListener();
+new Listener("Spectate Game", (target) => { gameChat.systemMsgQueue=[]; },0).bindListener();
 
 new Listener("new friend", (friend) => {
 	setTimeout(() => {
