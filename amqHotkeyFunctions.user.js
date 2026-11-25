@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Hotkey Functions
 // @namespace    https://github.com/nyamu-amq
-// @version      0.21
+// @version      0.22
 // @description  enable hotkey functions
 // @description  ESC: remove zombie tooltips
 // @description  TAB: move cursor focus to chat box and answer box
@@ -159,12 +159,11 @@ function doc_keyDown(event) {
 	}
 }
 function AdjustVolume(amount) {
-	var volumetemp=Cookies.get('volume')*1;
-	volumetemp=volumetemp+amount;
-	volumetemp=Math.min(Math.max(volumetemp, 0), 1);
-	volumeController.volume=volumetemp;
-	volumeController.adjustVolume();
-	volumeController.setMuted(false);
+	var volumetemp=quizVolumeController.volumeMaster.volume*1;
+	volumetemp=Math.min(Math.max(volumetemp+amount, 0), 1);
+	quizVolumeController.volumeMaster.volume=volumetemp;
+	quizVolumeController.adjustVolume();
+	quizVolumeController.volumeMaster.setMuted(false);
 }
 function SelectAvatarGroup(number) {
 	quiz.avatarContainer.currentGroup = number;
